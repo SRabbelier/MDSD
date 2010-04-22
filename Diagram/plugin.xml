@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?eclipse version="3.0"?>
+
+<plugin>
+       <extension point="org.eclipse.imp.runtime.languageDescription">
+          <language extensions="dia" description="Diagram" language="Diagram" derivedFrom="DynamicRoot" validator="Diagram.DiagramValidator" validatorClass="Diagram.DiagramValidator"></language>
+       </extension>
+       <extension id="Diagram.parser" name="Diagram Parser" point="org.eclipse.imp.runtime.parser">
+          <parser class="Diagram.DiagramParseController" language="Diagram">
+          </parser>
+       </extension>    
+    </plugin>

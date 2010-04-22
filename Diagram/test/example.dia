@@ -1,0 +1,52 @@
+// from question 2 of assignment 3
+
+[Customer]
+[Customer]->[Order]
+[Customer]<->[Order]
+[Customer]+-[Order]
+[Customer]<>-[Order]
+[Customer]++-[Order]
+[Customer]^[Cool Customer]
+[Customer]^[Uncool Customer]
+[Customer]uses-.->[PaymentStrategy]
+[Customer]<1-1..2>[Address]
+[Person]customer-billingAddress[Address]
+[Person]-[Address]
+[Customer],[Order]
+[Address]-[note: Value Object]
+[Customer|Forename;Surname;Email|Save(f:File, value:String)]
+[Customer{bg:orange;fg:red}]<>1->[Order{bg:green}]
+
+// from question 4 of assignment 3
+[Foo]oneToMany->*[FooBar]
+[Foo|valueProp]
+[Foo]entityRef->[Bar]
+[Foo]++entityComp-ownedBy>[Baz]
+[Bar|name]
+[FooBar|value]
+[FooBar]^[Bar]
+
+// from http://yuml.me/diagram/scruffy/class/samples
+[Customer]->[Billing Address]
+[Customer]1-0..*[Address]
+[Order]-billing >[Address], [Order]-shipping >[Address]
+[Customer{bg:orange}]- >[Order{bg:green}]
+[Company]<>-1>[Location], [Location]+->[Point]
+[Company]++-1>[Location]
+[Customer]<>1->*[Order], [Customer]-[note: Aggregate Root{bg:cornsilk}]
+[Wages]^-[Salaried], [Wages]^-[Contractor]
+[<<ITask>>]^-.-[NightlyBillingTask]
+[HttpContext]uses -.->[Response]
+[<<IDisposable>>|Session] // modified: replaced ; with |
+[User|+Forename+;Surname;+HashedPassword;-Salt|+Login();+Logout()]
+
+[note: You can stick notes on diagrams too!{bg:cornsilk}]
+// swapped order of cardinality and note for now
+// it's ambiguous the other way around
+[Customer]<>1-0..* orders>[Order] 
+[Order]++*-*>[LineItem]
+[Order]-1>[DeliveryMethod]
+[Order]*-*>[Product]
+[Category]<->[Product]
+[DeliveryMethod]^[National]
+[DeliveryMethod]^[International]

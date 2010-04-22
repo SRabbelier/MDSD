@@ -1,0 +1,21 @@
+
+module Diagram-Builders
+
+imports Diagram-Builders.generated
+
+builders
+                                                                      
+  // This file can be used for custom analysis and builder rules.     
+  //                                                                  
+  // See the imported file for a brief introduction and examples.     
+
+builders
+                                                                                              
+  provider : include/diagram.ctree                                                            
+                                                                                              
+  observer : editor-analyze                                                                   
+                                                                                              
+  builder  : "Generate Java code"   = generate-java (openeditor) (realtime)                   
+  builder  : "Show abstract syntax" = generate-aterm (openeditor) (realtime) (meta) (source)  
+                                                                                              
+  //on save  : generate-java                                                                    

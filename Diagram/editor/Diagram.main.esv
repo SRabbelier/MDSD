@@ -1,0 +1,16 @@
+module Diagram.main
+
+imports Diagram-Builders Diagram-Colorer Diagram-Completions Diagram-Folding Diagram-Outliner Diagram-References Diagram-Syntax
+
+language General properties
+                  
+  name          : Diagram
+  id            : Diagram
+  extends       : Root
+                  
+  description   : "Spoofax/IMP-generated editor for the Diagram language"
+  url           : http://strategoxt.org
+                  
+  extensions    : dia
+  table         : include/Diagram.tbl
+  start symbols : Start

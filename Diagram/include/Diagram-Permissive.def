@@ -1,0 +1,137 @@
+definition
+
+module Common
+exports
+  sorts WATER WATERTOKEN WATERTOKENSTART WATERTOKENSEPARATOR WATERTOKENSTAR
+
+  lexical syntax
+    ~[A-Za-z0-9\_]                 -> WATERTOKENSTART     {recover}
+    WATERTOKENSTART [A-Za-z0-9\_]* -> WATERTOKEN          
+    ~[A-Za-z0-9\_\ \t\12\r\n\*]    -> WATERTOKENSEPARATOR {recover}
+    "*"                            -> WATERTOKENSTAR      {recover}
+    WATERTOKEN                     -> WATER               
+    WATERTOKENSEPARATOR            -> WATER               
+    WATERTOKENSTAR                 -> WATER               
+
+  lexical restrictions
+    WATERTOKEN -/- [A-Za-z0-9\_]
+    WATERTOKENSTAR -/- [\/]
+
+  context-free syntax
+    WATER -> LAYOUT {cons("WATER")}
+
+  (
+
+  sorts WATEREOF
+
+  lexical restrictions
+    WATEREOF -/- ~[]
+
+  lexical syntax
+    %% Lexical insertion recovery rules                                  
+    "\""                                            -> INSERTOPENQUOTE21 {recover}
+    INSERTOPENQUOTE21 StringChar* "\n"              -> STRING            {cons("INSERTEND")}
+    INSERTOPENQUOTE21 StringChar* WATEREOF          -> STRING            {cons("INSERTEND")}
+    "/*"                                            -> INSERTSTART21     {recover}
+    INSERTSTART21 ( ~[\*] | CommentChar )* WATEREOF -> LAYOUT            {cons("INSERTEND")}
+                                                    -> "]"               {recover, cons("INSERTION")}
+                                                    -> "}"               {recover, cons("INSERTION")}
+                                                    -> ";"               {recover, cons("INSERTION")}
+                                                    -> ","               {recover, cons("INSERTION")}
+
+  syntax
+    %% Kernel syntax insertion recovery rules   
+
+  )
+
+  (
+
+  lexical syntax
+    [a-zA-Z] [a-zA-Z0-9\_]*            -> ID            
+    "-"? [0-9]+                        -> INT           
+    "\"" StringChar* "\""              -> STRING        
+    ~[\"\n]                            -> StringChar    
+    "\\\""                             -> StringChar    
+    BackSlashChar                      -> StringChar    
+    "\\"                               -> BackSlashChar 
+    [\ \t\n\r]                         -> LAYOUT        
+    [\*]                               -> CommentChar   
+    "/*" ( ~[\*] | CommentChar )* "*/" -> LAYOUT        
+    "//" ~[\n\r]* [\n\r] | EOF         -> LAYOUT        
+                                       -> EOF           
+
+  lexical restrictions
+    CommentChar -/- [\/]
+    INT -/- [0-9]
+    ID -/- [a-zA-Z0-9\_]
+    EOF -/- ~[]
+    BackSlashChar -/- [\"]
+
+  context-free restrictions
+    LAYOUT? -/- [\ \t\n\r]
+    LAYOUT? -/- [\/] . [\/]
+    LAYOUT? -/- [\/] . [\*]
+
+  )
+
+module Diagram
+imports Common
+
+exports
+  lexical syntax
+    [a-zA-Z] TextChar* -> Text     
+    [a-zA-Z0-9\_\ \!]  -> TextChar 
+    NameChar+          -> Name     
+    [\<\>\+\-]         -> NameChar 
+    TextChar           -> NameChar 
+
+  lexical restrictions
+    Text -/- [a-zA-Z0-9\_\ ]
+
+  context-free start-symbols
+    Start
+
+  context-free syntax
+    Line*                                   -> Start           {cons("Diagram")}
+    Line "," Line                           -> Line            {cons("MultiLine")}
+    Relation                                -> Line            {cons("RelationLine")}
+    Definition                              -> Line            {cons("DefinitionLine")}
+    Definition "^" Definition               -> Relation        {cons("Inheretance")}
+    LHS Indicator RHS                       -> Relation        {cons("Relation")}
+    Definition Attribute*                   -> LHS             {cons("LHS")}
+    Attribute* Definition                   -> RHS             {cons("RHS")}
+    Note                                    -> Attribute       
+    Cardinality                             -> Attribute       
+    Aggregation                             -> Attribute       
+    LeftDirectional                         -> Attribute       
+    "<>"                                    -> Attribute       {cons("Aggregation")}
+    "++"                                    -> Attribute       {cons("Composition")}
+    ">"                                     -> Attribute       {cons("RightDirectional")}
+    "^"                                     -> Attribute       {cons("Inheretance")}
+    "<"                                     -> LeftDirectional {cons("LeftDirectional")}
+    "+"                                     -> Aggregation     {cons("Aggregation")}
+    "-"                                     -> Indicator       {cons("Line")}
+    "-.-"                                   -> Indicator       {cons("DottedLine")}
+    "[" Pair DefinitionAttrs "]"            -> Definition      {cons("Label")}
+    "[" ClassDefinition DefinitionAttrs "]" -> Definition      {cons("Definition")}
+    Name                                    -> ClassDefinition {cons("EmptyClass")}
+    Name "|" Properties                     -> ClassDefinition {cons("Class")}
+    Name "|" Properties "|" Methods         -> ClassDefinition {cons("FullClass")}
+    {Property ";"}*                         -> Properties      {cons("Properties")}
+    {Method ";"}*                           -> Methods         {cons("Methods")}
+                                            -> DefinitionAttrs {cons("NoAttrs")}
+    "{" {Pair ";"}* "}"                     -> DefinitionAttrs {cons("DefinitionAttrs")}
+    Name                                    -> Property        {cons("Property")}
+    Name "(" FunctionArgs ")"               -> Method          {cons("Method")}
+    Text                                    -> Note            {cons("Note")}
+    {Pair ","}*                             -> FunctionArgs    {cons("FunctionArgs")}
+    Text ":" Text                           -> Pair            {cons("Pair")}
+    INT                                     -> Cardinality     {cons("SetCardinality")}
+    INT ".." INT                            -> Cardinality     {cons("RangedCardinality")}
+    INT ".." "*"                            -> Cardinality     {cons("ToAnyCardinality")}
+    "*"                                     -> Cardinality     {cons("AnyCardinality")}
+
+  context-free restrictions
+    Cardinality -/- [\.]
+    Aggregation -/- [\+]
+    LeftDirectional -/- [\>]

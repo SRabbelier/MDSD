@@ -1,0 +1,34 @@
+Module(
+  "example"
+, [ Entity(
+      "Foo"
+    , InheritsNone()
+    , [ Property("valueProp", Type("String"))
+      , ReferenceProperty("entityRef", Type("Bar"), NoAttributes())
+      , CompositeProperty("entityComp", Type("Baz"))
+      , ReferenceProperty("oneToMany", SetType("FooBar"), NoAttributes())
+      ]
+    )
+  , Entity("Bar", InheritsNone(), [Property("name", Type("String"))])
+  , Entity(
+      "Baz"
+    , InheritsNone()
+    , [ ReferenceProperty(
+          "ownedBy"
+        , Type("Foo")
+        , Attributes([InverseAttribute(Field("Foo", "entityComp"))])
+        )
+      ]
+    )
+  , Entity(
+      "Foobar"
+    , Inherits(["Bar"])
+    , [Property("value", Type("Int"))]
+    )
+  , Entity(
+      "Foobarbaz"
+    , Inherits(["Bar", "Baz"])
+    , [Property("value", Type("Int"))]
+    )
+  ]
+)

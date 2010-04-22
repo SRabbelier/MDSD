@@ -1,0 +1,382 @@
+Diagram(
+  [ DefinitionLine(Definition(EmptyClass("Customer"), NoAttrs()))
+  , RelationLine(
+      Relation(
+        LHS(Definition(EmptyClass("Customer"), NoAttrs()), [])
+      , Line()
+      , RHS([RightDirectional()], Definition(EmptyClass("Order"), NoAttrs()))
+      )
+    )
+  , RelationLine(
+      Relation(
+        LHS(Definition(EmptyClass("Customer"), NoAttrs()), [LeftDirectional()])
+      , Line()
+      , RHS([RightDirectional()], Definition(EmptyClass("Order"), NoAttrs()))
+      )
+    )
+  , RelationLine(
+      Relation(
+        LHS(Definition(EmptyClass("Customer"), NoAttrs()), [Aggregation()])
+      , Line()
+      , RHS([], Definition(EmptyClass("Order"), NoAttrs()))
+      )
+    )
+  , RelationLine(
+      Relation(
+        LHS(Definition(EmptyClass("Customer"), NoAttrs()), [Aggregation()])
+      , Line()
+      , RHS([], Definition(EmptyClass("Order"), NoAttrs()))
+      )
+    )
+  , RelationLine(
+      Relation(
+        LHS(Definition(EmptyClass("Customer"), NoAttrs()), [Composition()])
+      , Line()
+      , RHS([], Definition(EmptyClass("Order"), NoAttrs()))
+      )
+    )
+  , RelationLine(
+      Inheretance(
+        Definition(EmptyClass("Customer"), NoAttrs())
+      , Definition(EmptyClass("Cool Customer"), NoAttrs())
+      )
+    )
+  , RelationLine(
+      Inheretance(
+        Definition(EmptyClass("Customer"), NoAttrs())
+      , Definition(EmptyClass("Uncool Customer"), NoAttrs())
+      )
+    )
+  , RelationLine(
+      Relation(
+        LHS(Definition(EmptyClass("Customer"), NoAttrs()), [Note("uses")])
+      , DottedLine()
+      , RHS([RightDirectional()], Definition(EmptyClass("PaymentStrategy"), NoAttrs()))
+      )
+    )
+  , RelationLine(
+      Relation(
+        LHS(
+          Definition(EmptyClass("Customer"), NoAttrs())
+        , [LeftDirectional(), SetCardinality("1")]
+        )
+      , Line()
+      , RHS(
+          [RangedCardinality("1", "2"), RightDirectional()]
+        , Definition(EmptyClass("Address"), NoAttrs())
+        )
+      )
+    )
+  , RelationLine(
+      Relation(
+        LHS(Definition(EmptyClass("Person"), NoAttrs()), [Note("customer")])
+      , Line()
+      , RHS([Note("billingAddress")], Definition(EmptyClass("Address"), NoAttrs()))
+      )
+    )
+  , RelationLine(
+      Relation(
+        LHS(Definition(EmptyClass("Person"), NoAttrs()), [])
+      , Line()
+      , RHS([], Definition(EmptyClass("Address"), NoAttrs()))
+      )
+    )
+  , MultiLine(
+      DefinitionLine(Definition(EmptyClass("Customer"), NoAttrs()))
+    , DefinitionLine(Definition(EmptyClass("Order"), NoAttrs()))
+    )
+  , RelationLine(
+      Relation(
+        LHS(Definition(EmptyClass("Address"), NoAttrs()), [])
+      , Line()
+      , RHS([], Label(Pair("note", "Value Object"), NoAttrs()))
+      )
+    )
+  , DefinitionLine(
+      Definition(
+        FullClass(
+          "Customer"
+        , Properties([Property("Forename"), Property("Surname"), Property("Email")])
+        , Methods(
+            [ Method(
+                "Save"
+              , FunctionArgs([Pair("f", "File"), Pair("value", "String")])
+              )
+            ]
+          )
+        )
+      , NoAttrs()
+      )
+    )
+  , RelationLine(
+      Relation(
+        LHS(
+          Definition(
+            EmptyClass("Customer")
+          , DefinitionAttrs([Pair("bg", "orange"), Pair("fg", "red")])
+          )
+        , [Aggregation(), SetCardinality("1")]
+        )
+      , Line()
+      , RHS(
+          [RightDirectional()]
+        , Definition(EmptyClass("Order"), DefinitionAttrs([Pair("bg", "green")]))
+        )
+      )
+    )
+  , RelationLine(
+      Relation(
+        LHS(Definition(EmptyClass("Foo"), NoAttrs()), [Note("oneToMany")])
+      , Line()
+      , RHS([RightDirectional(), AnyCardinality()], Definition(EmptyClass("FooBar"), NoAttrs()))
+      )
+    )
+  , DefinitionLine(
+      Definition(Class("Foo", Properties([Property("valueProp")])), NoAttrs())
+    )
+  , RelationLine(
+      Relation(
+        LHS(Definition(EmptyClass("Foo"), NoAttrs()), [Note("entityRef")])
+      , Line()
+      , RHS([RightDirectional()], Definition(EmptyClass("Bar"), NoAttrs()))
+      )
+    )
+  , RelationLine(
+      Relation(
+        LHS(
+          Definition(EmptyClass("Foo"), NoAttrs())
+        , [Composition(), Note("entityComp")]
+        )
+      , Line()
+      , RHS(
+          [Note("ownedBy"), RightDirectional()]
+        , Definition(EmptyClass("Baz"), NoAttrs())
+        )
+      )
+    )
+  , DefinitionLine(
+      Definition(Class("Bar", Properties([Property("name")])), NoAttrs())
+    )
+  , DefinitionLine(
+      Definition(Class("FooBar", Properties([Property("value")])), NoAttrs())
+    )
+  , RelationLine(
+      Inheretance(
+        Definition(EmptyClass("FooBar"), NoAttrs())
+      , Definition(EmptyClass("Bar"), NoAttrs())
+      )
+    )
+  , RelationLine(
+      Relation(
+        LHS(Definition(EmptyClass("Customer"), NoAttrs()), [])
+      , Line()
+      , RHS([RightDirectional()], Definition(EmptyClass("Billing Address"), NoAttrs()))
+      )
+    )
+  , RelationLine(
+      Relation(
+        LHS(Definition(EmptyClass("Customer"), NoAttrs()), [SetCardinality("1")])
+      , Line()
+      , RHS([ToAnyCardinality("0")], Definition(EmptyClass("Address"), NoAttrs()))
+      )
+    )
+  , MultiLine(
+      RelationLine(
+        Relation(
+          LHS(Definition(EmptyClass("Order"), NoAttrs()), [])
+        , Line()
+        , RHS(
+            [Note("billing "), RightDirectional()]
+          , Definition(EmptyClass("Address"), NoAttrs())
+          )
+        )
+      )
+    , RelationLine(
+        Relation(
+          LHS(Definition(EmptyClass("Order"), NoAttrs()), [])
+        , Line()
+        , RHS(
+            [Note("shipping "), RightDirectional()]
+          , Definition(EmptyClass("Address"), NoAttrs())
+          )
+        )
+      )
+    )
+  , RelationLine(
+      Relation(
+        LHS(
+          Definition(EmptyClass("Customer"), DefinitionAttrs([Pair("bg", "orange")]))
+        , []
+        )
+      , Line()
+      , RHS(
+          [RightDirectional()]
+        , Definition(EmptyClass("Order"), DefinitionAttrs([Pair("bg", "green")]))
+        )
+      )
+    )
+  , MultiLine(
+      RelationLine(
+        Relation(
+          LHS(Definition(EmptyClass("Company"), NoAttrs()), [Aggregation()])
+        , Line()
+        , RHS(
+            [SetCardinality("1"), RightDirectional()]
+          , Definition(EmptyClass("Location"), NoAttrs())
+          )
+        )
+      )
+    , RelationLine(
+        Relation(
+          LHS(Definition(EmptyClass("Location"), NoAttrs()), [Aggregation()])
+        , Line()
+        , RHS([RightDirectional()], Definition(EmptyClass("Point"), NoAttrs()))
+        )
+      )
+    )
+  , RelationLine(
+      Relation(
+        LHS(Definition(EmptyClass("Company"), NoAttrs()), [Composition()])
+      , Line()
+      , RHS(
+          [SetCardinality("1"), RightDirectional()]
+        , Definition(EmptyClass("Location"), NoAttrs())
+        )
+      )
+    )
+  , MultiLine(
+      RelationLine(
+        Relation(
+          LHS(
+            Definition(EmptyClass("Customer"), NoAttrs())
+          , [Aggregation(), SetCardinality("1")]
+          )
+        , Line()
+        , RHS([RightDirectional(), AnyCardinality()], Definition(EmptyClass("Order"), NoAttrs()))
+        )
+      )
+    , RelationLine(
+        Relation(
+          LHS(Definition(EmptyClass("Customer"), NoAttrs()), [])
+        , Line()
+        , RHS(
+            []
+          , Label(
+              Pair("note", "Aggregate Root")
+            , DefinitionAttrs([Pair("bg", "cornsilk")])
+            )
+          )
+        )
+      )
+    )
+  , MultiLine(
+      RelationLine(
+        Relation(
+          LHS(Definition(EmptyClass("Wages"), NoAttrs()), [Inheretance()])
+        , Line()
+        , RHS([], Definition(EmptyClass("Salaried"), NoAttrs()))
+        )
+      )
+    , RelationLine(
+        Relation(
+          LHS(Definition(EmptyClass("Wages"), NoAttrs()), [Inheretance()])
+        , Line()
+        , RHS([], Definition(EmptyClass("Contractor"), NoAttrs()))
+        )
+      )
+    )
+  , RelationLine(
+      Relation(
+        LHS(Definition(EmptyClass("<<ITask>>"), NoAttrs()), [Inheretance()])
+      , DottedLine()
+      , RHS([], Definition(EmptyClass("NightlyBillingTask"), NoAttrs()))
+      )
+    )
+  , RelationLine(
+      Relation(
+        LHS(Definition(EmptyClass("HttpContext"), NoAttrs()), [Note("uses ")])
+      , DottedLine()
+      , RHS([RightDirectional()], Definition(EmptyClass("Response"), NoAttrs()))
+      )
+    )
+  , DefinitionLine(
+      Definition(Class("<<IDisposable>>", Properties([Property("Session")])), NoAttrs())
+    )
+  , DefinitionLine(
+      Definition(
+        FullClass(
+          "User"
+        , Properties(
+            [Property("+Forename+"), Property("Surname"), Property("+HashedPassword"), Property("-Salt")]
+          )
+        , Methods(
+            [Method("+Login", FunctionArgs([])), Method("+Logout", FunctionArgs([]))]
+          )
+        )
+      , NoAttrs()
+      )
+    )
+  , DefinitionLine(
+      Label(
+        Pair("note", "You can stick notes on diagrams too!")
+      , DefinitionAttrs([Pair("bg", "cornsilk")])
+      )
+    )
+  , RelationLine(
+      Relation(
+        LHS(
+          Definition(EmptyClass("Customer"), NoAttrs())
+        , [Aggregation(), SetCardinality("1")]
+        )
+      , Line()
+      , RHS(
+          [ToAnyCardinality("0"), Note("orders"), RightDirectional()]
+        , Definition(EmptyClass("Order"), NoAttrs())
+        )
+      )
+    )
+  , RelationLine(
+      Relation(
+        LHS(Definition(EmptyClass("Order"), NoAttrs()), [Composition(), AnyCardinality()])
+      , Line()
+      , RHS([AnyCardinality(), RightDirectional()], Definition(EmptyClass("LineItem"), NoAttrs()))
+      )
+    )
+  , RelationLine(
+      Relation(
+        LHS(Definition(EmptyClass("Order"), NoAttrs()), [])
+      , Line()
+      , RHS(
+          [SetCardinality("1"), RightDirectional()]
+        , Definition(EmptyClass("DeliveryMethod"), NoAttrs())
+        )
+      )
+    )
+  , RelationLine(
+      Relation(
+        LHS(Definition(EmptyClass("Order"), NoAttrs()), [AnyCardinality()])
+      , Line()
+      , RHS([AnyCardinality(), RightDirectional()], Definition(EmptyClass("Product"), NoAttrs()))
+      )
+    )
+  , RelationLine(
+      Relation(
+        LHS(Definition(EmptyClass("Category"), NoAttrs()), [LeftDirectional()])
+      , Line()
+      , RHS([RightDirectional()], Definition(EmptyClass("Product"), NoAttrs()))
+      )
+    )
+  , RelationLine(
+      Inheretance(
+        Definition(EmptyClass("DeliveryMethod"), NoAttrs())
+      , Definition(EmptyClass("National"), NoAttrs())
+      )
+    )
+  , RelationLine(
+      Inheretance(
+        Definition(EmptyClass("DeliveryMethod"), NoAttrs())
+      , Definition(EmptyClass("International"), NoAttrs())
+      )
+    )
+  ]
+)

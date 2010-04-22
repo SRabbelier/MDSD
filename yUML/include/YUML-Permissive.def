@@ -1,0 +1,100 @@
+
+definition
+
+module Common
+exports
+  sorts WATER WATERTOKEN WATERTOKENSTART WATERTOKENSEPARATOR WATERTOKENSTAR
+
+  lexical syntax
+    ~[A-Za-z0-9\_]                 -> WATERTOKENSTART     {recover}
+    WATERTOKENSTART [A-Za-z0-9\_]* -> WATERTOKEN          
+    ~[A-Za-z0-9\_\ \t\12\r\n\*]    -> WATERTOKENSEPARATOR {recover}
+    "*"                            -> WATERTOKENSTAR      {recover}
+    WATERTOKEN                     -> WATER               
+    WATERTOKENSEPARATOR            -> WATER               
+    WATERTOKENSTAR                 -> WATER               
+
+  lexical restrictions
+    WATERTOKEN -/- [A-Za-z0-9\_]
+    WATERTOKENSTAR -/- [\/]
+
+  context-free syntax
+    WATER -> LAYOUT {cons("WATER")}
+
+  (
+
+  sorts WATEREOF
+
+  lexical restrictions
+    WATEREOF -/- ~[]
+
+  lexical syntax
+    %% Lexical insertion recovery rules                                  
+    "\""                                            -> INSERTOPENQUOTE20 {recover}
+    INSERTOPENQUOTE20 StringChar* "\n"              -> STRING            {cons("INSERTEND")}
+    INSERTOPENQUOTE20 StringChar* WATEREOF          -> STRING            {cons("INSERTEND")}
+    "/*"                                            -> INSERTSTART20     {recover}
+    INSERTSTART20 ( ~[\*] | CommentChar )* WATEREOF -> LAYOUT            {cons("INSERTEND")}
+                                                    -> "module"          {recover, cons("INSERTION")}
+                                                    -> "}"               {recover, cons("INSERTION")}
+                                                    -> ")"               {recover, cons("INSERTION")}
+                                                    -> ","               {recover, cons("INSERTION")}
+                                                    -> ">"               {recover, cons("INSERTION")}
+
+  syntax
+    %% Kernel syntax insertion recovery rules   
+
+  )
+
+  (
+
+  lexical syntax
+    [a-zA-Z] [a-zA-Z0-9\_]*            -> ID            
+    "-"? [0-9]+                        -> INT           
+    "\"" StringChar* "\""              -> STRING        
+    ~[\"\n]                            -> StringChar    
+    "\\\""                             -> StringChar    
+    BackSlashChar                      -> StringChar    
+    "\\"                               -> BackSlashChar 
+    [\ \t\n\r]                         -> LAYOUT        
+    [\*]                               -> CommentChar   
+    "/*" ( ~[\*] | CommentChar )* "*/" -> LAYOUT        
+    "//" ~[\n\r]* [\n\r] | EOF         -> LAYOUT        
+                                       -> EOF           
+
+  lexical restrictions
+    CommentChar -/- [\/]
+    INT -/- [0-9]
+    ID -/- [a-zA-Z0-9\_]
+    EOF -/- ~[]
+    BackSlashChar -/- [\"]
+
+  context-free restrictions
+    LAYOUT? -/- [\ \t\n\r]
+    LAYOUT? -/- [\/] . [\/]
+    LAYOUT? -/- [\/] . [\*]
+
+  )
+
+module YUML
+imports Common
+
+exports
+  context-free start-symbols
+    Start
+
+  context-free syntax
+    "module" ID Definition*                -> Start      {cons("Module")}
+    "entity" ID Inherits "{" Property* "}" -> Definition {cons("Entity")}
+    ":" {ID ","}+                          -> Inherits   {cons("Inherits")}
+                                           -> Inherits   {cons("InheritsNone")}
+    ID "::" Type                           -> Property   {cons("Property")}
+    ID "<>" Type                           -> Property   {cons("CompositeProperty")}
+    ID "->" Type Attributes                -> Property   {cons("ReferenceProperty")}
+    "(" {Attribute ","}+ ")"               -> Attributes {cons("Attributes")}
+                                           -> Attributes {cons("NoAttributes")}
+    "inverse" "=" Field                    -> Attribute  {cons("InverseAttribute")}
+    ID "." ID                              -> Field      {cons("Field")}
+    "Set" "<" ID ">"                       -> Type       {cons("SetType")}
+    "List" "<" ID ">"                      -> Type       {cons("ListType")}
+    ID                                     -> Type       {cons("Type")}
