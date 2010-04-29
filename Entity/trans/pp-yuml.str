@@ -1,0 +1,109 @@
+module pp-yuml
+
+imports include/Diagram
+
+rules
+
+  pp-yuml : lst ->
+        <map(pp-yuml); separate-by(|"\n"); concat-strings>
+        where <is-list>lst
+
+  pp-yuml : Diagram(lines) ->
+        <map(pp-yuml); separate-by(|"\n"); concat-strings>lines
+
+  pp-yuml : DefinitionLine(def) ->
+        <pp-yuml>def
+
+  pp-yuml : RelationLine(relation) ->
+        <pp-yuml>relation
+
+  pp-yuml : MultiLine(lhs, rhs) ->
+        $[[<pp-yuml>lhs]
+          [<pp-yuml>rhs]]
+
+  pp-yuml : Definition(cdef, attrs) ->
+        $[$[$[<pp-yuml>cdef][<pp-yuml>attrs]$]$]
+
+  pp-yuml : Relation(lhs, sep, rhs) ->
+        $[[<pp-yuml>lhs][<pp-yuml>sep][<pp-yuml>rhs]]
+
+  pp-yuml : Inheretance(lhs, rhs) ->
+        $[[<pp-yuml>lhs]^[<pp-yuml>rhs]]
+
+  pp-yuml : DefinitionAttrs(attrs) ->
+        $[{[<map(pp-yuml); separate-by(|";"); concat-strings>attrs]}]
+
+  pp-yuml : LHS(def, attrs) ->
+        $[[<pp-yuml>def][<map(pp-yuml)>attrs]]
+
+  pp-yuml : RHS(attrs, def) ->
+        $[[<map(pp-yuml)>attrs][<pp-yuml>def]]
+
+  pp-yuml : EmptyClass(name) ->
+        name
+
+  pp-yuml : Class(name, properties) ->
+        $[[name]|[<pp-yuml>properties]]
+
+  pp-yuml : FullClass(name, properties, methods) ->
+        $[[name]|[<pp-yuml>properties]|[<pp-yuml>methods]]
+
+  pp-yuml : Properties(props) ->
+        <map(pp-yuml); separate-by(|";"); concat-strings>props        
+
+  pp-yuml : Methods(methods) ->
+        <map(pp-yuml); separate-by(|";"); concat-strings>methods
+
+  pp-yuml : Property(name) ->
+        name
+
+  pp-yuml : Method(name, args) ->
+        $[[name]([<pp-yuml>args])]
+
+  pp-yuml : FunctionArgs(args) ->
+        <map(pp-yuml); separate-by(|", "); concat-strings>args
+
+  pp-yuml : Label(pair, attrs) ->
+        $[$[$[<pp-yuml>pair][<pp-yuml>attrs]$]$]
+
+  pp-yuml : Pair(key, value) ->
+        $[[key]:[value]]
+
+  pp-yuml : Note(txt) ->
+        txt
+
+  pp-yuml : SetCardinality(card) ->
+        card
+
+  pp-yuml : RangedCardinality(lhs, rhs) ->
+        $[[lhs]..[rhs]]
+        
+  pp-yuml : ToAnyCardinality(card) ->
+        $[[card]..*]
+
+  pp-yuml : AnyCardinality() ->
+        $[*]
+
+  pp-yuml : NoAttrs() ->
+        $[]
+
+  pp-yuml : Line() ->
+        $[-]
+
+  pp-yuml : DottedLine() ->
+        $[-.-]
+
+  pp-yuml : RightDirectional() ->
+        $[>]
+
+  pp-yuml : LeftDirectional() ->
+        $[<]
+
+  pp-yuml : Aggregation() ->
+        $[<>]
+
+  pp-yuml : Composition() ->
+        $[++]
+
+  pp-yuml : Inheretance() ->
+        $[^]

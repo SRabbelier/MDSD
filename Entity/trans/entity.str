@@ -8,6 +8,7 @@ imports
   lib/editor-common.generated
   check
   generate
+  include/Diagram
 
 rules // Main editor interface (defined by editor/Entity-Builders and -References.esv)
   
