@@ -8,6 +8,7 @@ imports
   lib/editor-common.generated
   check
   generate
+  pp-yuml
 
 rules // Main editor interface (defined by editor/Diagram-Builders and -References.esv)
   
@@ -57,3 +58,9 @@ rules // Main editor interface (defined by editor/Diagram-Builders and -Referenc
     ["String", "Int" | proposals]
     where
       proposals := <all-keys-GetEntity>
+
+  generate-yuml:
+    (selected, position, ast, path, project-path) -> (filename, result-string)
+    with
+      filename := <guarantee-extension(|"yuml")> path;
+      result-string := <pp-yuml> selected
