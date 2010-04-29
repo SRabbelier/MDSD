@@ -67,7 +67,7 @@ exports
     {Property ";"}*                 -> Properties {cons("Properties")}
     {Method ";"}*                   -> Methods {cons("Methods")}
 
-                                    -> DefinitionAttrs {cons("NoAttrs")}
+    % espilon %                     -> DefinitionAttrs {cons("NoAttrs")}
     "{" {Pair ";"}* "}"             -> DefinitionAttrs {cons("DefinitionAttrs")}
 
     Name                            -> Property {cons("Property")}
