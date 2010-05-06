@@ -22,6 +22,5 @@ folding Default folding definitions
   
   Start.Module
   Definition.Entity
-  Inherits.Inherits
   Property.ReferenceProperty
   Attributes.Attributes

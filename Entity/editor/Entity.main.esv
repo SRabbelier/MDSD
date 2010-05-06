@@ -1,6 +1,6 @@
 module Entity.main
 
-imports Entity-Builders Entity-Colorer Entity-Completions Entity-Folding Entity-Outliner Entity-References Entity-Syntax
+imports Entity-Builders Entity-Colorer Entity-Completions Entity-Folding Entity-Outliner Entity-References Entity-Syntax Diagram-Builders
 
 language General properties
                   

@@ -1,0 +1,10 @@
+module Diagram-Builders
+
+  // This file can be used for custom analysis and builder rules.
+  //
+  // See the imported file for a brief introduction and examples.
+
+builders
+
+    builder  : "Generate yUML description"  = generate-yuml (openeditor) (realtime)
+    builder  : "Generate yUML aterm"        = generate-yuml-aterm (openeditor) (realtime) (meta)

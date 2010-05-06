@@ -9,6 +9,8 @@ imports
   check
   generate
   include/Diagram
+  to-yuml
+  pp-yuml
 
 rules // Main editor interface (defined by editor/Entity-Builders and -References.esv)
   
@@ -57,3 +59,17 @@ rules // Main editor interface (defined by editor/Entity-Builders and -Reference
     ["String", "Int" | proposals]
     where
       proposals := <all-keys-GetEntity>
+
+  generate-yuml-aterm :
+    (selected, position, ast, path, project-path) -> (filename, result-string)
+    with
+      <debug(!"ATERM: ")>selected;
+      filename := <guarantee-extension(|"aterm")> path;
+      result-string := <declare-all; to-yuml> selected
+
+  generate-yuml :
+    (selected, position, ast, path, project-path) -> (filename, result-string)
+    with
+      filename := <guarantee-extension(|"yuml")> path;
+      // result-string := <find-inverse-relations; to-yuml; pp-yuml> selected
+      result-string := <declare-all; to-yuml; pp-yuml> selected

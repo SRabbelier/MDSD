@@ -2,6 +2,10 @@ module example
 
 // Example "Entity" program (see syntax/Entity.sdf for the grammar)
 
+/*
+    entity empty {
+    }
+*/
     entity Foo {
       valueProp  :: String   // value type
       entityRef  -> Bar      // reference
@@ -9,18 +13,19 @@ module example
       oneToMany  -> Set<FooBar>
     }
 
-    entity Bar { 
-      name :: String
-    }
-
     entity Baz {
       ownedBy -> Foo (inverse=Foo.entityComp)
+    }
+
+    entity Bar {
+      name :: String
     }
 
     entity Foobar : Bar {
       value :: Int
     }
-
+/*
     entity Foobarbaz : Bar, Baz {
       value :: Int
     }
+*/

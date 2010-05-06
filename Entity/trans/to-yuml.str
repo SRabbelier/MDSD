@@ -1,0 +1,83 @@
+module to-yuml
+
+imports include/Entity
+imports include/Diagram
+
+rules
+
+// mappers
+
+  declare-all = alltd(declare)
+
+  declare : e@Entity(name, InheritsNone(), _) -> e
+  with rules (          
+      EntityDeclaration : name -> e
+  )
+
+  declare : e@Entity(name, Inherits(inherits), _) -> e
+  with rules (
+      EntityDeclaration : name -> e
+      InheritsFrom : name -> inherits
+  )
+
+/*
+  declare : CompositeProperty(name, type) -> <id>
+  with rules (
+      
+  )
+
+  declare : ReferenceProperty(name, referenced, NoAttributes()) -> <id>
+  with rules (
+      
+  )
+    
+  declare : ReferenceProperty(name, referenced, Attributes(attributes)) -> <id>
+  with rules (
+      
+  ) 
+
+  declare : CompositeProperty(name, referenced) -> <id>
+  with rules (
+      
+  )
+*/
+// projectors
+
+rules
+
+  define : Class ->
+    DefinitionLine(Definition(<id>, []))
+
+  define-p(|props) : Class ->
+    DefinitionLine(Definition(<id>, props))
+
+  get-name : Entity(name, _, _) -> name
+
+  inherits : Entity(name, _, _) ->
+     InheretanceLine(Definition(simple, []),
+                     Definition(resolved, []))
+     where from := <InheritsFrom>name
+     where simple := EmptyClass(name)
+     where resolved := <EntityDeclaration; get-name>from
+
+
+rules
+
+  to-yuml : Module(name, def) -> 
+    Diagram(<map(to-yuml); concat>def)
+
+  to-yuml : Entity(name, inherits, []) ->
+     [<define>EmptyClass(name),<inherits>]
+
+  to-yuml : Entity(name, inherits, properties) ->
+    [<define>Class(name, props) |  <filter(inherits)> [<id>]]
+    where props := Properties(<map(to-yuml)>properties)
+
+  to-yuml : Property(name, type) ->
+    Property(name)
+
+  to-yuml : ReferenceProperty(name, type, t) ->
+    Property(name)
+
+  to-yuml : CompositeProperty(name, type) ->
+    Property(name)
