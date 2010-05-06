@@ -26,7 +26,7 @@ exports
 
     Relation                        -> Line {cons("RelationLine")}
     Definition                      -> Line {cons("DefinitionLine")}
-    Definition "^" Definition       -> Relation {cons("Inheretance")}
+    Definition "^" Definition       -> Line {cons("InheretanceLine")}
 
     LHS Indicator RHS               -> Relation {cons("Relation")}
     Definition Attribute*           -> LHS {cons("LHS")}

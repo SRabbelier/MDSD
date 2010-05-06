@@ -27,7 +27,7 @@ rules
   pp-yuml : Relation(lhs, sep, rhs) ->
         $[[<pp-yuml>lhs][<pp-yuml>sep][<pp-yuml>rhs]]
 
-  pp-yuml : Inheretance(lhs, rhs) ->
+  pp-yuml : InheretanceLine(lhs, rhs) ->
         $[[<pp-yuml>lhs]^[<pp-yuml>rhs]]
 
   pp-yuml : DefinitionAttrs(attrs) ->

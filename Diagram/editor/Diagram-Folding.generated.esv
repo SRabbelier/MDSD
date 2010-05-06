@@ -21,6 +21,7 @@ folding Default folding definitions
   //   Definition._ (disabled)
   
   Start.Diagram
+  LHS.LHS
   Definition.Label
   DefinitionAttrs.DefinitionAttrs
   Definition.Definition
@@ -30,5 +31,4 @@ folding Default folding definitions
   Methods.Methods
   Method.Method
   FunctionArgs.FunctionArgs
-  LHS.LHS
   RHS.RHS
