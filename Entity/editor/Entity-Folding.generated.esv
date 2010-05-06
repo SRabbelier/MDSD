@@ -24,3 +24,4 @@ folding Default folding definitions
   Definition.Entity
   Property.ReferenceProperty
   Attributes.Attributes
+  Definition.InheretingEntity

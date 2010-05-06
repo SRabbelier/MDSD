@@ -13,10 +13,9 @@ exports
   
     "module" ID Definition*         -> Start {cons("Module")}
 
-    "entity" ID Inherits "{" Property* "}" -> Definition {cons("Entity")}
+    "entity" ID "{" Property* "}"   -> Definition {cons("Entity")}
 
-    ":" ID                          -> Inherits {cons("Inherits")}
-    % epsilon %                     -> Inherits {cons("InheritsNone")}
+    "entity" ID ":" ID "{" Property* "}" -> Definition {cons("InheretingEntity")}
 
 %% Might want to add Attributes to the other Properties as well
     ID "::" Type                    -> Property {cons("Property")}

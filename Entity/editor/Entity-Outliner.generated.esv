@@ -14,3 +14,4 @@ outliner Default outliner
   
   Start.Module
   Definition.Entity
+  Definition.InheretingEntity
