@@ -21,7 +21,7 @@ module example
       name :: String
     }
 
-    entity Foobar : Bar {
+    entity FooBar : Bar {
       value :: Int
     }
 /*
