@@ -20,56 +20,59 @@ rules
       InheritsFrom : name -> inherits
   )
 
-/*
-  declare : CompositeProperty(name, type) -> <id>
-  with rules (
-      
-  )
-
-  declare : ReferenceProperty(name, referenced, NoAttributes()) -> <id>
-  with rules (
-      
-  )
-    
-  declare : ReferenceProperty(name, referenced, Attributes(attributes)) -> <id>
-  with rules (
-      
-  ) 
-
-  declare : CompositeProperty(name, referenced) -> <id>
-  with rules (
-      
-  )
-*/
 // projectors
 
 rules
 
-  define : Class ->
-    DefinitionLine(Definition(<id>, NoAttrs()))
+  define : Class(name, Properties([])) ->
+    DefinitionLine(Definition(EmptyClass(name), NoAttrs()))
 
-  define-p(|props) : Class ->
-    DefinitionLine(Definition(<id>, props))
+  define : c@Class(name, _) ->
+    DefinitionLine(Definition(c, NoAttrs()))
+
+  relate(|lhs, rhs, lhs-attrs, rhs-attrs) : _ -> 
+    RelationLine(Relation(LHS(lhs-definition, lhs-attrs), Line(), RHS(rhs-attrs, rhs-definition)))
+    where lhs-definition := Definition(EmptyClass(lhs), NoAttrs())
+    where rhs-definition := Definition(EmptyClass(rhs), NoAttrs())
 
   get-name : Entity(name, _) -> name
 
-  inherits : InheretingEntity(name, _, _) ->
+  declare-inherits : InheretingEntity(name, _, _) ->
     InheretanceLine(Definition(simple, NoAttrs()),
                     Definition(resolved, NoAttrs()))
     where from := <InheritsFrom>name
     where simple := EmptyClass(name)
     where from-name := <EntityDeclaration; get-name>from
-    where resolved := EmptyClass(name)
+    where resolved := EmptyClass(from-name)
 
-  properties : Entity(name, properties) -> <fail>
-  /*
-    RelationLine(Relation(
-        LHS(Definition(EmptyClass("Person"), NoAttrs()), [])
-      , Line()
-      , RHS([], Definition(EmptyClass("Address"), NoAttrs()))
-    ))
-  */
+  declare-referenced(|cname, lhs) : SetType(name) ->
+    <relate(|cname, name, lhs-attrs, rhs-attrs)>
+    where lhs-attrs := [Note(lhs)]
+    where rhs-attrs := [RightDirectional(), AnyCardinality()]
 
+  declare-referenced(|cname, lhs) : Type(name) ->
+    <relate(|cname, name, lhs-attrs, rhs-attrs)>
+    where lhs-attrs := [Note(lhs)]
+    where rhs-attrs := [RightDirectional()]
+
+  declare-composite(|cname, lhs) : Type(name) ->
+    <relate(|cname, name, lhs-attrs, rhs-attrs)>
+    where lhs-attrs := [Note(lhs), Composition()]
+    where rhs-attrs := [RightDirectional()]
+
+  declare-property(|cname) : CompositeProperty(name, referenced) ->
+    [<declare-composite(|cname, name)>referenced]
+
+  declare-attributes : InverseAttribute(Field(lhs, rhs)) -> <fail>
+
+  declare-property(|cname) : ReferenceProperty(name, referenced, NoAttributes()) ->
+    [<declare-referenced(|cname, name)>referenced]
+
+  declare-property(|cname) : ReferenceProperty(name, referenced, Attributes(attributes)) ->
+    [<declare-referenced(|cname, name)>referenced | <filter(declare-attributes)>attributes]
+    
+  declare-properties : Entity(name, properties) ->
+    <filter(declare-property(|name)); concat>properties
 
 rules
 
@@ -79,18 +82,12 @@ rules
   to-yuml : Entity(name, []) ->
      [<define>EmptyClass(name)]
 
-  to-yuml : Entity(name, properties) ->
-    [<define>Class(name, props) | <filter(properties)> [<id>]]
-    where props := Properties(<map(to-yuml)>properties)
+  to-yuml : e@Entity(name, properties) ->
+    [<define>Class(name, props) | <declare-properties>e]
+    where props := Properties(<filter(to-yuml)>properties)
 
-  to-yuml : InheretingEntity(name, inherits, properties) ->
-    [<to-yuml>Entity(name, properties) | <filter(inherits)> [<id>]]
+  to-yuml : e@InheretingEntity(name, inherits, properties) ->
+    [<declare-inherits>e | <to-yuml>Entity(name, properties)]
 
   to-yuml : Property(name, type) ->
-    Property(name)
-
-  to-yuml : ReferenceProperty(name, type, t) ->
-    Property(name)
-
-  to-yuml : CompositeProperty(name, type) ->
     Property(name)
