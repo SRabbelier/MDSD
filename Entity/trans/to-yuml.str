@@ -5,54 +5,72 @@ imports include/Diagram
 
 rules
 
-// mappers
-
   declare-all = alltd(declare)
 
   declare : e@Entity(name, properties) -> e
-  with <filter(declare-property(|name))>properties
-  with rules (          
+  with rules (
+      EntityName : e -> name
       EntityDeclaration : name -> e
   )
+  with <filter(declare-property(|name))>properties
 
   declare : e@InheretingEntity(name, inherits, properties) -> e
-  with <filter(declare-property(|e))>properties
   with rules (
+      EntityName : e -> name
       EntityDeclaration : name -> e
       InheritsFrom : name -> inherits
   )
+  with <filter(declare-property(|e))>properties
 
   declare-property(|e) : p@ReferenceProperty(name, referenced, Attributes(attributes)) -> p
+  with rules (
+      EntityReferenced : e -> p
+  )
   with rules (
       PropertyName : p -> name
       PropertyEntity : p -> e
   )
   with <filter(declare-attribute(|p))>attributes
+  with try(<declare-referenced>referenced)
+
+  declare-property(|e) : p@ReferenceProperty(name, referenced, _) -> p
+  with rules (
+      EntityReferenced : e -> p
+  )
+  with try(<declare-referenced>referenced)
+
+  declare-referenced : t@Type(name) -> t
+  with rules (
+      EntityReferenced : name -> t
+  )
 
   declare-attribute(|p) : a@InverseAttribute(field) -> a
-  with inverse := Field(<PropertyEntity>p, <PropertyName>p)
+  with e := <PropertyEntity>p
+  with inverse := Field(e, <PropertyName>p)
   with rules (
       AttributeProperty : a -> p
       InversedProperty : inverse -> p
       InverseProperty : field -> a
+      EntityReferenced : e -> a
   )
-
-// projectors
 
 rules
 
+  define : e@EmptyClass(name) ->
+    DefinitionLine(Definition(e, NoAttrs()))
+    where not(<EntityReferenced>name)
+
   define : Class(name, Properties([])) ->
     DefinitionLine(Definition(EmptyClass(name), NoAttrs()))
+    where not(<EntityReferenced>name)
 
-  define : c@Class(name, _) ->
+  define : c@Class(name, Properties([x|xs])) ->
     DefinitionLine(Definition(c, NoAttrs()))
 
   relate(|lhs, rhs, lhs-attrs, rhs-attrs) : _ -> 
     RelationLine(Relation(LHS(lhs-definition, lhs-attrs), Line(), RHS(rhs-attrs, rhs-definition)))
     where lhs-definition := Definition(EmptyClass(lhs), NoAttrs())
     where rhs-definition := Definition(EmptyClass(rhs), NoAttrs())
-
-  get-name : Entity(name, _) -> name
 
 rules
 
@@ -61,7 +79,7 @@ rules
                     Definition(resolved, NoAttrs()))
     where from := <InheritsFrom>name
     with simple := EmptyClass(name)
-    with from-name := <EntityDeclaration; get-name>from
+    with from-name := <EntityDeclaration; EntityName>from
     with resolved := EmptyClass(from-name)
 
   handle-referenced(|cname, lhs) : SetType(name) ->
@@ -110,12 +128,18 @@ rules
   to-yuml : Module(name, def) -> 
     Diagram(<map(to-yuml); concat>def)
 
-  to-yuml : Entity(name, []) ->
-    [<define>EmptyClass(name)]
+  to-yuml : Entity(name, []) -> [res]
+    where res := <define>EmptyClass(name)
+
+  to-yuml : Entity(name, []) -> []
 
   to-yuml : e@Entity(name, properties) ->
-    [<define>Class(name, props) | <handle-properties>e]
+    [d | <handle-properties>e]
     with props := Properties(<filter(to-yuml)>properties)
+    where d := <define>Class(name, props)
+
+  to-yuml : e@Entity(name, properties) ->
+    <handle-properties>e
 
   to-yuml : e@InheretingEntity(name, inherits, properties) ->
     [<handle-inherits>e | <to-yuml>Entity(name, properties)]
