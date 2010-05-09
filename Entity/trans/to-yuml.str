@@ -9,15 +9,31 @@ rules
 
   declare-all = alltd(declare)
 
-  declare : e@Entity(name, _) -> e
+  declare : e@Entity(name, properties) -> e
+  with <filter(declare-property(|name))>properties
   with rules (          
       EntityDeclaration : name -> e
   )
 
-  declare : e@InheretingEntity(name, inherits, _) -> e
+  declare : e@InheretingEntity(name, inherits, properties) -> e
+  with <filter(declare-property(|e))>properties
   with rules (
       EntityDeclaration : name -> e
       InheritsFrom : name -> inherits
+  )
+
+  declare-property(|e) : p@ReferenceProperty(name, referenced, Attributes(attributes)) -> p
+  with <filter(declare-attribute(|p))>attributes
+  with rules (
+      PropertyName : p -> name
+      PropertyEntity : p -> e
+  )
+
+  declare-attribute(|p) : a@InverseAttribute(field) -> a
+  with <debug(!"inverse: ")>field
+  with rules (
+      AttributeProperty : a -> p
+      InverseProperty : field -> a
   )
 
 // projectors
@@ -37,42 +53,47 @@ rules
 
   get-name : Entity(name, _) -> name
 
-  declare-inherits : InheretingEntity(name, _, _) ->
+  handle-inherits : InheretingEntity(name, _, _) ->
     InheretanceLine(Definition(simple, NoAttrs()),
                     Definition(resolved, NoAttrs()))
     where from := <InheritsFrom>name
-    where simple := EmptyClass(name)
-    where from-name := <EntityDeclaration; get-name>from
-    where resolved := EmptyClass(from-name)
+    with simple := EmptyClass(name)
+    with from-name := <EntityDeclaration; get-name>from
+    with resolved := EmptyClass(from-name)
 
-  declare-referenced(|cname, lhs) : SetType(name) ->
+  handle-referenced(|cname, lhs) : SetType(name) ->
     <relate(|cname, name, lhs-attrs, rhs-attrs)>
-    where lhs-attrs := [Note(lhs)]
-    where rhs-attrs := [RightDirectional(), AnyCardinality()]
+    with lhs-attrs := [Note(lhs)]
+    with rhs-attrs := [RightDirectional(), AnyCardinality()]
 
-  declare-referenced(|cname, lhs) : Type(name) ->
+  handle-inverse(|cname, lhs) : Type(name) -> [Note(p)]
+    with field := Field(cname, lhs)
+    where f := <InverseProperty>field
+    with p := <AttributeProperty; PropertyName>f
+
+  handle-inverse(|cname, lhs) : Type(name) -> []
+
+  handle-referenced(|cname, lhs) : t@Type(name) ->
     <relate(|cname, name, lhs-attrs, rhs-attrs)>
-    where lhs-attrs := [Note(lhs)]
-    where rhs-attrs := [RightDirectional()]
+    with lhs-attrs := [Note(lhs)]
+    with rhs-attrs := [RightDirectional() | <handle-inverse(|cname, lhs)>t]
 
-  declare-composite(|cname, lhs) : Type(name) ->
+  handle-composite(|cname, lhs) : t@Type(name) ->
     <relate(|cname, name, lhs-attrs, rhs-attrs)>
-    where lhs-attrs := [Note(lhs), Composition()]
-    where rhs-attrs := [RightDirectional()]
+    with lhs-attrs := [Note(lhs), Composition()]
+    with rhs-attrs := [RightDirectional() | <handle-inverse(|cname, lhs)>t]
 
-  declare-property(|cname) : CompositeProperty(name, referenced) ->
-    [<declare-composite(|cname, name)>referenced]
+  handle-property(|cname) : CompositeProperty(name, referenced) ->
+    <handle-composite(|cname, name)>referenced
 
-  declare-attributes : InverseAttribute(Field(lhs, rhs)) -> <fail>
+  handle-property(|cname) : ReferenceProperty(name, referenced, NoAttributes()) ->
+    <handle-referenced(|cname, name)>referenced
 
-  declare-property(|cname) : ReferenceProperty(name, referenced, NoAttributes()) ->
-    [<declare-referenced(|cname, name)>referenced]
-
-  declare-property(|cname) : ReferenceProperty(name, referenced, Attributes(attributes)) ->
-    [<declare-referenced(|cname, name)>referenced | <filter(declare-attributes)>attributes]
+  handle-property(|cname) : ReferenceProperty(name, referenced, Attributes(attributes)) ->
+    <handle-referenced(|cname, name)>referenced
     
-  declare-properties : Entity(name, properties) ->
-    <filter(declare-property(|name)); concat>properties
+  handle-properties : Entity(name, properties) ->
+    <filter(handle-property(|name))>properties
 
 rules
 
@@ -83,11 +104,11 @@ rules
      [<define>EmptyClass(name)]
 
   to-yuml : e@Entity(name, properties) ->
-    [<define>Class(name, props) | <declare-properties>e]
-    where props := Properties(<filter(to-yuml)>properties)
+    [<define>Class(name, props) | <handle-properties>e]
+    with props := Properties(<filter(to-yuml)>properties)
 
   to-yuml : e@InheretingEntity(name, inherits, properties) ->
-    [<declare-inherits>e | <to-yuml>Entity(name, properties)]
+    [<handle-inherits>e | <to-yuml>Entity(name, properties)]
 
   to-yuml : Property(name, type) ->
     Property(name)
