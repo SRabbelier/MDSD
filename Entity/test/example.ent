@@ -2,10 +2,6 @@ module example
 
 // Example "Entity" program (see syntax/Entity.sdf for the grammar)
 
-/*
-    entity empty {
-    }
-*/
     entity Foo {
       valueProp  :: String   // value type
       entityRef  -> Bar      // reference
