@@ -23,16 +23,17 @@ rules
   )
 
   declare-property(|e) : p@ReferenceProperty(name, referenced, Attributes(attributes)) -> p
-  with <filter(declare-attribute(|p))>attributes
   with rules (
       PropertyName : p -> name
       PropertyEntity : p -> e
   )
+  with <filter(declare-attribute(|p))>attributes
 
   declare-attribute(|p) : a@InverseAttribute(field) -> a
-  with <debug(!"inverse: ")>field
+  with inverse := Field(<PropertyEntity>p, <PropertyName>p)
   with rules (
       AttributeProperty : a -> p
+      InversedProperty : inverse -> p
       InverseProperty : field -> a
   )
 
@@ -52,6 +53,8 @@ rules
     where rhs-definition := Definition(EmptyClass(rhs), NoAttrs())
 
   get-name : Entity(name, _) -> name
+
+rules
 
   handle-inherits : InheretingEntity(name, _, _) ->
     InheretanceLine(Definition(simple, NoAttrs()),
@@ -83,14 +86,21 @@ rules
     with lhs-attrs := [Note(lhs), Composition()]
     with rhs-attrs := [RightDirectional() | <handle-inverse(|cname, lhs)>t]
 
+  inverse-handled(|cname) : name -> f
+    with field := Field(cname, name)
+    where f := <InversedProperty>field
+
   handle-property(|cname) : CompositeProperty(name, referenced) ->
     <handle-composite(|cname, name)>referenced
+    where not(<inverse-handled(|cname)>name)
 
   handle-property(|cname) : ReferenceProperty(name, referenced, NoAttributes()) ->
     <handle-referenced(|cname, name)>referenced
+    where not(<inverse-handled(|cname)>name)
 
   handle-property(|cname) : ReferenceProperty(name, referenced, Attributes(attributes)) ->
     <handle-referenced(|cname, name)>referenced
+    where not(<inverse-handled(|cname)>name)
     
   handle-properties : Entity(name, properties) ->
     <filter(handle-property(|name))>properties
@@ -101,7 +111,7 @@ rules
     Diagram(<map(to-yuml); concat>def)
 
   to-yuml : Entity(name, []) ->
-     [<define>EmptyClass(name)]
+    [<define>EmptyClass(name)]
 
   to-yuml : e@Entity(name, properties) ->
     [<define>Class(name, props) | <handle-properties>e]
