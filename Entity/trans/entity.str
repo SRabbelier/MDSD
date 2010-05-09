@@ -63,7 +63,6 @@ rules // Main editor interface (defined by editor/Entity-Builders and -Reference
   generate-yuml-aterm :
     (selected, position, ast, path, project-path) -> (filename, result-string)
     with
-      <debug(!"ATERM: ")>selected;
       filename := <guarantee-extension(|"aterm")> path;
       result-string := <declare-all; to-yuml> selected
 
@@ -71,5 +70,4 @@ rules // Main editor interface (defined by editor/Entity-Builders and -Reference
     (selected, position, ast, path, project-path) -> (filename, result-string)
     with
       filename := <guarantee-extension(|"yuml")> path;
-      // result-string := <find-inverse-relations; to-yuml; pp-yuml> selected
       result-string := <declare-all; to-yuml; pp-yuml> selected
