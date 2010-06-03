@@ -1,0 +1,18 @@
+module python
+
+imports
+    libstratego-lib
+    libstratego-gpp
+    libstratego-aterm
+    include/Pipes
+    lib/editor-common.generated
+    lib/StrategoPython
+
+rules
+  to-python :
+    Start(_) -> py-exp|[8+8]|
+
+  pp-python :
+  	ast -> s
+  	where tbl := <import-term(lib/Python-pretty.pp.af)>
+    where s := <ast2box(|[tbl]); box2text-string(|80)> ast

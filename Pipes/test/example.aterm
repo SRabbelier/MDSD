@@ -2,7 +2,7 @@ Start(
   [ Pipe(
       "get_flickr"
     , ImplicitInput()
-    , Arguments([Variable("count")])
+    , Arguments(VariableList([Variable("count")]))
     , [ Function(
           None()
         , LambdaFunction(
@@ -15,7 +15,7 @@ Start(
           )
         )
       ]
-    , Output([])
+    , Output(None())
     )
   , Pipe(
       "main"
@@ -29,11 +29,118 @@ Start(
           , FunctionExtraction("feed")
           )
         )
-      , Function(None(), LambdaFunction(None(), FunctionApplication("analyse content", [])))
-      , FunctionArguments([FunctionArgument("on", Selector("item"))])
+      , Function(None(), LambdaFunction(None(), FunctionApplication("analyse_content", [])))
+      , Function(
+          None()
+        , LambdaFunction(
+            Some(
+              FunctionArguments(
+                [ FunctionArgument("on", Selector("item"))
+                , FunctionArgument("assign", Selector("item"))
+                , FunctionArgument(
+                    "trans"
+                  , LambdaFunction(
+                      Some(FunctionArguments([FunctionArgument("count", Integer("5"))]))
+                    , FunctionApplication("get_flickr", [])
+                    )
+                  )
+                , FunctionArgument("emit", All())
+                ]
+              )
+            )
+          , FunctionApplication("loop", [])
+          )
+        )
       ]
-    , NoOutput()
+    , Output(None())
     )
-  , Pipe("fdsa", NoInput(), NoArguments(), [], NoOutput())
+  , Pipe(
+      "main"
+    , NoInput()
+    , NoArguments()
+    , [ Function(
+          None()
+        , LambdaFunction(
+            Some(FunctionArguments([FunctionArgument("url", String("\"\""))]))
+          , FunctionExtraction("feed")
+          )
+        )
+      , Function(None(), LambdaFunction(None(), FunctionApplication("analyse_content", [])))
+      , Function(
+          None()
+        , LambdaFunction(
+            Some(
+              FunctionArguments(
+                [ FunctionArgument("on", Selector("item"))
+                , FunctionArgument("assign", Selector("item"))
+                , FunctionArgument(
+                    "trans"
+                  , LambdaFunction(
+                      Some(
+                        FunctionArguments(
+                          [FunctionArgument("find", Integer("5")), FunctionArgument("images", Selector("item"))]
+                        )
+                      )
+                    , FunctionApplication("flickr", [])
+                    )
+                  )
+                , FunctionArgument("emit", All())
+                ]
+              )
+            )
+          , FunctionApplication("loop", [])
+          )
+        )
+      ]
+    , Output(None())
+    )
+  , Pipe(
+      "multi"
+    , NoInput()
+    , NoArguments()
+    , [ Function(
+          Some(Assignment(Variable("feed1")))
+        , LambdaFunction(
+            Some(FunctionArguments([FunctionArgument("url", String("\"example.com/feed1\""))]))
+          , FunctionExtraction("feed")
+          )
+        )
+      , Function(
+          Some(Assignment(Variable("feed2")))
+        , LambdaFunction(
+            Some(FunctionArguments([FunctionArgument("url", String("\"example.com/feed2\""))]))
+          , FunctionExtraction("feed")
+          )
+        )
+      , Function(
+          Some(Assignment(Variable("feed3")))
+        , LambdaFunction(
+            None()
+          , FunctionApplication("reverse", [VariableList([Variable("feed1")])])
+          )
+        )
+      , Function(
+          Some(Assignment(Variable("union")))
+        , LambdaFunction(
+            None()
+          , FunctionApplication(
+              "union"
+            , [VariableList([Variable("feed2"), Variable("feed3")])]
+            )
+          )
+        )
+      ]
+    , Output(Some(VariableList([Variable("union")])))
+    )
+  , Native(
+      "loop"
+    , ExplicitInput(VariableList([Variable("stream")]))
+    , Arguments(
+        VariableList(
+          [Variable("on"), Variable("assign"), Variable("emit"), Variable("trans")]
+        )
+      )
+    , Output(Some(VariableList([Variable("stream")])))
+    )
   ]
 )

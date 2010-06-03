@@ -20,24 +20,27 @@ exports
 
     % epsilon %                                     -> Input {cons("NoInput")}
     "input"                                         -> Input {cons("ImplicitInput")}
-    "inputs" {Variable "and"}+                      -> Input {cons("ExplicitInput")}
+    "inputs" VariableList                           -> Input {cons("ExplicitInput")}
 
     % epsilon %                                     -> Arguments {cons("NoArguments")}
-    "arguments" {Variable "and"}+                   -> Arguments {cons("Arguments")}
+    "arguments" VariableList                        -> Arguments {cons("Arguments")}
 
     % epsilon %                                     -> Output {cons("NoOutput")}
-    "output" {Variable "and"}*                      -> Output {cons("Output")}
+    "output" VariableList?                          -> Output {cons("Output")}
 
     Variable "is"                                   -> Assignment {cons("Assignment")}
 
     "with" FunctionArgument+                        -> FunctionArguments {cons("FunctionArguments")}
     ID "is" Value                                   -> FunctionArgument {cons("FunctionArgument")}
+    ID "is"                                         -> FunctionArgument {recover}
 
-    "apply" ID ("to" Variable)?                     -> FunctionApplication {cons("FunctionApplication")}
+    "apply" ID ("to" VariableList)?                 -> FunctionApplication {cons("FunctionApplication")}
     "extract" ID                                    -> FunctionApplication {cons("FunctionExtraction")}
 
     FunctionArguments? FunctionApplication          -> LambdaFunction {cons("LambdaFunction")}
     Assignment? LambdaFunction                      -> Function {cons("Function")}
+
+    {Variable "and"}+                               -> VariableList {cons("VariableList")}
 
     %% class membership
     Variable                                        -> Value
@@ -45,12 +48,13 @@ exports
     LambdaFunction                                  -> Value
     All                                             -> Value
     String                                          -> Value
+    Integer                                         -> Value
     Function                                        -> Statement
     Load                                            -> Statement
-    FunctionArguments                               -> Statement {recover}
 
     %% primitves
     "all"                                           -> All {cons("All")}
     STRING                                          -> String {cons("String")}
+    INT                                             -> Integer {cons("Integer")} 
     "[" ID "]"                                      -> Selector {cons("Selector")} %% TODO
     "$" ID                                          -> Variable {cons("Variable")}

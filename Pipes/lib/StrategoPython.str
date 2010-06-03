@@ -1,0 +1,279 @@
+module StrategoPython
+
+signature
+  constructors
+    Block                    : List(Statement_Python) -> Block_Python
+    Decorator                : Exp_Python -> Decorator_Python
+    Param                    : Exp_Python -> Param_Python
+    NamedParam               : Id_Python * Exp_Python -> Param_Python
+    Finally                  : Block_Python -> Finally_Python
+    Except                   : Exp_Python * Exp_Python * Block_Python -> Catch_Python
+                             : Block_Python -> Stat_Python
+    Delete                   : Exp_Python -> Stat_Python
+    Print                    : Exp_Python -> Stat_Python
+    Return                   : Exp_Python -> Stat_Python
+    Assignment               : Exp_Python * Exp_Python -> Stat_Python
+    ExpStm                   : Exp_Python -> Stat_Python
+    Raise                    : Exp_Python -> Stat_Python
+    Try                      : Block_Python * List(Catch_Python) * Option(Finally_Python) -> Stat_Python
+    While                    : Exp_Python * Block_Python -> Stat_Python
+    For                      : Exp_Python * Exp_Python * Block_Python -> Stat_Python
+    If                       : Exp_Python * Block_Python * Block_Python -> Stat_Python
+    IfNoElse                 : Exp_Python * Block_Python -> Stat_Python
+    FunctionDef              : List(Decorator_Python) * Id_Python * List(Exp_Python) * Block_Python -> Stat_Python
+    ClassDef                 : List(Decorator_Python) * Id_Python * List(Exp_Python) * Block_Python -> Stat_Python
+    Import                   : Exp_Python -> Stat_Python
+    FromImport               : Exp_Python * Exp_Python -> Stat_Python
+    meta-var                 : String -> Statement_Python
+    Statement                : Stat_Python -> Statement_Python
+    Application              : List(Statement_Python) -> Application_Python
+    meta-var                 : String -> Exp_Python
+    String                   : String_Python -> Exp_Python
+    Call                     : Exp_Python * List(Param_Python) -> Exp_Python
+    Not                      : Exp_Python -> Exp_Python
+    Or                       : Exp_Python * Exp_Python -> Exp_Python
+    And                      : Exp_Python * Exp_Python -> Exp_Python
+    ListIndex                : Exp_Python * Exp_Python -> Exp_Python
+    ListLiteral              : List(Exp_Python) -> Exp_Python
+    TupleLiteralOne          : Exp_Python -> Exp_Python
+    TupleLiteral             : Exp_Python * List(Exp_Python) -> Exp_Python
+    FieldAccess              : Exp_Python * Id_Python -> Exp_Python
+    Float                    : Float_Python -> Exp_Python
+    Int                      : Int_Python -> Exp_Python
+    VarParams                : Id_Python -> Exp_Python
+    Var                      : Id_Python -> Exp_Python
+    In                       : Exp_Python * Exp_Python -> Exp_Python
+    SmallerThanOrEqual       : Exp_Python * Exp_Python -> Exp_Python
+    SmallerThan              : Exp_Python * Exp_Python -> Exp_Python
+    LargerThanOrEqual        : Exp_Python * Exp_Python -> Exp_Python
+    LargerThan               : Exp_Python * Exp_Python -> Exp_Python
+    NotEq                    : Exp_Python * Exp_Python -> Exp_Python
+    Eq                       : Exp_Python * Exp_Python -> Exp_Python
+    Minus                    : Exp_Python * Exp_Python -> Exp_Python
+    Plus                     : Exp_Python * Exp_Python -> Exp_Python
+    BitOr                    : Exp_Python * Exp_Python -> Exp_Python
+    BitAnd                   : Exp_Python * Exp_Python -> Exp_Python
+    RightShift               : Exp_Python * Exp_Python -> Exp_Python
+    LeftShift                : Exp_Python * Exp_Python -> Exp_Python
+    Mod                      : Exp_Python * Exp_Python -> Exp_Python
+    Div                      : Exp_Python * Exp_Python -> Exp_Python
+    Times                    : Exp_Python * Exp_Python -> Exp_Python
+                             : String -> Float_Python
+                             : String -> String_Python
+                             : String -> Int_Python
+    meta-var                 : String -> Id_Python
+                             : String -> Id_Python
+    RuleNames                : Term_StrategoHost -> RuleNames_StrategoHost
+                             : List(Id_StrategoHost) -> RuleNames_StrategoHost
+    RDecT                    : Id_StrategoHost * List(Typedid_StrategoHost) * List(Typedid_StrategoHost) -> RuleDec_StrategoHost
+    RDec                     : Id_StrategoHost * List(Typedid_StrategoHost) -> RuleDec_StrategoHost
+    RDecNoArgs               : Id_StrategoHost -> RuleDec_StrategoHost
+    DynRuleScopeId           : Id_StrategoHost -> DynRuleScopeId_StrategoHost
+    LabeledDynRuleScopeId    : Id_StrategoHost * Term_StrategoHost -> DynRuleScopeId_StrategoHost
+    DynRuleId                : RuleDec_StrategoHost -> DynRuleId_StrategoHost
+    AddLabelDynRuleId        : RuleDec_StrategoHost * Term_StrategoHost -> DynRuleId_StrategoHost
+    LabeledDynRuleId         : RuleDec_StrategoHost * Term_StrategoHost -> DynRuleId_StrategoHost
+    SetDynRuleDepends        : DynRuleId_StrategoHost * Rule_StrategoHost * Term_StrategoHost -> DynRuleDef_StrategoHost
+    DynRuleAssignAdd         : DynRuleId_StrategoHost * Term_StrategoHost -> DynRuleDef_StrategoHost
+    DynRuleAssign            : DynRuleId_StrategoHost * Term_StrategoHost -> DynRuleDef_StrategoHost
+    SetDynRuleMatch          : DynRuleId_StrategoHost * Term_StrategoHost -> DynRuleDef_StrategoHost
+    AddDynRule               : DynRuleId_StrategoHost * Rule_StrategoHost -> DynRuleDef_StrategoHost
+    SetDynRule               : DynRuleId_StrategoHost * Rule_StrategoHost -> DynRuleDef_StrategoHost
+    UndefineDynRule          : DynRuleId_StrategoHost * Term_StrategoHost -> DynRuleDef_StrategoHost
+    AddScopeLabel            : Id_StrategoHost * Term_StrategoHost -> DynRuleDef_StrategoHost
+    ScopeLabels              : Term_StrategoHost -> ScopeLabels_StrategoHost
+                             : List(DynRuleScopeId_StrategoHost) -> ScopeLabels_StrategoHost
+    WithClause               : Strategy_StrategoHost -> RuleCond_StrategoHost
+    WhereClause              : Strategy_StrategoHost -> RuleCond_StrategoHost
+    Rule                     : Term_StrategoHost * Term_StrategoHost * List(RuleCond_StrategoHost) -> Rule_StrategoHost
+    Rule                     : Term_StrategoHost * Term_StrategoHost * Strategy_StrategoHost -> Rule_StrategoHost
+    RuleNoCond               : Term_StrategoHost * Term_StrategoHost -> Rule_StrategoHost
+    RDefT                    : Id_StrategoHost * List(Typedid_StrategoHost) * List(Typedid_StrategoHost) * Rule_StrategoHost -> RuleDef_StrategoHost
+    RDef                     : Id_StrategoHost * List(Typedid_StrategoHost) * Rule_StrategoHost -> RuleDef_StrategoHost
+    RDefNoArgs               : Id_StrategoHost * Rule_StrategoHost -> RuleDef_StrategoHost
+    Overlay                  : Id_StrategoHost * List(Id_StrategoHost) * Term_StrategoHost -> Overlay_StrategoHost
+    OverlayNoArgs            : Id_StrategoHost * Term_StrategoHost -> Overlay_StrategoHost
+    SwitchCase               : Strategy_StrategoHost * Strategy_StrategoHost -> SwitchCase_StrategoHost
+    StrategyCurly            : Strategy_StrategoHost -> StrategyCurly_StrategoHost
+    ListVar                  : LId_StrategoHost -> LID_StrategoHost
+    ImportWildcard           : ModName_StrategoHost -> ImportModName_StrategoHost
+    Import                   : ModName_StrategoHost -> ImportModName_StrategoHost
+    Overlays                 : List(Overlay_StrategoHost) -> Decl_StrategoHost
+    Rules                    : List(Def_StrategoHost) -> Decl_StrategoHost
+    Signature                : List(Sdecl_StrategoHost) -> Decl_StrategoHost
+    Strategies               : List(Def_StrategoHost) -> Decl_StrategoHost
+    Imports                  : List(ImportModName_StrategoHost) -> Decl_StrategoHost
+    Specification            : List(Decl_StrategoHost) -> Module_StrategoHost
+    Module                   : ModName_StrategoHost * List(Decl_StrategoHost) -> Module_StrategoHost
+                             : Strategy_StrategoHost -> StrategyMid_StrategoHost
+    ParenStrat               : Strategy_StrategoHost -> StrategyParen_StrategoHost
+    DefaultVarDec            : ID_StrategoHost -> Typedid_StrategoHost
+    VarDec                   : ID_StrategoHost * Type_StrategoHost -> Typedid_StrategoHost
+    Internal                 : Anno_StrategoHost
+    Override                 : Anno_StrategoHost
+    Extend                   : Anno_StrategoHost
+                             : String -> EmptyId_StrategoHost
+    SDef                     : Id_StrategoHost * List(Typedid_StrategoHost) * Strategy_StrategoHost -> StrategyDef_StrategoHost
+    SDefNoArgs               : Id_StrategoHost * Strategy_StrategoHost -> StrategyDef_StrategoHost
+    ExtSDef                  : EmptyId_StrategoHost * List(Typedid_StrategoHost) * List(Typedid_StrategoHost) -> StrategyDef_StrategoHost
+    ExtSDef                  : Id_StrategoHost * List(Typedid_StrategoHost) * List(Typedid_StrategoHost) -> StrategyDef_StrategoHost
+    ExtSDefInl               : Id_StrategoHost * List(Typedid_StrategoHost) * List(Typedid_StrategoHost) * Strategy_StrategoHost -> StrategyDef_StrategoHost
+    SDefT                    : Id_StrategoHost * List(Typedid_StrategoHost) * List(Typedid_StrategoHost) * Strategy_StrategoHost -> StrategyDef_StrategoHost
+    DynRuleIntersectUnion    : Strategy_StrategoHost * RuleNames_StrategoHost * RuleNames_StrategoHost * Strategy_StrategoHost -> Strategy_StrategoHost
+    DynRuleUnion             : Strategy_StrategoHost * RuleNames_StrategoHost * Strategy_StrategoHost -> Strategy_StrategoHost
+    DynRuleIntersect         : Strategy_StrategoHost * RuleNames_StrategoHost * Strategy_StrategoHost -> Strategy_StrategoHost
+    DynRuleIntersectUnionFix : RuleNames_StrategoHost * RuleNames_StrategoHost * Strategy_StrategoHost -> Strategy_StrategoHost
+    DynRuleUnionFix          : RuleNames_StrategoHost * Strategy_StrategoHost -> Strategy_StrategoHost
+    DynRuleIntersectFix      : RuleNames_StrategoHost * Strategy_StrategoHost -> Strategy_StrategoHost
+    GenDynRules              : List(DynRuleDef_StrategoHost) -> Strategy_StrategoHost
+    DynRuleScope             : ScopeLabels_StrategoHost * Strategy_StrategoHost -> Strategy_StrategoHost
+    Assign                   : Term_StrategoHost * Term_StrategoHost -> Strategy_StrategoHost
+    AM                       : Strategy_StrategoHost * Term_StrategoHost -> Strategy_StrategoHost
+    SwitchChoice             : Strategy_StrategoHost * List(SwitchCase_StrategoHost) * Strategy_StrategoHost -> Strategy_StrategoHost
+    SwitchChoiceNoOtherwise  : Strategy_StrategoHost * List(SwitchCase_StrategoHost) -> Strategy_StrategoHost
+    IfThen                   : Strategy_StrategoHost * Strategy_StrategoHost -> Strategy_StrategoHost
+    CondChoice               : Strategy_StrategoHost * Strategy_StrategoHost * Strategy_StrategoHost -> Strategy_StrategoHost
+    Proceed                  : List(Strategy_StrategoHost) -> Strategy_StrategoHost
+    RChoice                  : Strategy_StrategoHost * Strategy_StrategoHost -> Strategy_StrategoHost
+    Choice                   : Strategy_StrategoHost * Strategy_StrategoHost -> Strategy_StrategoHost
+    SRule                    : Rule_StrategoHost -> Strategy_StrategoHost
+    LRule                    : Rule_StrategoHost -> Strategy_StrategoHost
+    CallNoArgs               : SVar_StrategoHost -> Strategy_StrategoHost
+    ExplodeCong              : Strategy_StrategoHost * StrategyParen_StrategoHost -> Strategy_StrategoHost
+    ListCong                 : List(Strategy_StrategoHost) * Strategy_StrategoHost -> Strategy_StrategoHost
+    ListCongNoTail           : List(Strategy_StrategoHost) -> Strategy_StrategoHost
+    TupleCong                : Strategy_StrategoHost * List(Strategy_StrategoHost) -> Strategy_StrategoHost
+    EmptyTupleCong           : Strategy_StrategoHost
+    AnnoCong                 : Strategy_StrategoHost * StrategyCurly_StrategoHost -> Strategy_StrategoHost
+    CongQ                    : String_StrategoHost * List(Strategy_StrategoHost) -> Strategy_StrategoHost
+    CharCong                 : Char_StrategoHost -> Strategy_StrategoHost
+    RealCong                 : Real_StrategoHost -> Strategy_StrategoHost
+    IntCong                  : Int_StrategoHost -> Strategy_StrategoHost
+    StrCong                  : String_StrategoHost -> Strategy_StrategoHost
+    Prim                     : String_StrategoHost * List(Term_StrategoHost) -> Strategy_StrategoHost
+    PrimNoArgs               : String_StrategoHost -> Strategy_StrategoHost
+    Test                     : Strategy_StrategoHost -> Strategy_StrategoHost
+    With                     : Strategy_StrategoHost -> Strategy_StrategoHost
+    Where                    : Strategy_StrategoHost -> Strategy_StrategoHost
+    Not                      : Strategy_StrategoHost -> Strategy_StrategoHost
+    Rec                      : Id_StrategoHost * Strategy_StrategoHost -> Strategy_StrategoHost
+    LChoice                  : Strategy_StrategoHost * Strategy_StrategoHost -> Strategy_StrategoHost
+    ScopeDefault             : Strategy_StrategoHost -> Strategy_StrategoHost
+    Call                     : SVar_StrategoHost * List(Strategy_StrategoHost) -> Strategy_StrategoHost
+    ImportTerm               : ModName_StrategoHost -> Strategy_StrategoHost
+    All                      : Strategy_StrategoHost -> Strategy_StrategoHost
+    One                      : Strategy_StrategoHost -> Strategy_StrategoHost
+    Some                     : Strategy_StrategoHost -> Strategy_StrategoHost
+    PrimT                    : String_StrategoHost * List(Strategy_StrategoHost) * List(Term_StrategoHost) -> Strategy_StrategoHost
+    GuardedLChoice           : Strategy_StrategoHost * StrategyMid_StrategoHost * Strategy_StrategoHost -> Strategy_StrategoHost
+    Seq                      : Strategy_StrategoHost * Strategy_StrategoHost -> Strategy_StrategoHost
+    Scope                    : List(ID_StrategoHost) * Strategy_StrategoHost -> Strategy_StrategoHost
+    Build                    : Term_StrategoHost -> Strategy_StrategoHost
+    Match                    : Term_StrategoHost -> Strategy_StrategoHost
+    ProceedNoArgs            : Strategy_StrategoHost
+    ProceedT                 : List(Strategy_StrategoHost) * List(Term_StrategoHost) -> Strategy_StrategoHost
+    Id                       : Strategy_StrategoHost
+    Fail                     : Strategy_StrategoHost
+    CallDynamic              : Term_StrategoHost * List(Strategy_StrategoHost) * List(Term_StrategoHost) -> Strategy_StrategoHost
+    CallT                    : SVar_StrategoHost * List(Strategy_StrategoHost) * List(Term_StrategoHost) -> Strategy_StrategoHost
+    Let                      : List(Def_StrategoHost) * Strategy_StrategoHost -> Strategy_StrategoHost
+    SVar                     : Id_StrategoHost -> SVar_StrategoHost
+                             : RuleDef_StrategoHost -> Def_StrategoHost
+    AnnoDef                  : List(Anno_StrategoHost) * RuleDef_StrategoHost -> Def_StrategoHost
+    AnnoDef                  : List(Anno_StrategoHost) * StrategyDef_StrategoHost -> Def_StrategoHost
+                             : StrategyDef_StrategoHost -> Def_StrategoHost
+                             : ConstType_StrategoHost -> Type_StrategoHost
+                             : FunType_StrategoHost -> Type_StrategoHost
+                             : Type_StrategoHost -> RetType_StrategoHost
+                             : ConstType_StrategoHost -> ArgType_StrategoHost
+    FunType                  : List(ArgType_StrategoHost) * RetType_StrategoHost -> FunType_StrategoHost
+    ConstType                : Sort_StrategoHost -> ConstType_StrategoHost
+    ExtOpDeclInj             : Type_StrategoHost -> Opdecl_StrategoHost
+    ExtOpDeclQ               : String_StrategoHost * Type_StrategoHost -> Opdecl_StrategoHost
+    ExtOpDecl                : Id_StrategoHost * Type_StrategoHost -> Opdecl_StrategoHost
+    OpDeclInj                : Type_StrategoHost -> Opdecl_StrategoHost
+    OpDeclQ                  : String_StrategoHost * Type_StrategoHost -> Opdecl_StrategoHost
+    OpDecl                   : Id_StrategoHost * Type_StrategoHost -> Opdecl_StrategoHost
+    SortTuple                : List(Sort_StrategoHost) -> Sort_StrategoHost
+    SortListTl               : List(Sort_StrategoHost) * Sort_StrategoHost -> Sort_StrategoHost
+    SortList                 : List(Sort_StrategoHost) -> Sort_StrategoHost
+    Sort                     : Id_StrategoHost * List(Sort_StrategoHost) -> Sort_StrategoHost
+    SortNoArgs               : UCID_StrategoHost -> Sort_StrategoHost
+    SortVar                  : LCID_StrategoHost -> Sort_StrategoHost
+    Constructors             : List(Opdecl_StrategoHost) -> Sdecl_StrategoHost
+    Sorts                    : List(Sort_StrategoHost) -> Sdecl_StrategoHost
+    Wld                      : Wld_StrategoHost
+    ToMetaExpr               : List(Statement_Python) -> Term_StrategoHost
+    ToMetaExpr               : Exp_Python -> Term_StrategoHost
+    ToMetaExpr               : Statement_Python -> Term_StrategoHost
+    App                      : Strategy_StrategoHost * Term_StrategoHost -> Term_StrategoHost
+    NoAnnoList               : PreTerm_StrategoHost -> Term_StrategoHost
+    AnnoList                 : PreTerm_StrategoHost * List(Term_StrategoHost) -> Term_StrategoHost
+    BuildDefault             : Term_StrategoHost -> Term_StrategoHost
+    As                       : Var_StrategoHost * Term_StrategoHost -> Term_StrategoHost
+    Anno                     : PreTerm_StrategoHost * PreTerm_StrategoHost -> Term_StrategoHost
+                             : Wld_StrategoHost -> Term_StrategoHost
+                             : Var_StrategoHost -> Term_StrategoHost
+                             : LID_StrategoHost -> ID_StrategoHost
+                             : Id_StrategoHost -> ID_StrategoHost
+    Var                      : LID_StrategoHost -> Var_StrategoHost
+    Var                      : Id_StrategoHost -> Var_StrategoHost
+                             : String -> Char_StrategoHost
+                             : String -> Padding_StrategoHost
+    QBr                      : String -> StringQuotedPart4_StrategoHost
+    QDollar                  : String -> StringQuotedPart4_StrategoHost
+    QStr                     : String -> StringQuotedPart4_StrategoHost
+    StringEscape4            : Padding_StrategoHost * Term_StrategoHost -> StringQuotedPart4_StrategoHost
+    QBr                      : String -> StringQuotedPart3_StrategoHost
+    QDollar                  : String -> StringQuotedPart3_StrategoHost
+    QStr                     : String -> StringQuotedPart3_StrategoHost
+    StringEscape3            : Padding_StrategoHost * Term_StrategoHost -> StringQuotedPart3_StrategoHost
+    QBr                      : String -> StringQuotedPart2_StrategoHost
+    QDollar                  : String -> StringQuotedPart2_StrategoHost
+    QStr                     : String -> StringQuotedPart2_StrategoHost
+    StringEscape2            : Padding_StrategoHost * Term_StrategoHost -> StringQuotedPart2_StrategoHost
+    QBr                      : String -> StringQuotedPart1_StrategoHost
+    QDollar                  : String -> StringQuotedPart1_StrategoHost
+    QStr                     : String -> StringQuotedPart1_StrategoHost
+    StringEscape1            : Padding_StrategoHost * Term_StrategoHost -> StringQuotedPart1_StrategoHost
+    StringQuotation4         : Padding_StrategoHost * List(StringQuotedPart4_StrategoHost) -> StringQuotation_StrategoHost
+    StringQuotation3         : Padding_StrategoHost * List(StringQuotedPart3_StrategoHost) -> StringQuotation_StrategoHost
+    StringQuotation2         : Padding_StrategoHost * List(StringQuotedPart2_StrategoHost) -> StringQuotation_StrategoHost
+    StringQuotation1         : Padding_StrategoHost * List(StringQuotedPart1_StrategoHost) -> StringQuotation_StrategoHost
+    ListTail                 : List(Term_StrategoHost) * Term_StrategoHost -> PreTerm_StrategoHost
+    List                     : List(Term_StrategoHost) -> PreTerm_StrategoHost
+    Tuple                    : List(Term_StrategoHost) -> PreTerm_StrategoHost
+    App                      : Strategy_StrategoHost * Term_StrategoHost -> PreTerm_StrategoHost
+    Char                     : Char_StrategoHost -> PreTerm_StrategoHost
+    BuildDefaultPT           : PreTerm_StrategoHost -> PreTerm_StrategoHost
+    As                       : Var_StrategoHost * PreTerm_StrategoHost -> PreTerm_StrategoHost
+    Explode                  : Term_StrategoHost * Term_StrategoHost -> PreTerm_StrategoHost
+    OpQ                      : String_StrategoHost * List(Term_StrategoHost) -> PreTerm_StrategoHost
+    Op                       : Id_StrategoHost * List(Term_StrategoHost) -> PreTerm_StrategoHost
+    Str                      : String_StrategoHost -> PreTerm_StrategoHost
+    Real                     : Real_StrategoHost -> PreTerm_StrategoHost
+    Int                      : Int_StrategoHost -> PreTerm_StrategoHost
+                             : Wld_StrategoHost -> PreTerm_StrategoHost
+                             : Var_StrategoHost -> PreTerm_StrategoHost
+                             : StringQuotation_StrategoHost -> PreTerm_StrategoHost
+                             : String -> String_StrategoHost
+                             : String -> Real_StrategoHost
+                             : String -> Int_StrategoHost
+                             : String -> UCID_StrategoHost
+                             : String -> LCID_StrategoHost
+                             : String -> LId_StrategoHost
+                             : String -> Id_StrategoHost
+                             : String -> ModName_StrategoHost
+
+
+signature
+  constructors
+    Some : a -> Option(a)
+    None : Option(a)
+
+
+signature
+  constructors
+    Cons : a * List(a) -> List(a)
+    Nil  : List(a)
+    Conc : List(a) * List(a) -> List(a)

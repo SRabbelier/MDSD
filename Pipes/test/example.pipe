@@ -16,9 +16,50 @@ load utils
 
 with url is "" extract feed
 
-apply analyse content
+apply analyse_content
 
 with
     on is [item]
+    assign is [item]
+    trans is with count is 5 apply get_flickr
+    emit is all
+apply loop
 
-pipe fdsa
+output
+
+pipe main
+
+with url is "" extract feed
+
+apply analyse_content
+
+with
+    on is [item]
+    assign is [item]
+    trans is with 
+        find is 5
+        images is [item]
+        apply flickr
+    emit is all
+apply loop
+
+output
+
+pipe multi
+
+$feed1 is with url is "example.com/feed1" extract feed
+$feed2 is with url is "example.com/feed2" extract feed
+
+$feed3 is apply reverse to $feed1
+
+$union is apply union to $feed2 and $feed3
+
+output $union
+
+
+native loop
+
+inputs $stream
+arguments $on and $assign and $emit and $trans
+
+output $stream
