@@ -29,7 +29,7 @@ output
 
 pipe main
 
-with url is "" extract feed
+with url is "example.com/feed" extract feed
 
 apply analyse_content
 
