@@ -41,14 +41,13 @@ rules // Main editor interface (defined by editor/Pipes-Builders and -References
     (selected, position, ast, path, project-path) -> (filename, result)
     with
       filename := <guarantee-extension(|"py")> path;
-      result   := <to-python; debug(!"debugging: "); pp-python> selected
+      result   := <to-python; pp-python> selected
   
   // Resolves a reference when the user control-clicks or presses F3 in the editor.
   // Only succeeds for nodes of the form Type(_) for which GetEntity is defined.
   editor-resolve:
     (node, position, ast, path, project-path) -> target
     where
-      <debug(!"Resolve: ")> node; 
       Type(type) := node; 
       target     := <GetEntity> type
 
