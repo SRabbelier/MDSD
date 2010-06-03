@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?eclipse version="3.0"?>
+
+<plugin>
+       <extension point="org.eclipse.imp.runtime.languageDescription">
+          <language extensions="pipe" description="Pipes" language="Pipes" derivedFrom="DynamicRoot" validator="Pipes.PipesValidator" validatorClass="Pipes.PipesValidator"></language>
+       </extension>
+       <extension id="Pipes.parser" name="Pipes Parser" point="org.eclipse.imp.runtime.parser">
+          <parser class="Pipes.PipesParseController" language="Pipes">
+          </parser>
+       </extension>    
+    </plugin>

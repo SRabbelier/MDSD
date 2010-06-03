@@ -1,0 +1,39 @@
+Start(
+  [ Pipe(
+      "get_flickr"
+    , ImplicitInput()
+    , Arguments([Variable("count")])
+    , [ Function(
+          None()
+        , LambdaFunction(
+            Some(
+              FunctionArguments(
+                [FunctionArgument("find", Variable("count")), FunctionArgument("images", Selector("item"))]
+              )
+            )
+          , FunctionApplication("flickr", [])
+          )
+        )
+      ]
+    , Output([])
+    )
+  , Pipe(
+      "main"
+    , NoInput()
+    , NoArguments()
+    , [ Load("utils")
+      , Function(
+          None()
+        , LambdaFunction(
+            Some(FunctionArguments([FunctionArgument("url", String("\"\""))]))
+          , FunctionExtraction("feed")
+          )
+        )
+      , Function(None(), LambdaFunction(None(), FunctionApplication("analyse content", [])))
+      , FunctionArguments([FunctionArgument("on", Selector("item"))])
+      ]
+    , NoOutput()
+    )
+  , Pipe("fdsa", NoInput(), NoArguments(), [], NoOutput())
+  ]
+)

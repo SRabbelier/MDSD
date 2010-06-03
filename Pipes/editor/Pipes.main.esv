@@ -1,0 +1,16 @@
+module Pipes.main
+
+imports Pipes-Builders Pipes-Colorer Pipes-Completions Pipes-Folding Pipes-Outliner Pipes-References Pipes-Syntax
+
+language General properties
+                  
+  name          : Pipes
+  id            : Pipes
+  extends       : Root
+                  
+  description   : "Spoofax/IMP-generated editor for the Pipes language"
+  url           : http://strategoxt.org
+                  
+  extensions    : pipe
+  table         : include/Pipes.tbl
+  start symbols : Start

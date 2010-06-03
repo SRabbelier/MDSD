@@ -1,0 +1,56 @@
+%% Grammar for the Pipes language
+%% By default, based on an example "entities" syntax
+module Pipes
+
+imports Common
+
+exports
+
+  context-free start-symbols
+    Start
+
+  context-free syntax
+  
+    Declaration*                                    -> Start {cons("Start")}
+    
+    "pipe" ID Input Arguments Statement* Output     -> Declaration {cons("Pipe")}
+    "native" ID Input Arguments Output              -> Declaration {cons("Native")}
+
+    "load" ID                                       -> Load {cons("Load")}
+
+    % epsilon %                                     -> Input {cons("NoInput")}
+    "input"                                         -> Input {cons("ImplicitInput")}
+    "inputs" {Variable "and"}+                      -> Input {cons("ExplicitInput")}
+
+    % epsilon %                                     -> Arguments {cons("NoArguments")}
+    "arguments" {Variable "and"}+                   -> Arguments {cons("Arguments")}
+
+    % epsilon %                                     -> Output {cons("NoOutput")}
+    "output" {Variable "and"}*                      -> Output {cons("Output")}
+
+    Variable "is"                                   -> Assignment {cons("Assignment")}
+
+    "with" FunctionArgument+                        -> FunctionArguments {cons("FunctionArguments")}
+    ID "is" Value                                   -> FunctionArgument {cons("FunctionArgument")}
+
+    "apply" ID ("to" Variable)?                     -> FunctionApplication {cons("FunctionApplication")}
+    "extract" ID                                    -> FunctionApplication {cons("FunctionExtraction")}
+
+    FunctionArguments? FunctionApplication          -> LambdaFunction {cons("LambdaFunction")}
+    Assignment? LambdaFunction                      -> Function {cons("Function")}
+
+    %% class membership
+    Variable                                        -> Value
+    Selector                                        -> Value
+    LambdaFunction                                  -> Value
+    All                                             -> Value
+    String                                          -> Value
+    Function                                        -> Statement
+    Load                                            -> Statement
+    FunctionArguments                               -> Statement {recover}
+
+    %% primitves
+    "all"                                           -> All {cons("All")}
+    STRING                                          -> String {cons("String")}
+    "[" ID "]"                                      -> Selector {cons("Selector")} %% TODO
+    "$" ID                                          -> Variable {cons("Variable")}

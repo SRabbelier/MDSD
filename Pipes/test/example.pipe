@@ -1,0 +1,24 @@
+pipe get_flickr
+
+input
+arguments $count
+
+with
+    find is $count
+    images is [item]
+apply flickr
+
+output
+
+pipe main
+
+load utils
+
+with url is "" extract feed
+
+apply analyse content
+
+with
+    on is [item]
+
+pipe fdsa
