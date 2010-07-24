@@ -1,0 +1,17 @@
+pipe main
+
+with url is "example.com/feed" extract feed
+
+apply analyse_content
+
+with
+    on is [item]
+    assign is [item]
+    trans is with
+        find is 5
+        images is [item]
+        apply flickr
+    emit is all
+apply loop
+
+output
