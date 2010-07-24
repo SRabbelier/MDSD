@@ -9,8 +9,38 @@ imports
     lib/StrategoPython
 
 rules
+  python-header = !python*|[
+	import sys;
+  ]|
+
+  python-after = !python*|[
+		def main(args): {
+
+	};
+	    if __name__ == '__main__': {
+		main(sys.argv);
+	    };
+  ]|
+
   to-python :
-    Start(_) -> py-exp|[8+8]|
+    Start(declarations) -> python*|[
+	  stm1
+      stm
+      stm2
+    ]|
+    with stm1 := <python-header>
+    with stm2 := <python-after>
+    with stm := <map(to-python)>declarations
+
+  to-python :
+	Pipe(name, input, arguments, statements, output) -> python|[
+		pass;
+		]|
+
+  generate-python :
+	Start(_) -> result
+	with code := <to-python; flatten-list>
+	with result := Application(code)
 
   pp-python :
   	ast -> s

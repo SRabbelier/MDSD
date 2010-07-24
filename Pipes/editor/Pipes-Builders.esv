@@ -18,5 +18,6 @@ builders
   builder  : "Generate Java code"   = generate-java (openeditor) (realtime)                   
   builder  : "Show abstract syntax" = generate-aterm (openeditor) (realtime) (meta) (source)
   builder  : "Generate python" = generate-python (openeditor) (realtime) (meta) (source) (persistent)
+  builder  : "Debug python" = debug-python (openeditor) (realtime) (meta) (source) (persistent)
                                                                                               
 //  on save  : generate-java                                                                    

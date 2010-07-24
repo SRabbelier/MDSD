@@ -36,12 +36,18 @@ rules // Main editor interface (defined by editor/Pipes-Builders and -References
     with
       filename := <guarantee-extension(|"aterm")> path;
       result   := selected // we just return the input term
+
+  debug-python:
+    (selected, position, ast, path, project-path) -> (filename, result)
+    with
+      filename := <guarantee-extension(|"aterm")> path;
+      result   := <generate-python> selected
   
   generate-python:
     (selected, position, ast, path, project-path) -> (filename, result)
     with
       filename := <guarantee-extension(|"py")> path;
-      result   := <to-python; pp-python> selected
+      result   := <generate-python; pp-python> selected
   
   // Resolves a reference when the user control-clicks or presses F3 in the editor.
   // Only succeeds for nodes of the form Type(_) for which GetEntity is defined.
