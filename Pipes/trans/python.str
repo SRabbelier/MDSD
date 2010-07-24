@@ -15,10 +15,10 @@ rules
 
   python-after = !python*|[
 		def main(args): {
-
-	};
+			pipe_main();
+		};
 	    if __name__ == '__main__': {
-		main(sys.argv);
+			main(sys.argv);
 	    };
   ]|
 
@@ -33,9 +33,12 @@ rules
     with stm := <map(to-python)>declarations
 
   to-python :
-	Pipe(name, input, arguments, statements, output) -> python|[
-		pass;
+	Pipe(name, input, arguments, statements, output) -> python*|[
+		def x(): {
+			pass;
+		};
 		]|
+		with x := <concat-strings> ["pipe_", name]
 
   generate-python :
 	Start(_) -> result
