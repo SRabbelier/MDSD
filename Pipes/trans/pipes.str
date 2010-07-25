@@ -40,7 +40,7 @@ rules // Main editor interface (defined by editor/Pipes-Builders and -References
   debug-python:
     (selected, position, ast, path, project-path) -> (filename, result)
     with
-      filename := <guarantee-extension(|"aterm")> path;
+      filename := <guarantee-extension(|"py.aterm")> path;
       result   := <generate-python> selected
   
   generate-python:

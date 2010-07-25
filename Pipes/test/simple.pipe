@@ -1,17 +1,22 @@
 pipe main
 
-with url is "example.com/feed" extract feed
+inputs $stream1 and $stream2
 
-apply analyse_content
+arguments $foo and $bar
+
+load utils
+
+with url is "" extract feed
+
+$stream1 is with
+    on is [title]
+    query is "the"
+apply filter to $stream1 and $stream2
 
 with
-    on is [item]
-    assign is [item]
-    trans is with
-        find is 5
-        images is [item]
-        apply flickr
-    emit is all
+   on     is [description]
+   assign is [image/url]
+   trans  is with pattern is "src=\"([^\"]+)\"" apply search_pattern
 apply loop
 
-output
+output $foo and $bar

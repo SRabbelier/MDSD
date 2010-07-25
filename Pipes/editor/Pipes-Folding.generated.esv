@@ -25,10 +25,9 @@ folding Default folding definitions
   Input.ExplicitInput
   VariableList.VariableList
   Arguments.Arguments
-  FunctionApplication.FunctionApplication
-  OptVariableList0
-  VariableList0
-  *
+  Selector
+  Selector.Selector
+  Selection.Selection
   Output.Output
-  OptVariableList1
+  OptVariableList0
   Declaration.Native

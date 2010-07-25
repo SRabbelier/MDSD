@@ -34,8 +34,10 @@ exports
     ID "is" Value                                   -> FunctionArgument {cons("FunctionArgument")}
     ID "is"                                         -> FunctionArgument {recover}
 
-    "apply" ID ("to" VariableList)?                 -> FunctionApplication {cons("FunctionApplication")}
+    "apply" ID ApplicationTarget?                   -> FunctionApplication {cons("FunctionApplication")}
     "extract" ID                                    -> FunctionApplication {cons("FunctionExtraction")}
+
+    "to" VariableList								-> ApplicationTarget
 
     FunctionArguments? FunctionApplication          -> LambdaFunction {cons("LambdaFunction")}
     Assignment? LambdaFunction                      -> Function {cons("Function")}
@@ -56,5 +58,6 @@ exports
     "all"                                           -> All {cons("All")}
     STRING                                          -> String {cons("String")}
     INT                                             -> Integer {cons("Integer")} 
-    "[" ID "]"                                      -> Selector {cons("Selector")} %% TODO
+    "[" Selection "]"                               -> Selector {cons("Selector")}
+    { ID "/"}+										-> Selection {cons("Selection")}
     "$" ID                                          -> Variable {cons("Variable")}

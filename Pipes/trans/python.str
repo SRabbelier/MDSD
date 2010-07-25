@@ -9,6 +9,31 @@ imports
     lib/StrategoPython
 
 rules
+  to-stream-args : NoInput() -> []
+
+  to-stream-args : ImplicitInput() -> ["stream"]
+
+  extract-variables : Variable(v) -> v
+
+  extract-keyword-args : Variable(v) -> result
+  with result := <concat-strings>[v, "=None"]
+
+  to-stream-args : ExplicitInput(VariableList(vars)) -> result
+  with result := <map(extract-variables)>vars
+
+  to-value-args : NoArguments() -> []
+
+  to-value-args : Arguments(VariableList(vars)) -> result
+  with result := <map(extract-keyword-args)>vars
+
+  to-output-args : NoOutput() -> python|[return None;]|
+
+  to-output-args : Output(None()) -> python|[return stream;]|
+
+  to-output-args : Output(Some(VariableList(vars))) -> result
+  with e := <map(extract-variables)>vars
+  with result := python|[return e;]|
+
   python-header = !python*|[
 	import sys;
   ]|
@@ -24,21 +49,86 @@ rules
 
   to-python :
     Start(declarations) -> python*|[
-	  stm1
+	  stm1*
       stm
-      stm2
+      stm2*
     ]|
-    with stm1 := <python-header>
-    with stm2 := <python-after>
+    with stm1* := <python-header>
+    with stm2* := <python-after>
     with stm := <map(to-python)>declarations
+
+  to-python : Load(_) -> []
+
+  to-python : Variable(name) -> name
+
+  to-python : Selector(Selection(selection)) -> result
+  with result := <separate-by(|"/"); concat-strings>selection
+
+  to-python : All() -> "all"
+
+  to-python : String(value) -> value
+
+  to-python : Integer(value) -> value
+
+  stream-name : None() -> "stream"
+
+  stream-name : Some(Assignment(Variable(name))) -> name
+
+  function-name : FunctionApplication(name, _) -> name
+
+  function-name : FunctionExtraction(name) -> name
+
+  extract-function-streams : FunctionApplication(_, None()) -> ["stream"]
+
+  extract-function-streams : FunctionApplication(_, Some(VariableList(vars))) -> result
+  with result := <map(extract-variables)>vars
+
+  extract-function-streams : FunctionExtraction(_) -> []
+
+  extract-function-arg : FunctionArgument(x, y) -> result
+  with debug(!"1 ")
+  with y' := <to-python>y
+  with debug(!"2 ")
+  with result := <concat-strings>[x, "=", y']
+  with debug(!"2 ")
+
+  extract-function-args : None() -> []
+
+  extract-function-args : Some(FunctionArguments(args)) -> result
+  with result := <map(extract-function-arg)>args
+
+  function-args : LambdaFunction(args, app) -> result
+  with function_streams := <extract-function-streams>app
+  with function_args := <extract-function-args>args
+  with result := <concat>[function_streams, function_args]
+
+  to-python : LambdaFunction(args, app) -> result
+  with x_funcname := <function-name>app
+  with pe0* := <function-args>
+  with result := py-exp|[
+	x_funcname(pe0*)
+  ]|
+
+  to-python : Function(assignment, func) -> python*|[
+	x_streamname = e;
+  ]|
+  with x_streamname := <stream-name>assignment
+  with e := <to-python>func
+
 
   to-python :
 	Pipe(name, input, arguments, statements, output) -> python*|[
-		def x(): {
-			pass;
+		def x_name(e*): {
+			stm*
+			stm_ret
 		};
 		]|
-		with x := <concat-strings> ["pipe_", name]
+		with x_name := <concat-strings> ["pipe_", name]
+		with stream-args := <to-stream-args>input
+		with value-args := <to-value-args>arguments
+		with e* := <flatten-list>[stream-args, value-args]
+		with stm_ret := <to-output-args>output
+		with stm* := <map(to-python); concat>statements
 
   generate-python :
 	Start(_) -> result
