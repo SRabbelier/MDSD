@@ -6,12 +6,12 @@ arguments $foo and $bar
 
 load utils
 
-with url is "" extract feed
+with url is "http://www.xkcd.com/rss.xml" extract feed
 
-$stream1 is with
+with
     on is [title]
     query is "the"
-apply filter to $stream1 and $stream2
+apply filter to $stream
 
 with
    on     is [description]

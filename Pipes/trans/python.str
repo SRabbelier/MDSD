@@ -74,9 +74,11 @@ rules
 
   stream-name : Some(Assignment(Variable(name))) -> name
 
-  function-name : FunctionApplication(name, _) -> name
+  function-name : FunctionApplication(name, _) -> result
+  with result := <concat-strings>["lambda: apply_", name]
 
-  function-name : FunctionExtraction(name) -> name
+  function-name : FunctionExtraction(name) -> result
+  with result := <concat-strings>["lambda: extract_", name]
 
   extract-function-streams : FunctionApplication(_, None()) -> ["stream"]
 
@@ -86,11 +88,8 @@ rules
   extract-function-streams : FunctionExtraction(_) -> []
 
   extract-function-arg : FunctionArgument(x, y) -> result
-  with debug(!"1 ")
   with y' := <to-python>y
-  with debug(!"2 ")
-  with result := <concat-strings>[x, "=", y']
-  with debug(!"2 ")
+  with result := NamedParam(x,y')
 
   extract-function-args : None() -> []
 
@@ -106,11 +105,11 @@ rules
   with x_funcname := <function-name>app
   with pe0* := <function-args>
   with result := py-exp|[
-	x_funcname(pe0*)
+	(x_funcname(pe0*),)[0]
   ]|
 
   to-python : Function(assignment, func) -> python*|[
-	x_streamname = e;
+	x_streamname = e();
   ]|
   with x_streamname := <stream-name>assignment
   with e := <to-python>func
