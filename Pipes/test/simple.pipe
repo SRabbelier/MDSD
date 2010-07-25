@@ -1,9 +1,5 @@
 pipe main
 
-inputs $stream1 and $stream2
-
-arguments $foo and $bar
-
 load utils
 
 with url is "http://www.xkcd.com/rss.xml" extract feed
@@ -11,7 +7,7 @@ with url is "http://www.xkcd.com/rss.xml" extract feed
 with
     on is [title]
     query is "the"
-apply filter to $stream
+apply filter
 
 with
    on     is [description]
@@ -19,4 +15,4 @@ with
    trans  is with pattern is "src=\"([^\"]+)\"" apply search_pattern
 apply loop
 
-output $foo and $bar
+output

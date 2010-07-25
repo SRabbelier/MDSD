@@ -36,6 +36,8 @@ rules
 
   python-header = !python*|[
 	import sys;
+	import logging;
+	from pipes_builtins import *;
   ]|
 
   python-after = !python*|[
@@ -62,7 +64,8 @@ rules
   to-python : Variable(name) -> name
 
   to-python : Selector(Selection(selection)) -> result
-  with result := <separate-by(|"/"); concat-strings>selection
+  with joined := <separate-by(|"/"); concat-strings>selection
+  with result := <concat-strings>["selector('", joined, "')"]
 
   to-python : All() -> "all"
 
@@ -105,11 +108,12 @@ rules
   with x_funcname := <function-name>app
   with pe0* := <function-args>
   with result := py-exp|[
-	(x_funcname(pe0*),)[0]
+	ident(x_funcname(pe0*))
   ]|
 
   to-python : Function(assignment, func) -> python*|[
 	x_streamname = e();
+	logging.debug(x_streamname);
   ]|
   with x_streamname := <stream-name>assignment
   with e := <to-python>func
