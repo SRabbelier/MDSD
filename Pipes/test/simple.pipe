@@ -2,7 +2,9 @@ pipe main
 
 load utils
 
-with url is "http://www.xkcd.com/rss.xml" extract feed
+with
+ url is "http://www.xkcd.com/rss.xml"
+extract feed
 
 with
     on is [title]
