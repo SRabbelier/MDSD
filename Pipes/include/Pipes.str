@@ -1,0 +1,54 @@
+module Pipes
+
+signature
+  constructors
+    None                : OptApplicationTarget0
+    Variable            : ID -> Variable
+    Selection           : List(ID) -> Selection
+    Selector            : Selection -> Selector
+    Integer             : INT -> Integer
+    String              : STRING -> String
+    All                 : All
+                        : Load -> Statement
+                        : Function -> Statement
+                        : Integer -> Value
+                        : String -> Value
+                        : All -> Value
+                        : LambdaFunction -> Value
+                        : Selector -> Value
+                        : Variable -> Value
+    VariableList        : List(Variable) -> VariableList
+    Function            : Option(Assignment) * LambdaFunction -> Function
+    LambdaFunction      : Option(FunctionArguments) * FunctionApplication -> LambdaFunction
+    FunctionExtraction  : ID -> FunctionApplication
+    FunctionApplication : ID * OptApplicationTarget0 -> FunctionApplication
+    FunctionArgument    : ID * Value -> FunctionArgument
+    FunctionArguments   : List(FunctionArgument) -> FunctionArguments
+    Assignment          : Variable -> Assignment
+    Output              : Option(VariableList) -> Output
+    NoOutput            : Output
+    Arguments           : VariableList -> Arguments
+    NoArguments         : Arguments
+    ExplicitInput       : VariableList -> Input
+    ImplicitInput       : Input
+    NoInput             : Input
+    Load                : ID -> Load
+    Native              : ID * Input * Arguments * Output -> Declaration
+    Pipe                : ID * Input * Arguments * List(Statement) * Output -> Declaration
+    Start               : List(Declaration) -> Start
+                        : String -> STRING
+                        : String -> INT
+                        : String -> ID
+
+
+signature
+  constructors
+    Some : a -> Option(a)
+    None : Option(a)
+
+
+signature
+  constructors
+    Cons : a * List(a) -> List(a)
+    Nil  : List(a)
+    Conc : List(a) * List(a) -> List(a)

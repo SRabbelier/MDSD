@@ -1,0 +1,130 @@
+
+definition
+
+module Common
+exports
+  sorts WATER WATERTOKEN WATERTOKENSTART WATERTOKENSEPARATOR WATERTOKENSTAR
+
+  lexical syntax
+    ~[A-Za-z0-9\_]                 -> WATERTOKENSTART     {recover}
+    WATERTOKENSTART [A-Za-z0-9\_]* -> WATERTOKEN          
+    ~[A-Za-z0-9\_\ \t\12\r\n\*]    -> WATERTOKENSEPARATOR {recover}
+    "*"                            -> WATERTOKENSTAR      {recover}
+    WATERTOKEN                     -> WATER               
+    WATERTOKENSEPARATOR            -> WATER               
+    WATERTOKENSTAR                 -> WATER               
+
+  lexical restrictions
+    WATERTOKEN -/- [A-Za-z0-9\_]
+    WATERTOKENSTAR -/- [\/]
+
+  context-free syntax
+    WATER -> LAYOUT {cons("WATER")}
+
+  (
+
+  sorts WATEREOF
+
+  lexical restrictions
+    WATEREOF -/- ~[]
+
+  lexical syntax
+    %% Lexical insertion recovery rules                                
+    "\""                                           -> INSERTOPENQUOTE2 {recover}
+    INSERTOPENQUOTE2 StringChar* "\n"              -> STRING           {cons("INSERTEND")}
+    INSERTOPENQUOTE2 StringChar* WATEREOF          -> STRING           {cons("INSERTEND")}
+    "/*"                                           -> INSERTSTART2     {recover}
+    INSERTSTART2 ( ~[\*] | CommentChar )* WATEREOF -> LAYOUT           {cons("INSERTEND")}
+                                                   -> "pipe"           {recover, cons("INSERTION")}
+                                                   -> "native"         {recover, cons("INSERTION")}
+                                                   -> "load"           {recover, cons("INSERTION")}
+                                                   -> "inputs"         {recover, cons("INSERTION")}
+                                                   -> "arguments"      {recover, cons("INSERTION")}
+                                                   -> "output"         {recover, cons("INSERTION")}
+                                                   -> "apply"          {recover, cons("INSERTION")}
+                                                   -> "extract"        {recover, cons("INSERTION")}
+                                                   -> "to"             {recover, cons("INSERTION")}
+                                                   -> "and"            {recover, cons("INSERTION")}
+                                                   -> "]"              {recover, cons("INSERTION")}
+                                                   -> "["              {recover, cons("INSERTION")}
+                                                   -> "/"              {recover, cons("INSERTION")}
+                                                   -> "$"              {recover, cons("INSERTION")}
+
+  syntax
+    %% Kernel syntax insertion recovery rules   
+
+  )
+
+  (
+
+  lexical syntax
+    [a-zA-Z] [a-zA-Z0-9\_]*            -> ID            
+    "-"? [0-9]+                        -> INT           
+    "\"" StringChar* "\""              -> STRING        
+    ~[\"\n]                            -> StringChar    
+    "\\\""                             -> StringChar    
+    BackSlashChar                      -> StringChar    
+    "\\"                               -> BackSlashChar 
+    [\ \t\n\r]                         -> LAYOUT        
+    [\*]                               -> CommentChar   
+    "/*" ( ~[\*] | CommentChar )* "*/" -> LAYOUT        
+    "//" ~[\n\r]* [\n\r] | EOF         -> LAYOUT        
+                                       -> EOF           
+
+  lexical restrictions
+    CommentChar -/- [\/]
+    INT -/- [0-9]
+    ID -/- [a-zA-Z0-9\_]
+    EOF -/- ~[]
+    BackSlashChar -/- [\"]
+
+  context-free restrictions
+    LAYOUT? -/- [\ \t\n\r]
+    LAYOUT? -/- [\/] . [\/]
+    LAYOUT? -/- [\/] . [\*]
+
+  )
+
+module Pipes
+imports Common
+
+exports
+  context-free start-symbols
+    Start
+
+  context-free syntax
+    Declaration*                                -> Start               {cons("Start")}
+    "pipe" ID Input Arguments Statement* Output -> Declaration         {cons("Pipe")}
+    "native" ID Input Arguments Output          -> Declaration         {cons("Native")}
+    "load" ID                                   -> Load                {cons("Load")}
+                                                -> Input               {cons("NoInput")}
+    "input"                                     -> Input               {cons("ImplicitInput")}
+    "inputs" VariableList                       -> Input               {cons("ExplicitInput")}
+                                                -> Arguments           {cons("NoArguments")}
+    "arguments" VariableList                    -> Arguments           {cons("Arguments")}
+                                                -> Output              {cons("NoOutput")}
+    "output" VariableList?                      -> Output              {cons("Output")}
+    Variable "is"                               -> Assignment          {cons("Assignment")}
+    "with" FunctionArgument+                    -> FunctionArguments   {cons("FunctionArguments")}
+    ID "is" Value                               -> FunctionArgument    {cons("FunctionArgument")}
+    ID "is"                                     -> FunctionArgument    {recover}
+    "apply" ID ApplicationTarget?               -> FunctionApplication {cons("FunctionApplication")}
+    "extract" ID                                -> FunctionApplication {cons("FunctionExtraction")}
+    "to" VariableList                           -> ApplicationTarget   
+    FunctionArguments? FunctionApplication      -> LambdaFunction      {cons("LambdaFunction")}
+    Assignment? LambdaFunction                  -> Function            {cons("Function")}
+    {Variable "and"}+                           -> VariableList        {cons("VariableList")}
+    Variable                                    -> Value               
+    Selector                                    -> Value               
+    LambdaFunction                              -> Value               
+    All                                         -> Value               
+    String                                      -> Value               
+    Integer                                     -> Value               
+    Function                                    -> Statement           
+    Load                                        -> Statement           
+    "all"                                       -> All                 {cons("All")}
+    STRING                                      -> String              {cons("String")}
+    INT                                         -> Integer             {cons("Integer")}
+    "[" Selection "]"                           -> Selector            {cons("Selector")}
+    {ID "/"}+                                   -> Selection           {cons("Selection")}
+    "$" ID                                      -> Variable            {cons("Variable")}

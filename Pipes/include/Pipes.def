@@ -1,0 +1,109 @@
+definition
+module Common
+
+exports
+
+  lexical syntax
+  
+    [a-zA-Z][a-zA-Z0-9\_]* -> ID
+    "-"? [0-9]+            -> INT
+    
+    "\"" StringChar* "\"" -> STRING
+    ~[\"\n]               -> StringChar
+    "\\\""                -> StringChar
+    BackSlashChar         -> StringChar
+    "\\"                  -> BackSlashChar
+    
+    [\ \t\n\r] -> LAYOUT
+    
+    [\*]                             -> CommentChar
+    "/*" (~[\*] | CommentChar)* "*/" -> LAYOUT
+    "//" ~[\n\r]* ([\n\r] | EOF)     -> LAYOUT
+    
+    -> EOF
+  
+  lexical restrictions
+  
+    %% Ensure greedy matching for lexicals
+  
+    CommentChar   -/- [\/]
+    INT           -/- [0-9]
+    ID            -/- [a-zA-Z0-9\_]
+    
+    %% EOF may not be followed by any char
+    
+    EOF           -/- ~[]
+
+    %% Backslash chars in strings may not be followed by " 
+    
+    BackSlashChar -/- [\"]
+
+  context-free restrictions
+  
+    %% Ensure greedy matching for comments
+
+    LAYOUT? -/- [\ \t\n\r]
+    LAYOUT? -/- [\/].[\/]
+    LAYOUT? -/- [\/].[\*]
+
+module Pipes
+
+imports Common
+
+exports
+
+  context-free start-symbols
+    Start
+
+  context-free syntax
+  
+    Declaration*                                    -> Start {cons("Start")}
+    
+    "pipe" ID Input Arguments Statement* Output     -> Declaration {cons("Pipe")}
+    "native" ID Input Arguments Output              -> Declaration {cons("Native")}
+
+    "load" ID                                       -> Load {cons("Load")}
+
+    % epsilon %                                     -> Input {cons("NoInput")}
+    "input"                                         -> Input {cons("ImplicitInput")}
+    "inputs" VariableList                           -> Input {cons("ExplicitInput")}
+
+    % epsilon %                                     -> Arguments {cons("NoArguments")}
+    "arguments" VariableList                        -> Arguments {cons("Arguments")}
+
+    % epsilon %                                     -> Output {cons("NoOutput")}
+    "output" VariableList?                          -> Output {cons("Output")}
+
+    Variable "is"                                   -> Assignment {cons("Assignment")}
+
+    "with" FunctionArgument+                        -> FunctionArguments {cons("FunctionArguments")}
+    ID "is" Value                                   -> FunctionArgument {cons("FunctionArgument")}
+    ID "is"                                         -> FunctionArgument {recover}
+
+    "apply" ID ApplicationTarget?                   -> FunctionApplication {cons("FunctionApplication")}
+    "extract" ID                                    -> FunctionApplication {cons("FunctionExtraction")}
+
+    "to" VariableList								-> ApplicationTarget
+
+    FunctionArguments? FunctionApplication          -> LambdaFunction {cons("LambdaFunction")}
+    Assignment? LambdaFunction                      -> Function {cons("Function")}
+
+    {Variable "and"}+                               -> VariableList {cons("VariableList")}
+
+    %% class membership
+    Variable                                        -> Value
+    Selector                                        -> Value
+    LambdaFunction                                  -> Value
+    All                                             -> Value
+    String                                          -> Value
+    Integer                                         -> Value
+    Function                                        -> Statement
+    Load                                            -> Statement
+
+    %% primitves
+    "all"                                           -> All {cons("All")}
+    STRING                                          -> String {cons("String")}
+    INT                                             -> Integer {cons("Integer")} 
+    "[" Selection "]"                               -> Selector {cons("Selector")}
+    { ID "/"}+										-> Selection {cons("Selection")}
+    "$" ID                                          -> Variable {cons("Variable")}
