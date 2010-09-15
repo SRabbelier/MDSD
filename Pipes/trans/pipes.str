@@ -55,7 +55,7 @@ rules // Main editor interface (defined by editor/Pipes-Builders and -References
     (node, position, ast, path, project-path) -> target
     where
       Type(type) := node; 
-      target     := <GetEntity> type
+      target     := <GetPipe> type
 
   // Returns "hover help" information for a particular node in the editor.
   // For references, this rule is invoked using the resolved term.
@@ -68,4 +68,4 @@ rules // Main editor interface (defined by editor/Pipes-Builders and -References
     (Type(COMPLETION(prefix)), position, ast, path, project-path) ->
     ["String", "Int" | proposals]
     where
-      proposals := <all-keys-GetEntity>
+      proposals := <all-keys-GetPipe>

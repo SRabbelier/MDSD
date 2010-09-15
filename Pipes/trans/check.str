@@ -16,30 +16,77 @@ rules
 
   // Records the definition of an entity in a dynamic rule GetEntity.
   record-entity:
-    Entity(x, body) -> Entity(x, body)
+    Pipe(x, _, _, _, _) -> <id>
     with
-      // For a name 'x', GetEntity will return the original 'x' tree node
+      // For a name 'x', GetPipe will return the original 'x' tree node
       rules(
-        GetEntity :+ x -> x
+        GetPipe :+ x -> <id>
       )
+  record-entity:
+    Native(x, _, _, _) -> <id>
+    with
+      rules(
+    	GetPipe :+ x -> <id>
+      )
+	
+	
 rules
-    
+      
+  get-name:
+  	FunctionApplication(p, t) -> p
+  
+  get-args:
+  	LambdaFunction(None(), _) -> []  
+  	
+  get-args:
+  	LambdaFunction(FunctionArguments(t), _) -> t
+
+  get-args:
+  	Pipe(_, _, NoArguments(), _, _) -> []
+
+  get-args:
+  	Pipe(_, _, Arguments(VariableList(a)), _, _) -> a
+  
+  get-args:
+  	Native(_, _, NoArguments(), _) -> []
+	  
+  get-args:
+  	Native(_, _, Arguments(VariableList(a)), _) -> a
+	  
+
+  
+  intersect:
+  	[[a|a'], [b|b']] -> <id>	
+  	where <intersect>[a', b']
+  	  when a.ID = b.Id
+  	
   // Reports an error if a property type is undefined.
   // This error is reported on the type name 'type'.
   constraint-error:
-    Property(x, Type(type)) -> (type, $[Type [type] is not defined])
+    FunctionApplication(p, t) -> (p, $[Pipe [p] is not defined])
     where
-      not(!type => "String"); // String and Int are built-in types
-      not(!type => "Int");
-      not(<GetEntity> type) // no entity for this type
+      not(<GetPipe> p) // no entity for this type
   
+  constraint-error:
+  	FunctionApplication(pname, t) -> (p, $[Pipe [p] is not defined])
+    where
+      p := <GetPipe> pname // no entity for this type
+//      <argument-constraint-error|p>t
+
+  	
+  constraint-error:
+  	LambdaFunction(arg, app) -> (p, $[Pipe [p] is not defined])
+    where  p := <get-name>app
+      ; pipe := <GetPipe> p 
+      ; <intersect>[pipe, arg]
+  	
   // Reports an error if an entity is defined more than once.
   // This constraint is implemented by testing if the "bag" of
   // all entities x is not a singleton list.
   constraint-error:
     Entity(x, _) -> (x, $[Duplicate entity name])
     where
-      not(<bagof-GetEntity> x => [_])
+      not(<bagof-GetPipe> x => [_])
   
   constraint-warning:
     Entity(x, _) -> (x, $[Entity names must start with a capital])

@@ -2,7 +2,6 @@ module Pipes
 
 signature
   constructors
-    None                : OptApplicationTarget0
     Variable            : ID -> Variable
     Selection           : List(ID) -> Selection
     Selector            : Selection -> Selector
@@ -20,8 +19,9 @@ signature
     VariableList        : List(Variable) -> VariableList
     Function            : Option(Assignment) * LambdaFunction -> Function
     LambdaFunction      : Option(FunctionArguments) * FunctionApplication -> LambdaFunction
+    ApplicationTarget   : VariableList -> ApplicationTarget
     FunctionExtraction  : ID -> FunctionApplication
-    FunctionApplication : ID * OptApplicationTarget0 -> FunctionApplication
+    FunctionApplication : ID * Option(ApplicationTarget) -> FunctionApplication
     FunctionArgument    : ID * Value -> FunctionArgument
     FunctionArguments   : List(FunctionArgument) -> FunctionArguments
     Assignment          : Variable -> Assignment

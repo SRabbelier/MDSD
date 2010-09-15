@@ -30,11 +30,11 @@ exports
 
   lexical syntax
     %% Lexical insertion recovery rules                                
-    "\""                                           -> INSERTOPENQUOTE2 {recover}
-    INSERTOPENQUOTE2 StringChar* "\n"              -> STRING           {cons("INSERTEND")}
-    INSERTOPENQUOTE2 StringChar* WATEREOF          -> STRING           {cons("INSERTEND")}
-    "/*"                                           -> INSERTSTART2     {recover}
-    INSERTSTART2 ( ~[\*] | CommentChar )* WATEREOF -> LAYOUT           {cons("INSERTEND")}
+    "\""                                           -> INSERTOPENQUOTE3 {recover}
+    INSERTOPENQUOTE3 StringChar* "\n"              -> STRING           {cons("INSERTEND")}
+    INSERTOPENQUOTE3 StringChar* WATEREOF          -> STRING           {cons("INSERTEND")}
+    "/*"                                           -> INSERTSTART4     {recover}
+    INSERTSTART4 ( ~[\*] | CommentChar )* WATEREOF -> LAYOUT           {cons("INSERTEND")}
                                                    -> "pipe"           {recover, cons("INSERTION")}
                                                    -> "native"         {recover, cons("INSERTION")}
                                                    -> "load"           {recover, cons("INSERTION")}
@@ -107,10 +107,9 @@ exports
     Variable "is"                               -> Assignment          {cons("Assignment")}
     "with" FunctionArgument+                    -> FunctionArguments   {cons("FunctionArguments")}
     ID "is" Value                               -> FunctionArgument    {cons("FunctionArgument")}
-    ID "is"                                     -> FunctionArgument    {recover}
     "apply" ID ApplicationTarget?               -> FunctionApplication {cons("FunctionApplication")}
     "extract" ID                                -> FunctionApplication {cons("FunctionExtraction")}
-    "to" VariableList                           -> ApplicationTarget   
+    "to" VariableList                           -> ApplicationTarget   {cons("ApplicationTarget")}
     FunctionArguments? FunctionApplication      -> LambdaFunction      {cons("LambdaFunction")}
     Assignment? LambdaFunction                  -> Function            {cons("Function")}
     {Variable "and"}+                           -> VariableList        {cons("VariableList")}

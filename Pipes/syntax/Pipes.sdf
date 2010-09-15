@@ -32,12 +32,11 @@ exports
 
     "with" FunctionArgument+                        -> FunctionArguments {cons("FunctionArguments")}
     ID "is" Value                                   -> FunctionArgument {cons("FunctionArgument")}
-    ID "is"                                         -> FunctionArgument {recover}
 
     "apply" ID ApplicationTarget?                   -> FunctionApplication {cons("FunctionApplication")}
     "extract" ID                                    -> FunctionApplication {cons("FunctionExtraction")}
 
-    "to" VariableList								-> ApplicationTarget
+    "to" VariableList								-> ApplicationTarget {cons("ApplicationTarget")}
 
     FunctionArguments? FunctionApplication          -> LambdaFunction {cons("LambdaFunction")}
     Assignment? LambdaFunction                      -> Function {cons("Function")}
