@@ -61,6 +61,7 @@ output $union
 
 native loop arguments $on and $assign and $trans and $emit
 native union
+native multi
 native reverse
 native analyse_content
 native flickr

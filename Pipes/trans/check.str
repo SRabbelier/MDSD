@@ -20,14 +20,17 @@ rules
     with
       // For a name 'x', GetPipe will return the original 'x' tree node
       rules(
-        GetPipe :+ x -> p
+        GetCustom :+ x -> p
+    	GetPipe :+ x -> p
       )
   record-entity:
     n@Native(PipeName(x), _, _, _) -> n
     with
       rules(
+    	GetNative :+ x -> n
     	GetPipe :+ x -> n
       )
+  
 	
 	
 rules
@@ -111,17 +114,17 @@ rules
   constraint-error:
     Pipe(PipeName(x), _, _, _, _) -> (x, $[Duplicate pipe name '[x]'])
     where
-      not(<bagof-GetPipe> x => [_])
+      not(<bagof-GetCustom> x => [_])
 
   constraint-error:
-    Native(PipeName(x), _, _, _) -> (x, $[Duplicate pipe name '[x]'])
+    Native(PipeName(x), _, _, _) -> (x, $[Duplicate native name '[x]'])
     where
-      not(<bagof-GetPipe> x => [_])
+      not(<bagof-GetNative> x => [_])
   
   constraint-warning:
-    Entity(x, _) -> (x, $[Entity names must start with a capital])
+    Pipe(PipeName(x), _, _, _, _) -> (x, $[Shadowing native pipe])
     where
-      not(<explode-string; Hd; is-upper> x)
+      (<bagof-GetNative> x => [_])
   
   constraint-note:
     Module(x @ "example", _) -> (x, $[This is just an example program in the "entities" language
