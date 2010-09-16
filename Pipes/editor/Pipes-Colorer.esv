@@ -8,3 +8,5 @@ colorer
   //                                                                  
   // See the imported file for a brief introduction and examples.    
   PipeName._		: 0 55 255    italic 
+  ExtractName._		: 0 55 255    italic 
+  Variable._		: 0 88 0

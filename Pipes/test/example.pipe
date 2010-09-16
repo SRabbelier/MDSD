@@ -49,14 +49,14 @@ output
 
 pipe multi
 
-	$feed1 is with url is "example.com/feed1" extract feed
-	$feed2 is with url is "example.com/feed2" extract feed
+	$feed1 becomes with url is "example.com/feed1" extract feed
+	$feed2 becomes with url is "example.com/feed2" extract feed
 	
-	$feed3 is apply reverse to $feed1
+	$feed3 becomes apply reverse to $feed1
 	
-	$union is apply union to $feed2 and $feed3
+	$union becomes apply union to $feed2 and $feed3
 
-output $union
+outputs $union
 
 
 native loop arguments $on and $assign and $trans and $emit
@@ -67,4 +67,4 @@ native analyse_content
 native flickr
 	inputs $stream
 	arguments $find and $images
-output $stream
+outputs $stream

@@ -17,15 +17,17 @@ signature
                         : Selector -> Value
                         : Variable -> Value
     VariableList        : List(Variable) -> VariableList
-    Function            : Option(Assignment) * LambdaFunction -> Function
+    Function            : Option(StreamAssignment) * LambdaFunction -> Function
     LambdaFunction      : Option(FunctionArguments) * FunctionApplication -> LambdaFunction
     ApplicationTarget   : VariableList -> ApplicationTarget
-    FunctionExtraction  : ID -> FunctionApplication
+    ExtractName         : ID -> ExtractName
+    FunctionExtraction  : ExtractName -> FunctionApplication
     FunctionApplication : PipeName * Option(ApplicationTarget) -> FunctionApplication
     FunctionArgument    : ID * Value -> FunctionArgument
     FunctionArguments   : List(FunctionArgument) -> FunctionArguments
-    Assignment          : Variable -> Assignment
-    Output              : Option(VariableList) -> Output
+    Assignment          : Variable -> StreamAssignment
+    ExplicitOutput      : VariableList -> Output
+    ImplicitOutput      : Output
     NoOutput            : Output
     Arguments           : VariableList -> Arguments
     NoArguments         : Arguments

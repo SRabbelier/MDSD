@@ -28,20 +28,23 @@ exports
     "arguments" VariableList                        -> Arguments {cons("Arguments")}
 
     % epsilon %                                     -> Output {cons("NoOutput")}
-    "output" VariableList?                          -> Output {cons("Output")}
+    "output"                          				-> Output {cons("ImplicitOutput")}
+    "outputs" VariableList							-> Output {cons("ExplicitOutput")}
 
-    Variable "is"                                   -> Assignment {cons("Assignment")}
+    Variable "becomes"                              -> StreamAssignment {cons("Assignment")}
+    Variable "is"		                            -> Assignment {cons("Assignment")}
 
     "with" FunctionArgument+                        -> FunctionArguments {cons("FunctionArguments")}
     ID "is" Value                                   -> FunctionArgument {cons("FunctionArgument")}
 
     "apply" PipeName ApplicationTarget?             -> FunctionApplication {cons("FunctionApplication")}
-    "extract" ID                                    -> FunctionApplication {cons("FunctionExtraction")}
+    "extract" ExtractName                           -> FunctionApplication {cons("FunctionExtraction")}
+    ID												-> ExtractName {cons("ExtractName")}
 
     "to" VariableList								-> ApplicationTarget {cons("ApplicationTarget")}
 
     FunctionArguments? FunctionApplication          -> LambdaFunction {cons("LambdaFunction")}
-    Assignment? LambdaFunction                      -> Function {cons("Function")}
+    StreamAssignment? LambdaFunction                -> Function {cons("Function")}
 
     {Variable "and"}+                               -> VariableList {cons("VariableList")}
 

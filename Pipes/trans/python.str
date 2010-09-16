@@ -28,9 +28,9 @@ rules
 
   to-output-args : NoOutput() -> python|[return None;]|
 
-  to-output-args : Output(None()) -> python|[return stream;]|
+  to-output-args : ImplicitOutput() -> python|[return stream;]|
 
-  to-output-args : Output(Some(VariableList(vars))) -> result
+  to-output-args : ExplicitOutput(VariableList(vars)) -> result
   with e := <map(extract-variables)>vars
   with result := python|[return e;]|
 

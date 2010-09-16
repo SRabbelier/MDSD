@@ -30,17 +30,17 @@ exports
 
   lexical syntax
     %% Lexical insertion recovery rules                                
-    "\""                                           -> INSERTOPENQUOTE1 {recover}
-    INSERTOPENQUOTE1 StringChar* "\n"              -> STRING           {cons("INSERTEND")}
-    INSERTOPENQUOTE1 StringChar* WATEREOF          -> STRING           {cons("INSERTEND")}
-    "/*"                                           -> INSERTSTART2     {recover}
-    INSERTSTART2 ( ~[\*] | CommentChar )* WATEREOF -> LAYOUT           {cons("INSERTEND")}
+    "\""                                           -> INSERTOPENQUOTE5 {recover}
+    INSERTOPENQUOTE5 StringChar* "\n"              -> STRING           {cons("INSERTEND")}
+    INSERTOPENQUOTE5 StringChar* WATEREOF          -> STRING           {cons("INSERTEND")}
+    "/*"                                           -> INSERTSTART6     {recover}
+    INSERTSTART6 ( ~[\*] | CommentChar )* WATEREOF -> LAYOUT           {cons("INSERTEND")}
                                                    -> "pipe"           {recover, cons("INSERTION")}
                                                    -> "native"         {recover, cons("INSERTION")}
                                                    -> "load"           {recover, cons("INSERTION")}
                                                    -> "inputs"         {recover, cons("INSERTION")}
                                                    -> "arguments"      {recover, cons("INSERTION")}
-                                                   -> "output"         {recover, cons("INSERTION")}
+                                                   -> "outputs"        {recover, cons("INSERTION")}
                                                    -> "apply"          {recover, cons("INSERTION")}
                                                    -> "extract"        {recover, cons("INSERTION")}
                                                    -> "to"             {recover, cons("INSERTION")}
@@ -104,15 +104,18 @@ exports
                                                       -> Arguments           {cons("NoArguments")}
     "arguments" VariableList                          -> Arguments           {cons("Arguments")}
                                                       -> Output              {cons("NoOutput")}
-    "output" VariableList?                            -> Output              {cons("Output")}
+    "output"                                          -> Output              {cons("ImplicitOutput")}
+    "outputs" VariableList                            -> Output              {cons("ExplicitOutput")}
+    Variable "becomes"                                -> StreamAssignment    {cons("Assignment")}
     Variable "is"                                     -> Assignment          {cons("Assignment")}
     "with" FunctionArgument+                          -> FunctionArguments   {cons("FunctionArguments")}
     ID "is" Value                                     -> FunctionArgument    {cons("FunctionArgument")}
     "apply" PipeName ApplicationTarget?               -> FunctionApplication {cons("FunctionApplication")}
-    "extract" ID                                      -> FunctionApplication {cons("FunctionExtraction")}
+    "extract" ExtractName                             -> FunctionApplication {cons("FunctionExtraction")}
+    ID                                                -> ExtractName         {cons("ExtractName")}
     "to" VariableList                                 -> ApplicationTarget   {cons("ApplicationTarget")}
     FunctionArguments? FunctionApplication            -> LambdaFunction      {cons("LambdaFunction")}
-    Assignment? LambdaFunction                        -> Function            {cons("Function")}
+    StreamAssignment? LambdaFunction                  -> Function            {cons("Function")}
     {Variable "and"}+                                 -> VariableList        {cons("VariableList")}
     Variable                                          -> Value               
     Selector                                          -> Value               
