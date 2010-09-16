@@ -30,11 +30,11 @@ exports
 
   lexical syntax
     %% Lexical insertion recovery rules                                
-    "\""                                           -> INSERTOPENQUOTE3 {recover}
-    INSERTOPENQUOTE3 StringChar* "\n"              -> STRING           {cons("INSERTEND")}
-    INSERTOPENQUOTE3 StringChar* WATEREOF          -> STRING           {cons("INSERTEND")}
-    "/*"                                           -> INSERTSTART4     {recover}
-    INSERTSTART4 ( ~[\*] | CommentChar )* WATEREOF -> LAYOUT           {cons("INSERTEND")}
+    "\""                                           -> INSERTOPENQUOTE1 {recover}
+    INSERTOPENQUOTE1 StringChar* "\n"              -> STRING           {cons("INSERTEND")}
+    INSERTOPENQUOTE1 StringChar* WATEREOF          -> STRING           {cons("INSERTEND")}
+    "/*"                                           -> INSERTSTART2     {recover}
+    INSERTSTART2 ( ~[\*] | CommentChar )* WATEREOF -> LAYOUT           {cons("INSERTEND")}
                                                    -> "pipe"           {recover, cons("INSERTION")}
                                                    -> "native"         {recover, cons("INSERTION")}
                                                    -> "load"           {recover, cons("INSERTION")}
@@ -93,37 +93,38 @@ exports
     Start
 
   context-free syntax
-    Declaration*                                -> Start               {cons("Start")}
-    "pipe" ID Input Arguments Statement* Output -> Declaration         {cons("Pipe")}
-    "native" ID Input Arguments Output          -> Declaration         {cons("Native")}
-    "load" ID                                   -> Load                {cons("Load")}
-                                                -> Input               {cons("NoInput")}
-    "input"                                     -> Input               {cons("ImplicitInput")}
-    "inputs" VariableList                       -> Input               {cons("ExplicitInput")}
-                                                -> Arguments           {cons("NoArguments")}
-    "arguments" VariableList                    -> Arguments           {cons("Arguments")}
-                                                -> Output              {cons("NoOutput")}
-    "output" VariableList?                      -> Output              {cons("Output")}
-    Variable "is"                               -> Assignment          {cons("Assignment")}
-    "with" FunctionArgument+                    -> FunctionArguments   {cons("FunctionArguments")}
-    ID "is" Value                               -> FunctionArgument    {cons("FunctionArgument")}
-    "apply" ID ApplicationTarget?               -> FunctionApplication {cons("FunctionApplication")}
-    "extract" ID                                -> FunctionApplication {cons("FunctionExtraction")}
-    "to" VariableList                           -> ApplicationTarget   {cons("ApplicationTarget")}
-    FunctionArguments? FunctionApplication      -> LambdaFunction      {cons("LambdaFunction")}
-    Assignment? LambdaFunction                  -> Function            {cons("Function")}
-    {Variable "and"}+                           -> VariableList        {cons("VariableList")}
-    Variable                                    -> Value               
-    Selector                                    -> Value               
-    LambdaFunction                              -> Value               
-    All                                         -> Value               
-    String                                      -> Value               
-    Integer                                     -> Value               
-    Function                                    -> Statement           
-    Load                                        -> Statement           
-    "all"                                       -> All                 {cons("All")}
-    STRING                                      -> String              {cons("String")}
-    INT                                         -> Integer             {cons("Integer")}
-    "[" Selection "]"                           -> Selector            {cons("Selector")}
-    {ID "/"}+                                   -> Selection           {cons("Selection")}
-    "$" ID                                      -> Variable            {cons("Variable")}
+    Declaration*                                      -> Start               {cons("Start")}
+    "pipe" PipeName Input Arguments Statement* Output -> Declaration         {cons("Pipe")}
+    "native" PipeName Input Arguments Output          -> Declaration         {cons("Native")}
+    ID                                                -> PipeName            {cons("PipeName")}
+    "load" ID                                         -> Load                {cons("Load")}
+                                                      -> Input               {cons("NoInput")}
+    "input"                                           -> Input               {cons("ImplicitInput")}
+    "inputs" VariableList                             -> Input               {cons("ExplicitInput")}
+                                                      -> Arguments           {cons("NoArguments")}
+    "arguments" VariableList                          -> Arguments           {cons("Arguments")}
+                                                      -> Output              {cons("NoOutput")}
+    "output" VariableList?                            -> Output              {cons("Output")}
+    Variable "is"                                     -> Assignment          {cons("Assignment")}
+    "with" FunctionArgument+                          -> FunctionArguments   {cons("FunctionArguments")}
+    ID "is" Value                                     -> FunctionArgument    {cons("FunctionArgument")}
+    "apply" PipeName ApplicationTarget?               -> FunctionApplication {cons("FunctionApplication")}
+    "extract" ID                                      -> FunctionApplication {cons("FunctionExtraction")}
+    "to" VariableList                                 -> ApplicationTarget   {cons("ApplicationTarget")}
+    FunctionArguments? FunctionApplication            -> LambdaFunction      {cons("LambdaFunction")}
+    Assignment? LambdaFunction                        -> Function            {cons("Function")}
+    {Variable "and"}+                                 -> VariableList        {cons("VariableList")}
+    Variable                                          -> Value               
+    Selector                                          -> Value               
+    LambdaFunction                                    -> Value               
+    All                                               -> Value               
+    String                                            -> Value               
+    Integer                                           -> Value               
+    Function                                          -> Statement           
+    Load                                              -> Statement           
+    "all"                                             -> All                 {cons("All")}
+    STRING                                            -> String              {cons("String")}
+    INT                                               -> Integer             {cons("Integer")}
+    "[" Selection "]"                                 -> Selector            {cons("Selector")}
+    {ID "/"}+                                         -> Selection           {cons("Selection")}
+    "$" ID                                            -> Variable            {cons("Variable")}

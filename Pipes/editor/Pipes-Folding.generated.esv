@@ -29,8 +29,8 @@ folding Default folding definitions
   Selector.Selector
   Selection.Selection
   FunctionApplication.FunctionApplication
-  OptApplicationTarget1
+  OptApplicationTarget0
   ApplicationTarget.ApplicationTarget
   Output.Output
-  OptVariableList1
+  OptVariableList0
   Declaration.Native

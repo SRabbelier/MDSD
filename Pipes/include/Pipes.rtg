@@ -20,8 +20,8 @@ regular tree grammar
     OptAssignment0              -> <none>()
     OptFunctionArguments0       -> <some>(FunctionArguments)
     OptFunctionArguments0       -> <none>()
-    OptApplicationTarget1       -> <some>(ApplicationTarget)
-    OptApplicationTarget1       -> <none>()
+    OptApplicationTarget0       -> <some>(ApplicationTarget)
+    OptApplicationTarget0       -> <none>()
     ListStarOfFunctionArgument0 -> ListPlusOfFunctionArgument0
     ListStarOfFunctionArgument0 -> <nil>()
     ListStarOfFunctionArgument0 -> <conc>(ListStarOfFunctionArgument0,ListStarOfFunctionArgument0)
@@ -29,8 +29,8 @@ regular tree grammar
     ListPlusOfFunctionArgument0 -> <conc>(ListPlusOfFunctionArgument0,ListStarOfFunctionArgument0)
     ListPlusOfFunctionArgument0 -> <conc>(ListPlusOfFunctionArgument0,ListPlusOfFunctionArgument0)
     ListPlusOfFunctionArgument0 -> <cons>(FunctionArgument,ListStarOfFunctionArgument0)
-    OptVariableList1            -> <some>(VariableList)
-    OptVariableList1            -> <none>()
+    OptVariableList0            -> <some>(VariableList)
+    OptVariableList0            -> <none>()
     ListStarOfStatement0        -> ListPlusOfStatement0
     ListStarOfStatement0        -> <nil>()
     ListStarOfStatement0        -> <conc>(ListStarOfStatement0,ListStarOfStatement0)
@@ -45,9 +45,9 @@ regular tree grammar
     ListPlusOfDeclaration0      -> <conc>(ListPlusOfDeclaration0,ListStarOfDeclaration0)
     ListPlusOfDeclaration0      -> <conc>(ListPlusOfDeclaration0,ListPlusOfDeclaration0)
     ListPlusOfDeclaration0      -> <cons>(Declaration,ListStarOfDeclaration0)
-    ListStarOfStringChar1       -> <string>
-    ListPlusOfStringChar1       -> <string>
-    OptLit1                     -> <string>
+    ListStarOfStringChar0       -> <string>
+    ListPlusOfStringChar0       -> <string>
+    OptLit0                     -> <string>
     Variable                    -> Variable(ID)
     Selection                   -> Selection(ListPlusOfID0)
     Selector                    -> Selector(Selection)
@@ -67,11 +67,11 @@ regular tree grammar
     LambdaFunction              -> LambdaFunction(OptFunctionArguments0,FunctionApplication)
     ApplicationTarget           -> ApplicationTarget(VariableList)
     FunctionApplication         -> FunctionExtraction(ID)
-    FunctionApplication         -> FunctionApplication(ID,OptApplicationTarget1)
+    FunctionApplication         -> FunctionApplication(PipeName,OptApplicationTarget0)
     FunctionArgument            -> FunctionArgument(ID,Value)
     FunctionArguments           -> FunctionArguments(ListPlusOfFunctionArgument0)
     Assignment                  -> Assignment(Variable)
-    Output                      -> Output(OptVariableList1)
+    Output                      -> Output(OptVariableList0)
     Output                      -> NoOutput()
     Arguments                   -> Arguments(VariableList)
     Arguments                   -> NoArguments()
@@ -79,8 +79,9 @@ regular tree grammar
     Input                       -> ImplicitInput()
     Input                       -> NoInput()
     Load                        -> Load(ID)
-    Declaration                 -> Native(ID,Input,Arguments,Output)
-    Declaration                 -> Pipe(ID,Input,Arguments,ListStarOfStatement0,Output)
+    PipeName                    -> PipeName(ID)
+    Declaration                 -> Native(PipeName,Input,Arguments,Output)
+    Declaration                 -> Pipe(PipeName,Input,Arguments,ListStarOfStatement0,Output)
     Start                       -> Start(ListStarOfDeclaration0)
     EOF                         -> <string>
     CommentChar                 -> <string>

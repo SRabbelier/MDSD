@@ -1,65 +1,69 @@
 pipe get_flickr
 
-input
-arguments $count
-
-with
-    find is $count
-    images is [item]
-apply flickr
-
-output
-
-pipe main
-
-load utils
-
-with url is "" extract feed
-
-apply analyse_content
-
-with
-    on is [item]
-    assign is [item]
-    trans is with count is 5 apply get_flickr
-    emit is all
-apply loop
+	input
+	arguments $count
+	
+	with
+	    find is $count
+	    images is [item]
+	apply flickr
 
 output
 
 pipe main
 
-with url is "example.com/feed" extract feed
+	load utils
+	
+	with url is "" extract feed
+	
+	apply analyse_content
+	
+	with
+	    //on is [item]
+	    on_fail is [item]
+	    on_failing is "meh"
+	    assign is [item]
+	    trans is with count is 66 apply get_flickr
+	    emit is all
+	apply loop
 
-apply analyse_content
+output
 
-with
-    on is [item]
-    assign is [item]
-    trans is with 
-        find is 5
-        images is [item]
-        apply flickr
-    emit is all
-apply loop
+pipe main
+
+	with url is "example.com/feed" extract feed
+	
+	apply analyse_content
+	
+	with
+	    on is [item]
+	    assign is [item]
+	    trans is with 
+	        find is 5
+	        images is [item]
+	        apply flickr
+	    emit is all
+	apply oops
 
 output
 
 pipe multi
 
-$feed1 is with url is "example.com/feed1" extract feed
-$feed2 is with url is "example.com/feed2" extract feed
-
-$feed3 is apply reverse to $feed1
-
-$union is apply union to $feed2 and $feed3
+	$feed1 is with url is "example.com/feed1" extract feed
+	$feed2 is with url is "example.com/feed2" extract feed
+	
+	$feed3 is apply reverse to $feed1
+	
+	$union is apply union to $feed2 and $feed3
 
 output $union
 
 
-native loop
-
-inputs $stream
-arguments $on and $assign and $emit and $trans
-
+native loop arguments $on and $assign and $trans and $emit
+native union
+native reverse
+native analyse_content
+native flickr
+	inputs $stream
+	arguments $find and $images
 output $stream

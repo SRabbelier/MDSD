@@ -16,25 +16,25 @@ rules
 
   // Records the definition of an entity in a dynamic rule GetEntity.
   record-entity:
-    Pipe(x, _, _, _, _) -> <id>
+    p@Pipe(PipeName(x), _, _, _, _) -> p
     with
       // For a name 'x', GetPipe will return the original 'x' tree node
       rules(
-        GetPipe :+ x -> <id>
+        GetPipe :+ x -> p
       )
   record-entity:
-    Native(x, _, _, _) -> <id>
+    n@Native(PipeName(x), _, _, _) -> n
     with
       rules(
-    	GetPipe :+ x -> <id>
+    	GetPipe :+ x -> n
       )
 	
 	
 rules
       
   get-name:
-  	FunctionApplication(p, t) -> p
-  
+  	FunctionApplication(PipeName(p), _) -> p
+  	  
   get-args:
   	LambdaFunction(None(), _) -> []  
   	
@@ -54,37 +54,67 @@ rules
   	Native(_, _, Arguments(VariableList(a)), _) -> a
 	  
 
+  checkParam(|target):
+  	[[Variable(param)|rest], args] -> errors
+  	where errs :=  <checkParam(|target)>[rest, args] 
+  	where (<fetch-elem(?FunctionArgument(param,_))> args) < errors:=<id>errs + errors:=<missingParam(|errs, target)>param
   
-  intersect:
-  	[[a|a'], [b|b']] -> <id>	
-  	where <intersect>[a', b']
-  	  when a.ID = b.Id
+  checkParam(|target):
+  	[[], _] -> []	
+
+  missingParam(|errors, target):
+  	x -> [(target, $[Missing argument '[x]']), errors]
+  
+  checkArgs:
+  	[param, [f@FunctionArgument(x,_)|rest]] -> errors
+  	where errs := <checkArgs>[param, rest]
+  	where (<fetch-elem(?Variable(x))> param) <  errors:=<id>errs + errors:=<invArg(|errs)>f
+
+  checkArgs:
+  	[_, []] -> []
+
+  invArg(|errors):
+  	f@FunctionArgument(x,_) -> [(f, $[Invalid argument '[x]']), errors]
+
+
+  is-empty:
+  	[] -> <id>
+  is-empty:
+  	[_] -> <fail>
   	
   // Reports an error if a property type is undefined.
   // This error is reported on the type name 'type'.
   constraint-error:
-    FunctionApplication(p, t) -> (p, $[Pipe [p] is not defined])
+    FunctionApplication(PipeName(p), t) -> (p, $[Pipe '[p]' is not defined])
     where
       not(<GetPipe> p) // no entity for this type
   
   constraint-error:
-  	FunctionApplication(pname, t) -> (p, $[Pipe [p] is not defined])
-    where
-      p := <GetPipe> pname // no entity for this type
-//      <argument-constraint-error|p>t
-
-  	
+  	LambdaFunction(Some(FunctionArguments(args)), app) -> [errors, errors2]
+    where p := <get-name>app
+    where pargs := <get-args><GetPipe> p 
+	  // Check that all arguments are expected parameters
+    where errors := <checkArgs>[pargs, args]
+	  // Check that all required arguments are provided
+    where errors2 := <checkParam(|app)>[pargs, args]
+    
   constraint-error:
-  	LambdaFunction(arg, app) -> (p, $[Pipe [p] is not defined])
-    where  p := <get-name>app
-      ; pipe := <GetPipe> p 
-      ; <intersect>[pipe, arg]
+	  // Check that all required arguments are provided
+  	f@LambdaFunction(None(), app) -> errors
+    where p := <get-name>app
+    where pargs := <get-args><GetPipe> p 
+    where errors := <checkParam(|app)>[pargs, []]
   	
   // Reports an error if an entity is defined more than once.
   // This constraint is implemented by testing if the "bag" of
   // all entities x is not a singleton list.
   constraint-error:
-    Entity(x, _) -> (x, $[Duplicate entity name])
+    Pipe(PipeName(x), _, _, _, _) -> (x, $[Duplicate pipe name '[x]'])
+    where
+      not(<bagof-GetPipe> x => [_])
+
+  constraint-error:
+    Native(PipeName(x), _, _, _) -> (x, $[Duplicate pipe name '[x]'])
     where
       not(<bagof-GetPipe> x => [_])
   

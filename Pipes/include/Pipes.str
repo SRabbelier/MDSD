@@ -21,7 +21,7 @@ signature
     LambdaFunction      : Option(FunctionArguments) * FunctionApplication -> LambdaFunction
     ApplicationTarget   : VariableList -> ApplicationTarget
     FunctionExtraction  : ID -> FunctionApplication
-    FunctionApplication : ID * Option(ApplicationTarget) -> FunctionApplication
+    FunctionApplication : PipeName * Option(ApplicationTarget) -> FunctionApplication
     FunctionArgument    : ID * Value -> FunctionArgument
     FunctionArguments   : List(FunctionArgument) -> FunctionArguments
     Assignment          : Variable -> Assignment
@@ -33,8 +33,9 @@ signature
     ImplicitInput       : Input
     NoInput             : Input
     Load                : ID -> Load
-    Native              : ID * Input * Arguments * Output -> Declaration
-    Pipe                : ID * Input * Arguments * List(Statement) * Output -> Declaration
+    PipeName            : ID -> PipeName
+    Native              : PipeName * Input * Arguments * Output -> Declaration
+    Pipe                : PipeName * Input * Arguments * List(Statement) * Output -> Declaration
     Start               : List(Declaration) -> Start
                         : String -> STRING
                         : String -> INT

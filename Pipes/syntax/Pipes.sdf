@@ -13,8 +13,10 @@ exports
   
     Declaration*                                    -> Start {cons("Start")}
     
-    "pipe" ID Input Arguments Statement* Output     -> Declaration {cons("Pipe")}
-    "native" ID Input Arguments Output              -> Declaration {cons("Native")}
+    "pipe" PipeName Input Arguments Statement* Output     -> Declaration {cons("Pipe")}
+    "native" PipeName Input Arguments Output              -> Declaration {cons("Native")}
+    
+    ID												-> PipeName {cons("PipeName")}
 
     "load" ID                                       -> Load {cons("Load")}
 
@@ -33,7 +35,7 @@ exports
     "with" FunctionArgument+                        -> FunctionArguments {cons("FunctionArguments")}
     ID "is" Value                                   -> FunctionArgument {cons("FunctionArgument")}
 
-    "apply" ID ApplicationTarget?                   -> FunctionApplication {cons("FunctionApplication")}
+    "apply" PipeName ApplicationTarget?             -> FunctionApplication {cons("FunctionApplication")}
     "extract" ID                                    -> FunctionApplication {cons("FunctionExtraction")}
 
     "to" VariableList								-> ApplicationTarget {cons("ApplicationTarget")}
