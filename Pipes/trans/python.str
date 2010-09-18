@@ -26,8 +26,6 @@ rules
   to-value-args : Arguments(VariableList(vars)) -> result
   with result := <map(extract-keyword-args)>vars
 
-  to-output-args : NoOutput() -> python|[return None;]|
-
   to-output-args : ImplicitOutput() -> python|[return stream;]|
 
   to-output-args : ExplicitOutput(VariableList(vars)) -> result

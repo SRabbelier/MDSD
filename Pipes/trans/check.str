@@ -118,8 +118,10 @@ rules
   constraint-warning:
     Pipe(PipeName(x), _, _, _, _) -> (x, $[Shadowing native pipe])
     where
-      (<bagof-GetNative> x => [_])
+      (<GetNative> x)
   
   constraint-note:
-    Module(x @ "example", _) -> (x, $[This is just an example program in the "entities" language
-                                      (this note is defined in trans/check.str) ])
+    Pipe(x@PipeName("Tim"), _, _, _, _) -> (x, $[You are an incredible machine.])
+
+  constraint-note:
+    Pipe(x@PipeName("Sverre"), _, _, _, _) -> (x, $[You are a CLI addict])

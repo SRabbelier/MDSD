@@ -11,7 +11,6 @@
    ExplicitInput             -- KW["inputs"] _1,
    NoArguments               -- ,
    Arguments                 -- KW["arguments"] _1,
-   NoOutput                  -- KW["sink"],
    ImplicitOutput            -- KW["output"],
    ExplicitOutput            -- KW["outputs"] _1,
    StreamAssignment          -- _1 KW["becomes"],

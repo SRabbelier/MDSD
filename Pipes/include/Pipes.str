@@ -28,7 +28,6 @@ signature
     StreamAssignment    : Variable -> StreamAssignment
     ExplicitOutput      : VariableList -> Output
     ImplicitOutput      : Output
-    NoOutput            : Output
     Arguments           : VariableList -> Arguments
     NoArguments         : Arguments
     ExplicitInput       : VariableList -> Input

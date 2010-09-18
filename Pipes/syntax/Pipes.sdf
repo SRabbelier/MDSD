@@ -27,7 +27,6 @@ exports
     % epsilon %                                     -> Arguments {cons("NoArguments")}
     "arguments" VariableList                        -> Arguments {cons("Arguments")}
 
-    "sink"                                          -> Output {cons("NoOutput")}
     "output"                          				-> Output {cons("ImplicitOutput")}
     "outputs" VariableList							-> Output {cons("ExplicitOutput")}
 

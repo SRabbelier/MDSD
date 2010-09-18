@@ -1,3 +1,16 @@
+pipe Tim
+output
+
+pipe Sverre
+output
+
+pipe outputs_without_stream
+outputs $stream
+
+pipe applied_to_un_init_stream
+	$stream becomes no_args applied to $stream.
+output
+
 pipe duplicate_name
 
 	load utils.
@@ -31,18 +44,23 @@ pipe shadow
 	feed, using "url" as url, extracted.
 output
 
-pipe sink_assigned_to_stream
-	kitchen applied.
+pipe duplicate_native
 output
 
 native loop arguments $on and $assign and $trans and $emit
 output
 
+native no_args
+output
+
 native shadow
 output
 
-native kitchen
-sink
+native duplicate_native
+output
+
+native duplicate_native
+output
 
 native feed
 	arguments $url
