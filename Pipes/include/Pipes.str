@@ -20,12 +20,11 @@ signature
     FunctionApplication : Option(StreamAssignment) * LambdaFunction * FunctionType -> FunctionApplication
     LambdaFunction      : PipeName * Option(FunctionArguments) -> LambdaFunction
     ApplicationTarget   : VariableList -> ApplicationTarget
-    ExtractName         : ID -> ExtractName
-    ExtractFunction     : ExtractName -> FunctionType
+    ExtractFunction     : FunctionType
     ApplyFunction       : Option(ApplicationTarget) -> FunctionType
     FunctionArgument    : Value * ID -> FunctionArgument
     FunctionArguments   : List(FunctionArgument) -> FunctionArguments
-    Assignment          : Variable -> StreamAssignment
+    StreamAssignment    : Variable -> StreamAssignment
     ExplicitOutput      : VariableList -> Output
     ImplicitOutput      : Output
     NoOutput            : Output

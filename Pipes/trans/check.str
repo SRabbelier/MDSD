@@ -36,10 +36,10 @@ rules
 rules
       
   get-args:
-  	LambdaFunction(_, None(), _) -> []  
+  	LambdaFunction(_, None()) -> []  
   	
   get-args:
-  	LambdaFunction(_, FunctionArguments(t), _) -> t
+  	LambdaFunction(_, FunctionArguments(t)) -> t
 
   get-args:
   	Pipe(_, _, NoArguments(), _, _) -> []
@@ -85,12 +85,12 @@ rules
   // Reports an error if a property type is undefined.
   // This error is reported on the type name 'type'.
   constraint-error:
-    LambdaFunction(p@PipeName(name), _, _) -> (p, $[Pipe '[name]' is not defined])
+    LambdaFunction(p@PipeName(name), _) -> (p, $[Pipe '[name]' is not defined])
     where
       not(<GetPipe> name) // no entity for this type
   
   constraint-error:
-  	LambdaFunction(PipeName(name), Some(FunctionArguments(args)), _) -> <concat>[errors, errors2]
+  	LambdaFunction(PipeName(name), Some(FunctionArguments(args))) -> <concat>[errors, errors2]
     where pargs := <get-args><GetPipe> name 
 	  // Check that all arguments are expected parameters
     where errors := <checkArgs>[pargs, args]
@@ -98,9 +98,9 @@ rules
     
   constraint-error:
 	  // Check that all required arguments are provided
-  	f@LambdaFunction(PipeName(name), None(), app) -> errors
+  	f@LambdaFunction(PipeName(name), None()) -> errors
     where pargs := <get-args><GetPipe>name
-    where errors := <checkParam(|app)>[pargs, []]
+    where errors := <checkParam(|name)>[pargs, []]
   	
   // Reports an error if an entity is defined more than once.
   // This constraint is implemented by testing if the "bag" of

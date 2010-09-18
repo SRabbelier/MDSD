@@ -30,11 +30,11 @@ exports
 
   lexical syntax
     %% Lexical insertion recovery rules                                  
-    "\""                                            -> INSERTOPENQUOTE10 {recover}
-    INSERTOPENQUOTE10 StringChar* "\n"              -> STRING            {cons("INSERTEND")}
-    INSERTOPENQUOTE10 StringChar* WATEREOF          -> STRING            {cons("INSERTEND")}
-    "/*"                                            -> INSERTSTART10     {recover}
-    INSERTSTART10 ( ~[\*] | CommentChar )* WATEREOF -> LAYOUT            {cons("INSERTEND")}
+    "\""                                            -> INSERTOPENQUOTE15 {recover}
+    INSERTOPENQUOTE15 StringChar* "\n"              -> STRING            {cons("INSERTEND")}
+    INSERTOPENQUOTE15 StringChar* WATEREOF          -> STRING            {cons("INSERTEND")}
+    "/*"                                            -> INSERTSTART15     {recover}
+    INSERTSTART15 ( ~[\*] | CommentChar )* WATEREOF -> LAYOUT            {cons("INSERTEND")}
                                                     -> "pipe"            {recover, cons("INSERTION")}
                                                     -> "native"          {recover, cons("INSERTION")}
                                                     -> "load"            {recover, cons("INSERTION")}
@@ -42,8 +42,7 @@ exports
                                                     -> "arguments"       {recover, cons("INSERTION")}
                                                     -> "outputs"         {recover, cons("INSERTION")}
                                                     -> ","               {recover, cons("INSERTION")}
-                                                    -> "apply"           {recover, cons("INSERTION")}
-                                                    -> "extract"         {recover, cons("INSERTION")}
+                                                    -> "applied"         {recover, cons("INSERTION")}
                                                     -> "to"              {recover, cons("INSERTION")}
                                                     -> "and"             {recover, cons("INSERTION")}
                                                     -> "]"               {recover, cons("INSERTION")}
@@ -107,12 +106,12 @@ exports
                                                       -> Output              {cons("NoOutput")}
     "output"                                          -> Output              {cons("ImplicitOutput")}
     "outputs" VariableList                            -> Output              {cons("ExplicitOutput")}
-    Variable "becomes"                                -> StreamAssignment    {cons("Assignment")}
+    Variable "becomes"                                -> StreamAssignment    {cons("StreamAssignment")}
     Variable "is"                                     -> Assignment          {cons("Assignment")}
     "," "using" FunctionArgument+ ","                 -> FunctionArguments   {cons("FunctionArguments")}
     Value "as" ID                                     -> FunctionArgument    {cons("FunctionArgument")}
-    "apply" ApplicationTarget?                        -> FunctionType        {cons("ApplyFunction")}
-    "extract" ExtractName                             -> FunctionType        {cons("ExtractFunction")}
+    "applied" ApplicationTarget?                      -> FunctionType        {cons("ApplyFunction")}
+    "extracted"                                       -> FunctionType        {cons("ExtractFunction")}
     ID                                                -> ExtractName         {cons("ExtractName")}
     "to" VariableList                                 -> ApplicationTarget   {cons("ApplicationTarget")}
     PipeName FunctionArguments?                       -> LambdaFunction      {cons("LambdaFunction")}

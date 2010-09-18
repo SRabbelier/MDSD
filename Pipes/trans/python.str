@@ -77,11 +77,8 @@ rules
 
   stream-name : Some(StreamAssignment(Variable(name))) -> name
 
-  function-name : LambdaFunction(PipeName(name), _, ApplyFunction(_)) -> result
-  with result := <concat-strings>["lambda: apply_", name]
-
-  function-name : LambdaFunction(PipeName(name), _, ExtractFunction()) -> result
-  with result := <concat-strings>["lambda: extract_", name]
+  function-name : LambdaFunction(PipeName(name), _) -> result
+  with result := <concat-strings>["lambda: func_", name]
 
   extract-function-streams : ApplyFunction(None()) -> ["stream"]
 
@@ -99,14 +96,14 @@ rules
   extract-function-args : Some(FunctionArguments(args)) -> result
   with result := <map(extract-function-arg)>args
 
-  function-args : LambdaFunction(_, args, app) -> result
+  function-args(|app) : LambdaFunction(_, args) -> result
   with function_streams := <extract-function-streams>app
   with function_args := <extract-function-args>args
   with result := <concat>[function_streams, function_args]
 
-  to-python : LambdaFunction(name, args, app) -> result
-  with x_funcname := <function-name><id>
-  with pe0* := <function-args>
+  lambda-to-python(|app) : LambdaFunction(name, args) -> result
+  with x_funcname := <function-name>
+  with pe0* := <function-args(|app)>
   with result := py-exp|[
 	ident(x_funcname(pe0*))
   ]|
@@ -116,8 +113,7 @@ rules
 	logging.debug(x_streamname);
   ]|
   with x_streamname := <stream-name>assignment
-  with e := <to-python>func
-  // TODO fun times
+  with e := <lambda-to-python(|appl)>func
 
   to-python :
 	Pipe(name, input, arguments, statements, output) -> python*|[

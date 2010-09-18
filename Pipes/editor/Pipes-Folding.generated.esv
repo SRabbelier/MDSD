@@ -25,11 +25,12 @@ folding Default folding definitions
   Input.ExplicitInput
   VariableList.VariableList
   Arguments.Arguments
+  FunctionApplication.FunctionApplication
   Selector
   Selector.Selector
   Selection.Selection
-  FunctionApplication.FunctionApplication
-  OptApplicationTarget2
+  FunctionType.ApplyFunction
+  OptApplicationTarget4
   ApplicationTarget.ApplicationTarget
   Output.ExplicitOutput
   Declaration.Native

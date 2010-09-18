@@ -12,10 +12,10 @@ filter, using
 , applied 
 
 loop, using
-   [description] as on
-   [image/url] as assign
-   search_pattern 
-   		using "src=\"([^\"]+)\"" as pattern, as trans 
+	[description] as on
+	[image/url] as assign
+	search_pattern, using "src=\"([^\"]+)\"" as pattern
+	, as trans 
 , applied
 
 native feed
