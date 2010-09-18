@@ -30,7 +30,7 @@ folding Default folding definitions
   Selector.Selector
   Selection.Selection
   FunctionType.ApplyFunction
-  OptApplicationTarget4
+  OptApplicationTarget7
   ApplicationTarget.ApplicationTarget
   Output.ExplicitOutput
   Declaration.Native

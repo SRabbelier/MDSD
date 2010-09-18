@@ -30,11 +30,11 @@ exports
 
   lexical syntax
     %% Lexical insertion recovery rules                                  
-    "\""                                            -> INSERTOPENQUOTE15 {recover}
-    INSERTOPENQUOTE15 StringChar* "\n"              -> STRING            {cons("INSERTEND")}
-    INSERTOPENQUOTE15 StringChar* WATEREOF          -> STRING            {cons("INSERTEND")}
-    "/*"                                            -> INSERTSTART15     {recover}
-    INSERTSTART15 ( ~[\*] | CommentChar )* WATEREOF -> LAYOUT            {cons("INSERTEND")}
+    "\""                                            -> INSERTOPENQUOTE17 {recover}
+    INSERTOPENQUOTE17 StringChar* "\n"              -> STRING            {cons("INSERTEND")}
+    INSERTOPENQUOTE17 StringChar* WATEREOF          -> STRING            {cons("INSERTEND")}
+    "/*"                                            -> INSERTSTART17     {recover}
+    INSERTSTART17 ( ~[\*] | CommentChar )* WATEREOF -> LAYOUT            {cons("INSERTEND")}
                                                     -> "pipe"            {recover, cons("INSERTION")}
                                                     -> "native"          {recover, cons("INSERTION")}
                                                     -> "load"            {recover, cons("INSERTION")}
@@ -103,7 +103,7 @@ exports
     "inputs" VariableList                             -> Input               {cons("ExplicitInput")}
                                                       -> Arguments           {cons("NoArguments")}
     "arguments" VariableList                          -> Arguments           {cons("Arguments")}
-                                                      -> Output              {cons("NoOutput")}
+    "sink"                                            -> Output              {cons("NoOutput")}
     "output"                                          -> Output              {cons("ImplicitOutput")}
     "outputs" VariableList                            -> Output              {cons("ExplicitOutput")}
     Variable "becomes"                                -> StreamAssignment    {cons("StreamAssignment")}
@@ -117,14 +117,15 @@ exports
     PipeName FunctionArguments?                       -> LambdaFunction      {cons("LambdaFunction")}
     StreamAssignment? LambdaFunction FunctionType     -> FunctionApplication {cons("FunctionApplication")}
     {Variable "and"}+                                 -> VariableList        {cons("VariableList")}
+    StatementYay "."                                  -> Statement           {cons("Statement")}
     Variable                                          -> Value               
     Selector                                          -> Value               
     LambdaFunction                                    -> Value               
     All                                               -> Value               
     String                                            -> Value               
     Integer                                           -> Value               
-    FunctionApplication                               -> Statement           
-    Load                                              -> Statement           
+    FunctionApplication                               -> StatementYay        
+    Load                                              -> StatementYay        
     "all"                                             -> All                 {cons("All")}
     STRING                                            -> String              {cons("String")}
     INT                                               -> Integer             {cons("Integer")}

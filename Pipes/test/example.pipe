@@ -3,10 +3,10 @@ pipe get_flickr
 	input
 	arguments $count
 	
-	with
-	    find is $count
-	    images is [item]
-	apply flickr
+	flickr, using
+	    $count as find 
+	    [item] as images
+	, applied
 
 output
 
@@ -14,9 +14,9 @@ pipe main
 
 	load utils
 	
-	with url is "" extract feed
+	feed, with "" as url , extracted
 	
-	apply analyse_content
+	analyse_content appied
 	
 	with
 	    //on is [item]

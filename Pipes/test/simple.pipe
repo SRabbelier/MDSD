@@ -1,29 +1,37 @@
 pipe main
+	
+	load utils.
+	
+	feed, using
+	 "http://www.xkcd.com/rss.xml" as url
+	, extracted.
+	
+	filter, using
+	    [title] as on
+	    "the" as query
+	, applied.
+	
+	loop, using
+		[description] as on
+		[image/url] as assign
+		search_pattern, using "src=\"([^\"]+)\"" as pattern
+		, as trans 
+	, applied.
 
-load utils
-
-feed, using
- "http://www.xkcd.com/rss.xml" as url
-, extracted
-
-filter, using
-    [title] as on
-    "the" as query
-, applied 
-
-loop, using
-	[description] as on
-	[image/url] as assign
-	search_pattern, using "src=\"([^\"]+)\"" as pattern
-	, as trans 
-, applied
+output
 
 native feed
 	arguments $url
+sink
+
 native filter
 	arguments $on and $query
+sink
+
 native loop
 	arguments $on and $assign and $trans
+sink
+
 native search_pattern
 	arguments $pattern
-output
+sink

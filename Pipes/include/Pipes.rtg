@@ -2,73 +2,74 @@
 regular tree grammar
   start Start
   productions
-    ListStarOfID1               -> ListPlusOfID1
-    ListStarOfID1               -> <nil>()
-    ListStarOfID1               -> <conc>(ListStarOfID1,ListStarOfID1)
-    ListPlusOfID1               -> <conc>(ListStarOfID1,ListPlusOfID1)
-    ListPlusOfID1               -> <conc>(ListPlusOfID1,ListStarOfID1)
-    ListPlusOfID1               -> <conc>(ListPlusOfID1,ListPlusOfID1)
-    ListPlusOfID1               -> <cons>(ID,ListStarOfID1)
-    ListStarOfVariable1         -> ListPlusOfVariable1
-    ListStarOfVariable1         -> <nil>()
-    ListStarOfVariable1         -> <conc>(ListStarOfVariable1,ListStarOfVariable1)
-    ListPlusOfVariable1         -> <conc>(ListStarOfVariable1,ListPlusOfVariable1)
-    ListPlusOfVariable1         -> <conc>(ListPlusOfVariable1,ListStarOfVariable1)
-    ListPlusOfVariable1         -> <conc>(ListPlusOfVariable1,ListPlusOfVariable1)
-    ListPlusOfVariable1         -> <cons>(Variable,ListStarOfVariable1)
-    OptStreamAssignment1        -> <some>(StreamAssignment)
-    OptStreamAssignment1        -> <none>()
-    OptFunctionArguments1       -> <some>(FunctionArguments)
-    OptFunctionArguments1       -> <none>()
-    OptApplicationTarget4       -> <some>(ApplicationTarget)
-    OptApplicationTarget4       -> <none>()
-    ListStarOfFunctionArgument1 -> ListPlusOfFunctionArgument1
-    ListStarOfFunctionArgument1 -> <nil>()
-    ListStarOfFunctionArgument1 -> <conc>(ListStarOfFunctionArgument1,ListStarOfFunctionArgument1)
-    ListPlusOfFunctionArgument1 -> <conc>(ListStarOfFunctionArgument1,ListPlusOfFunctionArgument1)
-    ListPlusOfFunctionArgument1 -> <conc>(ListPlusOfFunctionArgument1,ListStarOfFunctionArgument1)
-    ListPlusOfFunctionArgument1 -> <conc>(ListPlusOfFunctionArgument1,ListPlusOfFunctionArgument1)
-    ListPlusOfFunctionArgument1 -> <cons>(FunctionArgument,ListStarOfFunctionArgument1)
-    ListStarOfStatement1        -> ListPlusOfStatement1
-    ListStarOfStatement1        -> <nil>()
-    ListStarOfStatement1        -> <conc>(ListStarOfStatement1,ListStarOfStatement1)
-    ListPlusOfStatement1        -> <conc>(ListStarOfStatement1,ListPlusOfStatement1)
-    ListPlusOfStatement1        -> <conc>(ListPlusOfStatement1,ListStarOfStatement1)
-    ListPlusOfStatement1        -> <conc>(ListPlusOfStatement1,ListPlusOfStatement1)
-    ListPlusOfStatement1        -> <cons>(Statement,ListStarOfStatement1)
-    ListStarOfDeclaration1      -> ListPlusOfDeclaration1
-    ListStarOfDeclaration1      -> <nil>()
-    ListStarOfDeclaration1      -> <conc>(ListStarOfDeclaration1,ListStarOfDeclaration1)
-    ListPlusOfDeclaration1      -> <conc>(ListStarOfDeclaration1,ListPlusOfDeclaration1)
-    ListPlusOfDeclaration1      -> <conc>(ListPlusOfDeclaration1,ListStarOfDeclaration1)
-    ListPlusOfDeclaration1      -> <conc>(ListPlusOfDeclaration1,ListPlusOfDeclaration1)
-    ListPlusOfDeclaration1      -> <cons>(Declaration,ListStarOfDeclaration1)
+    ListStarOfID0               -> ListPlusOfID0
+    ListStarOfID0               -> <nil>()
+    ListStarOfID0               -> <conc>(ListStarOfID0,ListStarOfID0)
+    ListPlusOfID0               -> <conc>(ListStarOfID0,ListPlusOfID0)
+    ListPlusOfID0               -> <conc>(ListPlusOfID0,ListStarOfID0)
+    ListPlusOfID0               -> <conc>(ListPlusOfID0,ListPlusOfID0)
+    ListPlusOfID0               -> <cons>(ID,ListStarOfID0)
+    ListStarOfVariable0         -> ListPlusOfVariable0
+    ListStarOfVariable0         -> <nil>()
+    ListStarOfVariable0         -> <conc>(ListStarOfVariable0,ListStarOfVariable0)
+    ListPlusOfVariable0         -> <conc>(ListStarOfVariable0,ListPlusOfVariable0)
+    ListPlusOfVariable0         -> <conc>(ListPlusOfVariable0,ListStarOfVariable0)
+    ListPlusOfVariable0         -> <conc>(ListPlusOfVariable0,ListPlusOfVariable0)
+    ListPlusOfVariable0         -> <cons>(Variable,ListStarOfVariable0)
+    OptStreamAssignment0        -> <some>(StreamAssignment)
+    OptStreamAssignment0        -> <none>()
+    OptFunctionArguments0       -> <some>(FunctionArguments)
+    OptFunctionArguments0       -> <none>()
+    OptApplicationTarget7       -> <some>(ApplicationTarget)
+    OptApplicationTarget7       -> <none>()
+    ListStarOfFunctionArgument0 -> ListPlusOfFunctionArgument0
+    ListStarOfFunctionArgument0 -> <nil>()
+    ListStarOfFunctionArgument0 -> <conc>(ListStarOfFunctionArgument0,ListStarOfFunctionArgument0)
+    ListPlusOfFunctionArgument0 -> <conc>(ListStarOfFunctionArgument0,ListPlusOfFunctionArgument0)
+    ListPlusOfFunctionArgument0 -> <conc>(ListPlusOfFunctionArgument0,ListStarOfFunctionArgument0)
+    ListPlusOfFunctionArgument0 -> <conc>(ListPlusOfFunctionArgument0,ListPlusOfFunctionArgument0)
+    ListPlusOfFunctionArgument0 -> <cons>(FunctionArgument,ListStarOfFunctionArgument0)
+    ListStarOfStatement0        -> ListPlusOfStatement0
+    ListStarOfStatement0        -> <nil>()
+    ListStarOfStatement0        -> <conc>(ListStarOfStatement0,ListStarOfStatement0)
+    ListPlusOfStatement0        -> <conc>(ListStarOfStatement0,ListPlusOfStatement0)
+    ListPlusOfStatement0        -> <conc>(ListPlusOfStatement0,ListStarOfStatement0)
+    ListPlusOfStatement0        -> <conc>(ListPlusOfStatement0,ListPlusOfStatement0)
+    ListPlusOfStatement0        -> <cons>(Statement,ListStarOfStatement0)
+    ListStarOfDeclaration0      -> ListPlusOfDeclaration0
+    ListStarOfDeclaration0      -> <nil>()
+    ListStarOfDeclaration0      -> <conc>(ListStarOfDeclaration0,ListStarOfDeclaration0)
+    ListPlusOfDeclaration0      -> <conc>(ListStarOfDeclaration0,ListPlusOfDeclaration0)
+    ListPlusOfDeclaration0      -> <conc>(ListPlusOfDeclaration0,ListStarOfDeclaration0)
+    ListPlusOfDeclaration0      -> <conc>(ListPlusOfDeclaration0,ListPlusOfDeclaration0)
+    ListPlusOfDeclaration0      -> <cons>(Declaration,ListStarOfDeclaration0)
     ListStarOfStringChar0       -> <string>
     ListPlusOfStringChar0       -> <string>
     OptLit0                     -> <string>
     Variable                    -> Variable(ID)
-    Selection                   -> Selection(ListPlusOfID1)
+    Selection                   -> Selection(ListPlusOfID0)
     Selector                    -> Selector(Selection)
     Integer                     -> Integer(INT)
     String                      -> String(STRING)
     All                         -> All()
-    Statement                   -> Load
-    Statement                   -> FunctionApplication
+    StatementYay                -> Load
+    StatementYay                -> FunctionApplication
     Value                       -> Integer
     Value                       -> String
     Value                       -> All
     Value                       -> LambdaFunction
     Value                       -> Selector
     Value                       -> Variable
-    VariableList                -> VariableList(ListPlusOfVariable1)
-    FunctionApplication         -> FunctionApplication(OptStreamAssignment1,LambdaFunction,FunctionType)
-    LambdaFunction              -> LambdaFunction(PipeName,OptFunctionArguments1)
+    Statement                   -> Statement(StatementYay)
+    VariableList                -> VariableList(ListPlusOfVariable0)
+    FunctionApplication         -> FunctionApplication(OptStreamAssignment0,LambdaFunction,FunctionType)
+    LambdaFunction              -> LambdaFunction(PipeName,OptFunctionArguments0)
     ApplicationTarget           -> ApplicationTarget(VariableList)
     ExtractName                 -> ExtractName(ID)
     FunctionType                -> ExtractFunction()
-    FunctionType                -> ApplyFunction(OptApplicationTarget4)
+    FunctionType                -> ApplyFunction(OptApplicationTarget7)
     FunctionArgument            -> FunctionArgument(Value,ID)
-    FunctionArguments           -> FunctionArguments(ListPlusOfFunctionArgument1)
+    FunctionArguments           -> FunctionArguments(ListPlusOfFunctionArgument0)
     Assignment                  -> Assignment(Variable)
     StreamAssignment            -> StreamAssignment(Variable)
     Output                      -> ExplicitOutput(VariableList)
@@ -82,8 +83,8 @@ regular tree grammar
     Load                        -> Load(ID)
     PipeName                    -> PipeName(ID)
     Declaration                 -> Native(PipeName,Input,Arguments,Output)
-    Declaration                 -> Pipe(PipeName,Input,Arguments,ListStarOfStatement1,Output)
-    Start                       -> Start(ListStarOfDeclaration1)
+    Declaration                 -> Pipe(PipeName,Input,Arguments,ListStarOfStatement0,Output)
+    Start                       -> Start(ListStarOfDeclaration0)
     EOF                         -> <string>
     CommentChar                 -> <string>
     BackSlashChar               -> <string>

@@ -8,14 +8,15 @@ signature
     Integer             : INT -> Integer
     String              : STRING -> String
     All                 : All
-                        : Load -> Statement
-                        : FunctionApplication -> Statement
+                        : Load -> StatementYay
+                        : FunctionApplication -> StatementYay
                         : Integer -> Value
                         : String -> Value
                         : All -> Value
                         : LambdaFunction -> Value
                         : Selector -> Value
                         : Variable -> Value
+    Statement           : StatementYay -> Statement
     VariableList        : List(Variable) -> VariableList
     FunctionApplication : Option(StreamAssignment) * LambdaFunction * FunctionType -> FunctionApplication
     LambdaFunction      : PipeName * Option(FunctionArguments) -> LambdaFunction

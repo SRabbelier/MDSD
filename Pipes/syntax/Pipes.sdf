@@ -1,5 +1,5 @@
 %% Grammar for the Pipes language
-%% By default, based on an example "entities" syntax
+
 module Pipes
 
 imports Common
@@ -27,7 +27,7 @@ exports
     % epsilon %                                     -> Arguments {cons("NoArguments")}
     "arguments" VariableList                        -> Arguments {cons("Arguments")}
 
-    % epsilon %                                     -> Output {cons("NoOutput")}
+    "sink"                                          -> Output {cons("NoOutput")}
     "output"                          				-> Output {cons("ImplicitOutput")}
     "outputs" VariableList							-> Output {cons("ExplicitOutput")}
 
@@ -44,9 +44,12 @@ exports
     "to" VariableList								-> ApplicationTarget {cons("ApplicationTarget")}
 
     PipeName FunctionArguments?                     -> LambdaFunction {cons("LambdaFunction")}
+
     StreamAssignment? LambdaFunction FunctionType   -> FunctionApplication {cons("FunctionApplication")}
 
     {Variable "and"}+                               -> VariableList {cons("VariableList")}
+
+	StatementYay "."								-> Statement {cons("Statement")}
 
     %% class membership
     Variable                                        -> Value
@@ -55,8 +58,8 @@ exports
     All                                             -> Value
     String                                          -> Value
     Integer                                         -> Value
-    FunctionApplication                             -> Statement
-    Load                                            -> Statement
+    FunctionApplication                             -> StatementYay
+    Load                                            -> StatementYay
 
     %% primitves
     "all"                                           -> All {cons("All")}
