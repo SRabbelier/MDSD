@@ -2,47 +2,49 @@ module Pipes
 
 signature
   constructors
-    Variable            : ID -> Variable
-    Stream              : ID -> Stream
-    Selection           : List(ID) -> Selection
-    Selector            : Selection -> Selector
-    Integer             : INT -> Integer
-    String              : STRING -> String
-    All                 : All
-                        : Load -> StatementYay
-                        : FunctionApplication -> StatementYay
-                        : Integer -> Value
-                        : String -> Value
-                        : All -> Value
-                        : LambdaFunction -> Value
-                        : Selector -> Value
-                        : Variable -> Value
-    Statement           : StatementYay -> Statement
-    StreamList          : List(Stream) -> StreamList
-    VariableList        : List(Variable) -> VariableList
-    FunctionApplication : Option(StreamAssignment) * LambdaFunction * FunctionType -> FunctionApplication
-    LambdaFunction      : PipeName * Option(FunctionArguments) -> LambdaFunction
-    ApplicationTarget   : StreamList -> ApplicationTarget
-    ExtractFunction     : FunctionType
-    ApplyFunction       : Option(ApplicationTarget) -> FunctionType
-    FunctionArgument    : Value * ID -> FunctionArgument
-    FunctionArguments   : List(FunctionArgument) -> FunctionArguments
-    StreamAssignment    : Stream -> StreamAssignment
-    ExplicitOutput      : StreamList -> Output
-    ImplicitOutput      : Output
-    Arguments           : VariableList -> Arguments
-    NoArguments         : Arguments
-    ExplicitInput       : StreamList -> Input
-    ImplicitInput       : Input
-    NoInput             : Input
-    Load                : ID -> Load
-    PipeName            : ID -> PipeName
-    Native              : PipeName * Input * Arguments * Output -> Declaration
-    Pipe                : PipeName * Input * Arguments * List(Statement) * Output -> Declaration
-    Start               : List(Declaration) -> Start
-                        : String -> STRING
-                        : String -> INT
-                        : String -> ID
+    Variable                 : ID -> Variable
+    Stream                   : ID -> Stream
+    Selection                : List(ID) -> Selection
+    Selector                 : Selection -> Selector
+    Integer                  : INT -> Integer
+    String                   : STRING -> String
+    All                      : All
+                             : Load -> StatementYay
+                             : FunctionApplication -> StatementYay
+                             : Integer -> Value
+                             : String -> Value
+                             : All -> Value
+                             : LambdaFunction -> Value
+                             : Selector -> Value
+                             : Variable -> Value
+    Statement                : StatementYay -> Statement
+    StreamList               : List(Stream) -> StreamList
+    VariableList             : List(Variable) -> VariableList
+    FunctionApplication      : StreamAssignment * LambdaFunction * FunctionType -> FunctionApplication
+    LambdaFunction           : PipeName * Option(FunctionArguments) -> LambdaFunction
+    ApplicationTarget        : StreamList -> ApplicationTarget
+    ExtractFunction          : FunctionType
+    ApplyFunction            : Option(ApplicationTarget) -> FunctionType
+    FunctionArgument         : Value * ID -> FunctionArgument
+    FunctionArguments        : List(FunctionArgument) -> FunctionArguments
+    MultipleStreamAssignment : StreamList -> StreamAssignment
+    SingleStreamAssignment   : Stream -> StreamAssignment
+    NoStreamAssignment       : StreamAssignment
+    ExplicitOutput           : StreamList -> Output
+    ImplicitOutput           : Output
+    Arguments                : VariableList -> Arguments
+    NoArguments              : Arguments
+    ExplicitInput            : StreamList -> Input
+    ImplicitInput            : Input
+    NoInput                  : Input
+    Load                     : ID -> Load
+    PipeName                 : ID -> PipeName
+    Native                   : PipeName * Input * Arguments * Output -> Declaration
+    Pipe                     : PipeName * Input * Arguments * List(Statement) * Output -> Declaration
+    Start                    : List(Declaration) -> Start
+                             : String -> STRING
+                             : String -> INT
+                             : String -> ID
 
 
 signature

@@ -116,7 +116,7 @@ rules
     
   constraint-error:
   	FunctionApplication(_, LambdaFunction(PipeName(name), _), ApplyFunction(None())) -> (name, $[Expected [expected_size] arguments but got (one) implicit stream])  
-  	where expected_size := <GetPipe; debug(!"Pipe "); get-inputs; debug(!"inputs "); length>name
+  	where expected_size := <GetPipe; get-inputs; length>name
   	where not(<eq>[expected_size, 1]) 
   constraint-error:
   	FunctionApplication(_, LambdaFunction(PipeName(name),_), ApplyFunction(Some(ApplicationTarget(StreamList(input))))) -> (name, $[Expected [expected_size] arguments but got [actual_size]])

@@ -27,11 +27,12 @@ folding Default folding definitions
   Arguments.Arguments
   VariableList.VariableList
   FunctionApplication.FunctionApplication
+  StreamAssignment.MultipleStreamAssignment
   Selector
   Selector.Selector
   Selection.Selection
   FunctionType.ApplyFunction
-  OptApplicationTarget12
+  OptApplicationTarget14
   ApplicationTarget.ApplicationTarget
   Output.ExplicitOutput
   Declaration.Native

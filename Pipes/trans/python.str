@@ -71,10 +71,6 @@ rules
 
   to-python : Integer(value) -> value
 
-  stream-name : None() -> "stream"
-
-  stream-name : Some(StreamAssignment(Variable(name))) -> name
-
   function-name : LambdaFunction(PipeName(name), _) -> result
   with result := <concat-strings>["lambda: func_", name]
 
@@ -106,11 +102,11 @@ rules
 	ident(x_funcname(pe0*))
   ]|
 
-  to-python : FunctionApplication(assignment, func, appl) -> python*|[
+  to-python : FunctionApplication(MultipleStreamAssignment(StreamList(list)), func, appl) -> python*|[
 	x_streamname = e();
 	logging.debug(x_streamname);
   ]|
-  with x_streamname := <stream-name>assignment
+  with x_streamname := <separate-by(|","); concat-strings>list
   with e := <lambda-to-python(|appl)>func
 
   to-python :
