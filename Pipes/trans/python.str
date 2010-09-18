@@ -75,22 +75,22 @@ rules
 
   stream-name : None() -> "stream"
 
-  stream-name : Some(Assignment(Variable(name))) -> name
+  stream-name : Some(StreamAssignment(Variable(name))) -> name
 
-  function-name : FunctionApplication(name, _) -> result
+  function-name : LambdaFunction(PipeName(name), _, ApplyFunction(_)) -> result
   with result := <concat-strings>["lambda: apply_", name]
 
-  function-name : FunctionExtraction(name) -> result
+  function-name : LambdaFunction(PipeName(name), _, ExtractFunction()) -> result
   with result := <concat-strings>["lambda: extract_", name]
 
-  extract-function-streams : FunctionApplication(_, None()) -> ["stream"]
+  extract-function-streams : ApplyFunction(None()) -> ["stream"]
 
-  extract-function-streams : FunctionApplication(_, Some(VariableList(vars))) -> result
+  extract-function-streams : ApplyFunction(Some(VariableList(vars))) -> result
   with result := <map(extract-variables)>vars
 
-  extract-function-streams : FunctionExtraction(_) -> []
+  extract-function-streams : ExtractFunction() -> []
 
-  extract-function-arg : FunctionArgument(x, y) -> result
+  extract-function-arg : FunctionArgument(y, x) -> result
   with y' := <to-python>y
   with result := NamedParam(x,y')
 
@@ -99,25 +99,25 @@ rules
   extract-function-args : Some(FunctionArguments(args)) -> result
   with result := <map(extract-function-arg)>args
 
-  function-args : LambdaFunction(args, app) -> result
+  function-args : LambdaFunction(_, args, app) -> result
   with function_streams := <extract-function-streams>app
   with function_args := <extract-function-args>args
   with result := <concat>[function_streams, function_args]
 
-  to-python : LambdaFunction(args, app) -> result
-  with x_funcname := <function-name>app
+  to-python : LambdaFunction(name, args, app) -> result
+  with x_funcname := <function-name><id>
   with pe0* := <function-args>
   with result := py-exp|[
 	ident(x_funcname(pe0*))
   ]|
 
-  to-python : Function(assignment, func) -> python*|[
+  to-python : FunctionApplication(assignment, func, appl) -> python*|[
 	x_streamname = e();
 	logging.debug(x_streamname);
   ]|
   with x_streamname := <stream-name>assignment
   with e := <to-python>func
-
+  // TODO fun times
 
   to-python :
 	Pipe(name, input, arguments, statements, output) -> python*|[

@@ -35,14 +35,11 @@ rules
 	
 rules
       
-  get-name:
-  	FunctionApplication(PipeName(p), _) -> p
-  	  
   get-args:
-  	LambdaFunction(None(), _) -> []  
+  	LambdaFunction(_, None(), _) -> []  
   	
   get-args:
-  	LambdaFunction(FunctionArguments(t), _) -> t
+  	LambdaFunction(_, FunctionArguments(t), _) -> t
 
   get-args:
   	Pipe(_, _, NoArguments(), _, _) -> []
@@ -60,7 +57,7 @@ rules
   checkParam(|target):
   	[[Variable(param)|rest], args] -> errors
   	where errs :=  <checkParam(|target)>[rest, args] 
-  	where (<fetch-elem(?FunctionArgument(param,_))> args) < errors:=<id>errs + errors:=<missingParam(|errs, target)>param
+  	where (<fetch-elem(?FunctionArgument(_, param))> args) < errors:=<id>errs + errors:=<missingParam(|errs, target)>param
   
   checkParam(|target):
   	[[], _] -> []	
@@ -69,7 +66,7 @@ rules
   	x -> [(target, $[Missing argument '[x]']), errors]
   
   checkArgs:
-  	[param, [f@FunctionArgument(x,_)|rest]] -> errors
+  	[param, [f@FunctionArgument(_,x)|rest]] -> errors
   	where errs := <checkArgs>[param, rest]
   	where (<fetch-elem(?Variable(x))> param) <  errors:=<id>errs + errors:=<invArg(|errs)>f
 
@@ -77,7 +74,7 @@ rules
   	[_, []] -> []
 
   invArg(|errors):
-  	f@FunctionArgument(x,_) -> [(f, $[Invalid argument '[x]']), errors]
+  	f@FunctionArgument(_,x) -> [(f, $[Invalid argument '[x]']), errors]
 
 
   is-empty:
@@ -88,24 +85,21 @@ rules
   // Reports an error if a property type is undefined.
   // This error is reported on the type name 'type'.
   constraint-error:
-    FunctionApplication(PipeName(p), t) -> (p, $[Pipe '[p]' is not defined])
+    LambdaFunction(p@PipeName(name), _, _) -> (p, $[Pipe '[name]' is not defined])
     where
-      not(<GetPipe> p) // no entity for this type
+      not(<GetPipe> name) // no entity for this type
   
   constraint-error:
-  	LambdaFunction(Some(FunctionArguments(args)), app) -> [errors, errors2]
-    where p := <get-name>app
-    where pargs := <get-args><GetPipe> p 
+  	LambdaFunction(PipeName(name), Some(FunctionArguments(args)), _) -> <concat>[errors, errors2]
+    where pargs := <get-args><GetPipe> name 
 	  // Check that all arguments are expected parameters
     where errors := <checkArgs>[pargs, args]
-	  // Check that all required arguments are provided
-    where errors2 := <checkParam(|app)>[pargs, args]
+    where errors2 := <checkParam(|name)>[pargs, args]
     
   constraint-error:
 	  // Check that all required arguments are provided
-  	f@LambdaFunction(None(), app) -> errors
-    where p := <get-name>app
-    where pargs := <get-args><GetPipe> p 
+  	f@LambdaFunction(PipeName(name), None(), app) -> errors
+    where pargs := <get-args><GetPipe>name
     where errors := <checkParam(|app)>[pargs, []]
   	
   // Reports an error if an entity is defined more than once.

@@ -29,26 +29,27 @@ exports
     WATEREOF -/- ~[]
 
   lexical syntax
-    %% Lexical insertion recovery rules                                
-    "\""                                           -> INSERTOPENQUOTE5 {recover}
-    INSERTOPENQUOTE5 StringChar* "\n"              -> STRING           {cons("INSERTEND")}
-    INSERTOPENQUOTE5 StringChar* WATEREOF          -> STRING           {cons("INSERTEND")}
-    "/*"                                           -> INSERTSTART6     {recover}
-    INSERTSTART6 ( ~[\*] | CommentChar )* WATEREOF -> LAYOUT           {cons("INSERTEND")}
-                                                   -> "pipe"           {recover, cons("INSERTION")}
-                                                   -> "native"         {recover, cons("INSERTION")}
-                                                   -> "load"           {recover, cons("INSERTION")}
-                                                   -> "inputs"         {recover, cons("INSERTION")}
-                                                   -> "arguments"      {recover, cons("INSERTION")}
-                                                   -> "outputs"        {recover, cons("INSERTION")}
-                                                   -> "apply"          {recover, cons("INSERTION")}
-                                                   -> "extract"        {recover, cons("INSERTION")}
-                                                   -> "to"             {recover, cons("INSERTION")}
-                                                   -> "and"            {recover, cons("INSERTION")}
-                                                   -> "]"              {recover, cons("INSERTION")}
-                                                   -> "["              {recover, cons("INSERTION")}
-                                                   -> "/"              {recover, cons("INSERTION")}
-                                                   -> "$"              {recover, cons("INSERTION")}
+    %% Lexical insertion recovery rules                                  
+    "\""                                            -> INSERTOPENQUOTE10 {recover}
+    INSERTOPENQUOTE10 StringChar* "\n"              -> STRING            {cons("INSERTEND")}
+    INSERTOPENQUOTE10 StringChar* WATEREOF          -> STRING            {cons("INSERTEND")}
+    "/*"                                            -> INSERTSTART10     {recover}
+    INSERTSTART10 ( ~[\*] | CommentChar )* WATEREOF -> LAYOUT            {cons("INSERTEND")}
+                                                    -> "pipe"            {recover, cons("INSERTION")}
+                                                    -> "native"          {recover, cons("INSERTION")}
+                                                    -> "load"            {recover, cons("INSERTION")}
+                                                    -> "inputs"          {recover, cons("INSERTION")}
+                                                    -> "arguments"       {recover, cons("INSERTION")}
+                                                    -> "outputs"         {recover, cons("INSERTION")}
+                                                    -> ","               {recover, cons("INSERTION")}
+                                                    -> "apply"           {recover, cons("INSERTION")}
+                                                    -> "extract"         {recover, cons("INSERTION")}
+                                                    -> "to"              {recover, cons("INSERTION")}
+                                                    -> "and"             {recover, cons("INSERTION")}
+                                                    -> "]"               {recover, cons("INSERTION")}
+                                                    -> "["               {recover, cons("INSERTION")}
+                                                    -> "/"               {recover, cons("INSERTION")}
+                                                    -> "$"               {recover, cons("INSERTION")}
 
   syntax
     %% Kernel syntax insertion recovery rules   
@@ -108,14 +109,14 @@ exports
     "outputs" VariableList                            -> Output              {cons("ExplicitOutput")}
     Variable "becomes"                                -> StreamAssignment    {cons("Assignment")}
     Variable "is"                                     -> Assignment          {cons("Assignment")}
-    "with" FunctionArgument+                          -> FunctionArguments   {cons("FunctionArguments")}
-    ID "is" Value                                     -> FunctionArgument    {cons("FunctionArgument")}
-    "apply" PipeName ApplicationTarget?               -> FunctionApplication {cons("FunctionApplication")}
-    "extract" ExtractName                             -> FunctionApplication {cons("FunctionExtraction")}
+    "," "using" FunctionArgument+ ","                 -> FunctionArguments   {cons("FunctionArguments")}
+    Value "as" ID                                     -> FunctionArgument    {cons("FunctionArgument")}
+    "apply" ApplicationTarget?                        -> FunctionType        {cons("ApplyFunction")}
+    "extract" ExtractName                             -> FunctionType        {cons("ExtractFunction")}
     ID                                                -> ExtractName         {cons("ExtractName")}
     "to" VariableList                                 -> ApplicationTarget   {cons("ApplicationTarget")}
-    FunctionArguments? FunctionApplication            -> LambdaFunction      {cons("LambdaFunction")}
-    StreamAssignment? LambdaFunction                  -> Function            {cons("Function")}
+    PipeName FunctionArguments?                       -> LambdaFunction      {cons("LambdaFunction")}
+    StreamAssignment? LambdaFunction FunctionType     -> FunctionApplication {cons("FunctionApplication")}
     {Variable "and"}+                                 -> VariableList        {cons("VariableList")}
     Variable                                          -> Value               
     Selector                                          -> Value               
@@ -123,7 +124,7 @@ exports
     All                                               -> Value               
     String                                            -> Value               
     Integer                                           -> Value               
-    Function                                          -> Statement           
+    FunctionApplication                               -> Statement           
     Load                                              -> Statement           
     "all"                                             -> All                 {cons("All")}
     STRING                                            -> String              {cons("String")}

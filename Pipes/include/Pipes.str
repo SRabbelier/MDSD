@@ -9,7 +9,7 @@ signature
     String              : STRING -> String
     All                 : All
                         : Load -> Statement
-                        : Function -> Statement
+                        : FunctionApplication -> Statement
                         : Integer -> Value
                         : String -> Value
                         : All -> Value
@@ -17,13 +17,13 @@ signature
                         : Selector -> Value
                         : Variable -> Value
     VariableList        : List(Variable) -> VariableList
-    Function            : Option(StreamAssignment) * LambdaFunction -> Function
-    LambdaFunction      : Option(FunctionArguments) * FunctionApplication -> LambdaFunction
+    FunctionApplication : Option(StreamAssignment) * LambdaFunction * FunctionType -> FunctionApplication
+    LambdaFunction      : PipeName * Option(FunctionArguments) -> LambdaFunction
     ApplicationTarget   : VariableList -> ApplicationTarget
     ExtractName         : ID -> ExtractName
-    FunctionExtraction  : ExtractName -> FunctionApplication
-    FunctionApplication : PipeName * Option(ApplicationTarget) -> FunctionApplication
-    FunctionArgument    : ID * Value -> FunctionArgument
+    ExtractFunction     : ExtractName -> FunctionType
+    ApplyFunction       : Option(ApplicationTarget) -> FunctionType
+    FunctionArgument    : Value * ID -> FunctionArgument
     FunctionArguments   : List(FunctionArgument) -> FunctionArguments
     Assignment          : Variable -> StreamAssignment
     ExplicitOutput      : VariableList -> Output

@@ -20,8 +20,8 @@ regular tree grammar
     OptStreamAssignment0        -> <none>()
     OptFunctionArguments0       -> <some>(FunctionArguments)
     OptFunctionArguments0       -> <none>()
-    OptApplicationTarget5       -> <some>(ApplicationTarget)
-    OptApplicationTarget5       -> <none>()
+    OptApplicationTarget3       -> <some>(ApplicationTarget)
+    OptApplicationTarget3       -> <none>()
     ListStarOfFunctionArgument0 -> ListPlusOfFunctionArgument0
     ListStarOfFunctionArgument0 -> <nil>()
     ListStarOfFunctionArgument0 -> <conc>(ListStarOfFunctionArgument0,ListStarOfFunctionArgument0)
@@ -53,7 +53,7 @@ regular tree grammar
     String                      -> String(STRING)
     All                         -> All()
     Statement                   -> Load
-    Statement                   -> Function
+    Statement                   -> FunctionApplication
     Value                       -> Integer
     Value                       -> String
     Value                       -> All
@@ -61,13 +61,13 @@ regular tree grammar
     Value                       -> Selector
     Value                       -> Variable
     VariableList                -> VariableList(ListPlusOfVariable0)
-    Function                    -> Function(OptStreamAssignment0,LambdaFunction)
-    LambdaFunction              -> LambdaFunction(OptFunctionArguments0,FunctionApplication)
+    FunctionApplication         -> FunctionApplication(OptStreamAssignment0,LambdaFunction,FunctionType)
+    LambdaFunction              -> LambdaFunction(PipeName,OptFunctionArguments0)
     ApplicationTarget           -> ApplicationTarget(VariableList)
     ExtractName                 -> ExtractName(ID)
-    FunctionApplication         -> FunctionExtraction(ExtractName)
-    FunctionApplication         -> FunctionApplication(PipeName,OptApplicationTarget5)
-    FunctionArgument            -> FunctionArgument(ID,Value)
+    FunctionType                -> ExtractFunction(ExtractName)
+    FunctionType                -> ApplyFunction(OptApplicationTarget3)
+    FunctionArgument            -> FunctionArgument(Value,ID)
     FunctionArguments           -> FunctionArguments(ListPlusOfFunctionArgument0)
     Assignment                  -> Assignment(Variable)
     StreamAssignment            -> Assignment(Variable)

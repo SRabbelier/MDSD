@@ -34,17 +34,17 @@ exports
     Variable "becomes"                              -> StreamAssignment {cons("Assignment")}
     Variable "is"		                            -> Assignment {cons("Assignment")}
 
-    "with" FunctionArgument+                        -> FunctionArguments {cons("FunctionArguments")}
-    ID "is" Value                                   -> FunctionArgument {cons("FunctionArgument")}
+    "," "using" FunctionArgument+ ","               -> FunctionArguments {cons("FunctionArguments")}
+    Value "as" ID                                   -> FunctionArgument {cons("FunctionArgument")}
 
-    "apply" PipeName ApplicationTarget?             -> FunctionApplication {cons("FunctionApplication")}
-    "extract" ExtractName                           -> FunctionApplication {cons("FunctionExtraction")}
+    "apply" ApplicationTarget?                      -> FunctionType {cons("ApplyFunction")}
+    "extract" ExtractName                           -> FunctionType {cons("ExtractFunction")}
     ID												-> ExtractName {cons("ExtractName")}
 
     "to" VariableList								-> ApplicationTarget {cons("ApplicationTarget")}
 
-    FunctionArguments? FunctionApplication          -> LambdaFunction {cons("LambdaFunction")}
-    StreamAssignment? LambdaFunction                -> Function {cons("Function")}
+    PipeName FunctionArguments?                     -> LambdaFunction {cons("LambdaFunction")}
+    StreamAssignment? LambdaFunction FunctionType   -> FunctionApplication {cons("FunctionApplication")}
 
     {Variable "and"}+                               -> VariableList {cons("VariableList")}
 
@@ -55,7 +55,7 @@ exports
     All                                             -> Value
     String                                          -> Value
     Integer                                         -> Value
-    Function                                        -> Statement
+    FunctionApplication                             -> Statement
     Load                                            -> Statement
 
     %% primitves
