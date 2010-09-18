@@ -9,13 +9,13 @@ regular tree grammar
     ListPlusOfID0               -> <conc>(ListPlusOfID0,ListStarOfID0)
     ListPlusOfID0               -> <conc>(ListPlusOfID0,ListPlusOfID0)
     ListPlusOfID0               -> <cons>(ID,ListStarOfID0)
-    ListStarOfStream1           -> ListPlusOfStream1
-    ListStarOfStream1           -> <nil>()
-    ListStarOfStream1           -> <conc>(ListStarOfStream1,ListStarOfStream1)
-    ListPlusOfStream1           -> <conc>(ListStarOfStream1,ListPlusOfStream1)
-    ListPlusOfStream1           -> <conc>(ListPlusOfStream1,ListStarOfStream1)
-    ListPlusOfStream1           -> <conc>(ListPlusOfStream1,ListPlusOfStream1)
-    ListPlusOfStream1           -> <cons>(Stream,ListStarOfStream1)
+    ListStarOfStream0           -> ListPlusOfStream0
+    ListStarOfStream0           -> <nil>()
+    ListStarOfStream0           -> <conc>(ListStarOfStream0,ListStarOfStream0)
+    ListPlusOfStream0           -> <conc>(ListStarOfStream0,ListPlusOfStream0)
+    ListPlusOfStream0           -> <conc>(ListPlusOfStream0,ListStarOfStream0)
+    ListPlusOfStream0           -> <conc>(ListPlusOfStream0,ListPlusOfStream0)
+    ListPlusOfStream0           -> <cons>(Stream,ListStarOfStream0)
     ListStarOfVariable0         -> ListPlusOfVariable0
     ListStarOfVariable0         -> <nil>()
     ListStarOfVariable0         -> <conc>(ListStarOfVariable0,ListStarOfVariable0)
@@ -27,8 +27,8 @@ regular tree grammar
     OptStreamAssignment0        -> <none>()
     OptFunctionArguments0       -> <some>(FunctionArguments)
     OptFunctionArguments0       -> <none>()
-    OptApplicationTarget11      -> <some>(ApplicationTarget)
-    OptApplicationTarget11      -> <none>()
+    OptApplicationTarget12      -> <some>(ApplicationTarget)
+    OptApplicationTarget12      -> <none>()
     ListStarOfFunctionArgument0 -> ListPlusOfFunctionArgument0
     ListStarOfFunctionArgument0 -> <nil>()
     ListStarOfFunctionArgument0 -> <conc>(ListStarOfFunctionArgument0,ListStarOfFunctionArgument0)
@@ -69,14 +69,14 @@ regular tree grammar
     Value                       -> Selector
     Value                       -> Variable
     Statement                   -> Statement(StatementYay)
-    StreamList                  -> StreamList(ListPlusOfStream1)
+    StreamList                  -> StreamList(ListPlusOfStream0)
     VariableList                -> VariableList(ListPlusOfVariable0)
     FunctionApplication         -> FunctionApplication(OptStreamAssignment0,LambdaFunction,FunctionType)
     LambdaFunction              -> LambdaFunction(PipeName,OptFunctionArguments0)
     ApplicationTarget           -> ApplicationTarget(StreamList)
     ExtractName                 -> ExtractName(ID)
     FunctionType                -> ExtractFunction()
-    FunctionType                -> ApplyFunction(OptApplicationTarget11)
+    FunctionType                -> ApplyFunction(OptApplicationTarget12)
     FunctionArgument            -> FunctionArgument(Value,ID)
     FunctionArguments           -> FunctionArguments(ListPlusOfFunctionArgument0)
     Assignment                  -> Assignment(Variable)

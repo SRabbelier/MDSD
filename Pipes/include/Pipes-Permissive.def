@@ -30,11 +30,11 @@ exports
 
   lexical syntax
     %% Lexical insertion recovery rules                                  
-    "\""                                            -> INSERTOPENQUOTE21 {recover}
-    INSERTOPENQUOTE21 StringChar* "\n"              -> STRING            {cons("INSERTEND")}
-    INSERTOPENQUOTE21 StringChar* WATEREOF          -> STRING            {cons("INSERTEND")}
-    "/*"                                            -> INSERTSTART21     {recover}
-    INSERTSTART21 ( ~[\*] | CommentChar )* WATEREOF -> LAYOUT            {cons("INSERTEND")}
+    "\""                                            -> INSERTOPENQUOTE22 {recover}
+    INSERTOPENQUOTE22 StringChar* "\n"              -> STRING            {cons("INSERTEND")}
+    INSERTOPENQUOTE22 StringChar* WATEREOF          -> STRING            {cons("INSERTEND")}
+    "/*"                                            -> INSERTSTART22     {recover}
+    INSERTSTART22 ( ~[\*] | CommentChar )* WATEREOF -> LAYOUT            {cons("INSERTEND")}
                                                     -> "pipe"            {recover, cons("INSERTION")}
                                                     -> "native"          {recover, cons("INSERTION")}
                                                     -> "load"            {recover, cons("INSERTION")}

@@ -52,7 +52,20 @@ rules
 	  
   get-args:
   	Native(_, _, Arguments(VariableList(a)), _) -> a
-	  
+
+  get-inputs:
+  	Pipe(_, NoInput(), _, _, _) -> []
+  get-inputs:
+  	Pipe(_, ImplicitInput(), _, _, _) -> [Stream("stream")]
+  get-inputs:
+  	Pipe(_, ExplicitInput(StreamList(list)), _, _, _) -> list
+
+  get-inputs:
+  	Native(_, NoInput(), _, _) -> []
+  get-inputs:
+  	Native(_, ImplicitInput(), _, _) -> [Stream("stream")]
+  get-inputs:
+  	Native(_, ExplicitInput(StreamList(list)), _, _) -> list
 
   checkParam(|target):
   	[[Variable(param)|rest], args] -> errors
@@ -75,7 +88,6 @@ rules
 
   invArg(|errors):
   	f@FunctionArgument(_,x) -> [(f, $[Invalid argument '[x]']), errors]
-
 
   is-empty:
   	[] -> <id>
@@ -101,6 +113,16 @@ rules
   	f@LambdaFunction(PipeName(name), None()) -> errors
     where pargs := <get-args><GetPipe>name
     where errors := <checkParam(|name)>[pargs, []]
+    
+  constraint-error:
+  	FunctionApplication(_, LambdaFunction(PipeName(name), _), ApplyFunction(None())) -> (name, $[Expected [expected_size] arguments but got (one) implicit stream])  
+  	where expected_size := <GetPipe; debug(!"Pipe "); get-inputs; debug(!"inputs "); length>name
+  	where not(<eq>[expected_size, 1]) 
+  constraint-error:
+  	FunctionApplication(_, LambdaFunction(PipeName(name),_), ApplyFunction(Some(ApplicationTarget(StreamList(input))))) -> (name, $[Expected [expected_size] arguments but got [actual_size]])
+  	where actual_size := <length>input
+  	where expected_size := <GetPipe; get-inputs; length>name
+  	where not(<eq>[expected_size, actual_size]) 
   	
   // Reports an error if an entity is defined more than once.
   // This constraint is implemented by testing if the "bag" of

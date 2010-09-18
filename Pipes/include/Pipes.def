@@ -82,8 +82,8 @@ exports
     "," "using" FunctionArgument+ ","               -> FunctionArguments {cons("FunctionArguments")}
     Value "as" ID                                   -> FunctionArgument {cons("FunctionArgument")}
 
-    "applied" ApplicationTarget?                      -> FunctionType {cons("ApplyFunction")}
-    "extracted"                                       -> FunctionType {cons("ExtractFunction")}
+    "applied" ApplicationTarget?                    -> FunctionType {cons("ApplyFunction")}
+    "extracted"                                     -> FunctionType {cons("ExtractFunction")}
     ID												-> ExtractName {cons("ExtractName")}
 
     "to" StreamList  								-> ApplicationTarget {cons("ApplicationTarget")}
