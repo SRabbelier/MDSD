@@ -22,16 +22,16 @@ output
 
 native feed
 	arguments $url
-sink
+output
 
 native filter
 	arguments $on and $query
-sink
+output
 
 native loop
 	arguments $on and $assign and $trans
-sink
+output
 
 native search_pattern
 	arguments $pattern
-sink
+output

@@ -6,64 +6,55 @@ pipe get_flickr
 	flickr, using
 	    $count as find 
 	    [item] as images
-	, applied
+	, applied.
 
 output
 
 pipe main
 
-	load utils
+	load utils.
 	
-	feed, with "" as url , extracted
+	feed, using "" as url , extracted.
 	
-	analyse_content appied
+	analyse_content applied.
 	
-	with
-	    //on is [item]
-	    on_fail is [item]
-	    on_failing is "meh"
-	    assign is [item]
-	    trans is with count is 66 apply get_flickr
-	    emit is all
-	apply loop
+	loop, using
+	    [item] as on
+	    [item] as assign  
+	    get_flickr, using 66 as count, as trans
+	    "all" as emit
+	    // TODO all
+	, applied.
 
 output
 
-pipe main
-
-	with url is "example.com/feed" extract feed
-	
-	apply analyse_content
-	
-	with
-	    on is [item]
-	    assign is [item]
-	    trans is with 
-	        find is 5
-	        images is [item]
-	        apply flickr
-	    emit is all
-	apply oops
-
-output
 
 pipe multi
-
-	$feed1 becomes with url is "example.com/feed1" extract feed
-	$feed2 becomes with url is "example.com/feed2" extract feed
+	$feed1 becomes feed, using "example.com/feed1" as url, extracted.
+	$feed2 becomes feed, using "example.com/feed2" as url, extracted.
 	
-	$feed3 becomes apply reverse to $feed1
+	$feed3 becomes reverse applied to $feed1.
 	
-	$union becomes apply union to $feed2 and $feed3
+	$union becomes union applied to $feed2 and $feed3.
 
 outputs $union
 
-
 native loop arguments $on and $assign and $trans and $emit
+output
+
 native union
-native multi
+output
+
 native reverse
+output
+
 native analyse_content
+output
+
+native feed
+	arguments $url
+output
+
 native flickr
 	inputs $stream
 	arguments $find and $images

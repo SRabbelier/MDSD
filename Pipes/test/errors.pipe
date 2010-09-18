@@ -1,0 +1,54 @@
+pipe duplicate_name
+
+	load utils.
+	
+	feed, using "" as url , extracted.
+	
+	loop, using
+	    //on is [item]
+	    [item] as on_fail 
+	    "meh" as on_failing
+	    [item] as assign  
+	    get_flickr, using 66 as count, as trans
+	    "all" as emit
+	    // TODO all
+	, applied.
+
+output
+
+
+pipe duplicate_name
+
+	feed, using "example.com/feed" as url,  extracted.
+
+	oops, using
+		"Bar" as argument
+	, applied.
+
+output
+
+pipe shadow
+	feed, using "url" as url, extracted.
+output
+
+pipe sink_assigned_to_stream
+	kitchen applied.
+output
+
+native loop arguments $on and $assign and $trans and $emit
+output
+
+native shadow
+output
+
+native kitchen
+sink
+
+native feed
+	arguments $url
+output
+
+native flickr
+	inputs $stream
+	arguments $find and $images
+outputs $stream
