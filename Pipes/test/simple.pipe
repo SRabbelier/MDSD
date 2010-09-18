@@ -20,15 +20,33 @@ pipe main
 
 output
 
+pipe multi
+	$feed1 becomes feed, using "example.com/feed1" as url, extracted.
+	$feed2 becomes feed, using "example.com/feed2" as url, extracted.
+	
+	$union becomes wrong_input_count applied.
+	$union becomes wrong_input_count applied to $feed2.
+	$union becomes wrong_input_count applied to $feed1 and $feed2.
+	$union becomes wrong_input_count applied to $feed1 and $feed2 and $feed3.
+
+outputs $union
+
+native wrong_input_count
+	inputs $one and $two
+output
+
+
 native feed
 	arguments url
 output
 
 native filter
+	input
 	arguments on and query
 output
 
 native loop
+	inputs $stream and $bla
 	arguments on and assign and trans
 output
 

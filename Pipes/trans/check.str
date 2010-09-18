@@ -34,7 +34,16 @@ rules
 	
 	
 rules
-      
+  eq-len:
+  	[[a|a'], [b|b']] -> res
+  	where res := <eq-len>[a', b']
+  eq-len:
+  	[[], [_]] -> <fail>
+  eq-len:
+  	[[_], []] -> <fail>
+  eq-len:
+  	[[], []] -> <id>
+        
   get-args:
   	LambdaFunction(_, None()) -> []  
   	
@@ -69,8 +78,8 @@ rules
 
   checkParam(|target):
   	[[Variable(param)|rest], args] -> errors
-  	where errs :=  <checkParam(|target)>[rest, args] 
-  	where (<fetch-elem(?FunctionArgument(_, param))> args) < errors:=<id>errs + errors:=<missingParam(|errs, target)>param
+  	with errs :=  <checkParam(|target)>[rest, args] 
+  	with (<fetch-elem(?FunctionArgument(_, param))> args) < errors:=<id>errs + errors:=<missingParam(|errs, target)>param
   
   checkParam(|target):
   	[[], _] -> []	
@@ -80,8 +89,8 @@ rules
   
   checkArgs:
   	[param, [f@FunctionArgument(_,x)|rest]] -> errors
-  	where errs := <checkArgs>[param, rest]
-  	where (<fetch-elem(?Variable(x))> param) <  errors:=<id>errs + errors:=<invArg(|errs)>f
+  	with errs := <checkArgs>[param, rest]
+  	with (<fetch-elem(?Variable(x))> param) <  errors:=<id>errs + errors:=<invArg(|errs)>f
 
   checkArgs:
   	[_, []] -> []
@@ -103,26 +112,28 @@ rules
   
   constraint-error:
   	LambdaFunction(PipeName(name), Some(FunctionArguments(args))) -> <concat>[errors, errors2]
-    where pargs := <get-args><GetPipe> name 
+    with pargs := <get-args><GetPipe> name 
 	  // Check that all arguments are expected parameters
-    where errors := <checkArgs>[pargs, args]
-    where errors2 := <checkParam(|name)>[pargs, args]
+    with errors := <checkArgs>[pargs, args]
+    with errors2 := <checkParam(|name)>[pargs, args]
     
   constraint-error:
 	  // Check that all required arguments are provided
   	f@LambdaFunction(PipeName(name), None()) -> errors
-    where pargs := <get-args><GetPipe>name
-    where errors := <checkParam(|name)>[pargs, []]
+    with pargs := <get-args><GetPipe>name
+    with errors := <checkParam(|name)>[pargs, []]
     
   constraint-error:
-  	FunctionApplication(_, LambdaFunction(PipeName(name), _), ApplyFunction(None())) -> (name, $[Expected [expected_size] arguments but got (one) implicit stream])  
-  	where expected_size := <GetPipe; get-inputs; length>name
-  	where not(<eq>[expected_size, 1]) 
-  constraint-error:
-  	FunctionApplication(_, LambdaFunction(PipeName(name),_), ApplyFunction(Some(ApplicationTarget(StreamList(input))))) -> (name, $[Expected [expected_size] arguments but got [actual_size]])
-  	where actual_size := <length>input
-  	where expected_size := <GetPipe; get-inputs; length>name
-  	where not(<eq>[expected_size, actual_size]) 
+  	FunctionApplication(_, LambdaFunction(PipeName(name),_), ApplyFunction(ApplicationTarget(StreamList(input)))) -> (name, $[Expected [expected_size] arguments but got [actual_size]])
+  	with <debug(!"que ")>input
+  	with actual_size := <length>input
+  	with <debug(!"yay ")>actual_size
+  	with expected_input := <GetPipe; debug(!"1 "); get-inputs; debug(!"2 ")>name
+  	with expected_size := <length>expected_input
+  	with <debug(!"booh ")>expected_size
+  	// where not(<eq>[expected_size, actual_size]) // LOLWTF?!!OMGBBQ
+  	where not(<eq-len>[input, expected_input]) 
+	// where <lt>[expected_size, actual_size] <+ <gt>[expected_size, actual_size] 
   	
   // Reports an error if an entity is defined more than once.
   // This constraint is implemented by testing if the "bag" of

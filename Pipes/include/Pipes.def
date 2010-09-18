@@ -76,7 +76,7 @@ exports
     "output"                          				-> Output {cons("ImplicitOutput")}
     "outputs" StreamList							-> Output {cons("ExplicitOutput")}
 
-	% epsilon %										-> StreamAssignment {cons("NoStreamAssignment")}
+	% epsilon %										-> StreamAssignment {cons("ImplicitStreamAssignment")}
     Stream "becomes"                                -> StreamAssignment {cons("SingleStreamAssignment")}
     StreamList "become"                             -> StreamAssignment {cons("MultipleStreamAssignment")}
 
@@ -85,10 +85,11 @@ exports
     "," "using" FunctionArgument+ ","               -> FunctionArguments {cons("FunctionArguments")}
     Value "as" ID                                   -> FunctionArgument {cons("FunctionArgument")}
 
-    "applied" ApplicationTarget?                    -> FunctionType {cons("ApplyFunction")}
+    "applied" ApplicationTarget                     -> FunctionType {cons("ApplyFunction")}
     "extracted"                                     -> FunctionType {cons("ExtractFunction")}
     ID												-> ExtractName {cons("ExtractName")}
 
+	% epsilon %										-> ApplicationTarget {cons("ImplicitApplicationTarget")}
     "to" StreamList  								-> ApplicationTarget {cons("ApplicationTarget")}
 
     PipeName FunctionArguments?                     -> LambdaFunction {cons("LambdaFunction")}

@@ -30,11 +30,11 @@ exports
 
   lexical syntax
     %% Lexical insertion recovery rules                                  
-    "\""                                            -> INSERTOPENQUOTE24 {recover}
-    INSERTOPENQUOTE24 StringChar* "\n"              -> STRING            {cons("INSERTEND")}
-    INSERTOPENQUOTE24 StringChar* WATEREOF          -> STRING            {cons("INSERTEND")}
-    "/*"                                            -> INSERTSTART24     {recover}
-    INSERTSTART24 ( ~[\*] | CommentChar )* WATEREOF -> LAYOUT            {cons("INSERTEND")}
+    "\""                                            -> INSERTOPENQUOTE28 {recover}
+    INSERTOPENQUOTE28 StringChar* "\n"              -> STRING            {cons("INSERTEND")}
+    INSERTOPENQUOTE28 StringChar* WATEREOF          -> STRING            {cons("INSERTEND")}
+    "/*"                                            -> INSERTSTART28     {recover}
+    INSERTSTART28 ( ~[\*] | CommentChar )* WATEREOF -> LAYOUT            {cons("INSERTEND")}
                                                     -> "pipe"            {recover, cons("INSERTION")}
                                                     -> "native"          {recover, cons("INSERTION")}
                                                     -> "load"            {recover, cons("INSERTION")}
@@ -105,15 +105,16 @@ exports
     "arguments" VariableList                          -> Arguments           {cons("Arguments")}
     "output"                                          -> Output              {cons("ImplicitOutput")}
     "outputs" StreamList                              -> Output              {cons("ExplicitOutput")}
-                                                      -> StreamAssignment    {cons("NoStreamAssignment")}
+                                                      -> StreamAssignment    {cons("ImplicitStreamAssignment")}
     Stream "becomes"                                  -> StreamAssignment    {cons("SingleStreamAssignment")}
     StreamList "become"                               -> StreamAssignment    {cons("MultipleStreamAssignment")}
     Variable "is"                                     -> Assignment          {cons("Assignment")}
     "," "using" FunctionArgument+ ","                 -> FunctionArguments   {cons("FunctionArguments")}
     Value "as" ID                                     -> FunctionArgument    {cons("FunctionArgument")}
-    "applied" ApplicationTarget?                      -> FunctionType        {cons("ApplyFunction")}
+    "applied" ApplicationTarget                       -> FunctionType        {cons("ApplyFunction")}
     "extracted"                                       -> FunctionType        {cons("ExtractFunction")}
     ID                                                -> ExtractName         {cons("ExtractName")}
+                                                      -> ApplicationTarget   {cons("ImplicitApplicationTarget")}
     "to" StreamList                                   -> ApplicationTarget   {cons("ApplicationTarget")}
     PipeName FunctionArguments?                       -> LambdaFunction      {cons("LambdaFunction")}
     StreamAssignment LambdaFunction FunctionType      -> FunctionApplication {cons("FunctionApplication")}

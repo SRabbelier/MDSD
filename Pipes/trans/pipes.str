@@ -7,7 +7,9 @@ imports
   include/Pipes
   lib/editor-common.generated
   check
+  desugar
   generate
+  rename
   python
 
 rules // Main editor interface (defined by editor/Pipes-Builders and -References.esv)
@@ -19,9 +21,10 @@ rules // Main editor interface (defined by editor/Pipes-Builders and -References
     with
       editor-init;
       analyze;
-      errors   := <collect-all(constraint-error, conc)> ast;
-      warnings := <collect-all(constraint-warning, conc)> ast;
-      notes    := <collect-all(constraint-note, conc)> ast
+      desugared := <alltd(desugar); alltd(rename)>ast;
+      errors   := <collect-all(constraint-error, conc)> desugared;
+      warnings := <collect-all(constraint-warning, conc)> desugared;
+      notes    := <collect-all(constraint-note, conc)> desugared
   
   // Transforms a selection to Java
   generate-java:
