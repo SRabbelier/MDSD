@@ -22,13 +22,13 @@ exports
 
     % epsilon %                                     -> Input {cons("NoInput")}
     "input"                                         -> Input {cons("ImplicitInput")}
-    "inputs" ":" StreamList                         -> Input {cons("ExplicitInput")}
+    "input" ":" StreamList                          -> Input {cons("ExplicitInput")}
 
     % epsilon %                                     -> Arguments {cons("NoArguments")}
     "arguments" ":" ArgumentList                    -> Arguments {cons("Arguments")}
     
     "output"                        				-> Output {cons("ImplicitOutput")}
-    "outputs" ":" StreamList     					-> Output {cons("ExplicitOutput")}
+    "output" ":" StreamList      					-> Output {cons("ExplicitOutput")}
 
 	% epsilon %										-> StreamAssignment {cons("ImplicitStreamAssignment")}
     Stream "becomes"                                -> StreamAssignment {cons("SingleStreamAssignment")}

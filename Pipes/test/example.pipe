@@ -27,6 +27,8 @@ define pipe main
 	    "all" as emit
 	    // TODO all
 	, applied.
+	  
+	get_flickr applied.
 
 output
 
@@ -39,7 +41,7 @@ define pipe multi
 	
 	$union becomes union applied to $feed2 and $feed3.
 
-outputs: $union
+output: $union
 
 
 define native loop
@@ -48,7 +50,7 @@ define native loop
 output
 
 define native union
-	inputs: $arg1 and $arg2
+	input: $arg1 and $arg2
 output
 
 define native reverse
@@ -64,6 +66,6 @@ define native feed
 output
 
 define native flickr
-	inputs: $stream
+	input: $stream
 	arguments: find and images
-outputs: $stream
+output: $stream

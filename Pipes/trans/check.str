@@ -82,14 +82,14 @@ rules
 
   checkParam(|target):
   	[[Argument(Variable(param))|rest], args] -> errors
-  	with errs :=  <checkParam(|target)>[rest, args] 
+  	with errs :=  <checkParam(|target)>[rest, args]
   	with (<fetch-elem(?FunctionArgument(_, param))> args) < errors:=errs + errors:=<missingParam(|errs, target)>param
   
   checkParam(|target):
   	[[], _] -> []	
 
   missingParam(|errors, target):
-  	Variable(x) -> [(target, $[Missing argument '[x]']), errors]
+  	x -> [(target, $[Missing argument '[x]']), errors]
   
   hasParam(|x):
   	param -> <id>
@@ -120,7 +120,7 @@ rules
   
   constraint-error:
   	LambdaFunction(PipeName(name), Some(FunctionArguments(args))) -> <concat>[errors, errors2]
-    with pargs := <get-args><GetPipe> name 
+    where pargs := <get-args><GetPipe> name 
 	  // Check that all arguments are expected parameters
     with errors := <checkArgs>[pargs, args]
     with errors2 := <checkParam(|name)>[pargs, args]
@@ -128,11 +128,11 @@ rules
   constraint-error:
 	  // Check that all required arguments are provided
   	f@LambdaFunction(PipeName(name), None()) -> errors
-    with pargs := <get-args><GetPipe>name
+    where pargs := <get-args><GetPipe>name
     with errors := <checkParam(|name)>[pargs, []]
     
   constraint-error:
-  	FunctionApplication(_, LambdaFunction(PipeName(name),_), ApplyFunction(ApplicationTarget(StreamList(input)))) -> (name, $[Expected [expected_size] arguments but got [actual_size]])
+  	FunctionApplication(_, LambdaFunction(PipeName(name),_), ApplyFunction(ApplicationTarget(StreamList(input)))) -> (name, $[Expected [expected_size] streams but got [actual_size]])
   	with actual_size := <length>input
   	where p := <GetPipe>name
   	with expected_input := <get-inputs>p

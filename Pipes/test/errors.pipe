@@ -7,24 +7,29 @@ input
 output
 
 define pipe outputs_without_stream
-outputs $stream
+output: $stream
 
 define pipe applied_to_un_init_stream
-	$stream becomes no_args applied to $stream.
+	$stream becomes no_streams applied to $stream.
+output
+
+load utils
+
+define native get_flickr
+input
+	arguments: 5 as count
 output
 
 define pipe duplicate_name
 
-	load utils.
-	
 	feed, using "" as url , extracted.
 	
 	loop, using
 	    //on is [item]
-	    [item] as on_fail and
-	    "meh" as on_failing and
-	    [item] as assign  and
-	    pipe get_flickr, using 66 as count, as trans and
+	    [item] as on_fail
+	    "meh" as on_failing
+	    [item] as assign 
+	    pipe get_flickr, using 66 as count, as trans
 	    "all" as emit
 	    // TODO all
 	, applied.
@@ -58,19 +63,18 @@ define pipe multi
 	$union becomes wrong_input_count applied to $feed1 and $feed2.
 	$union becomes wrong_input_count applied to $feed1 and $feed2 and $feed3.
 
-outputs $union
-
+output: $union
 
 define native loop
 input
-	arguments on and assign and trans and emit
+	arguments: on and assign and trans and emit
 output
 
 define native wrong_input_count
-inputs $one and $two
+input: $one and $two
 output
 
-define native no_args
+define native no_streams
 output
 
 define native shadow
@@ -87,10 +91,10 @@ output
 
 define native feed
 input
-	arguments url
+	arguments: url
 output
 
 define native flickr
-inputs $stream
-	arguments find and images
-outputs $stream
+input: $stream
+	arguments: find and images
+output: $stream
