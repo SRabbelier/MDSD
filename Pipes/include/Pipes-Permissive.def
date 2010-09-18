@@ -30,11 +30,11 @@ exports
 
   lexical syntax
     %% Lexical insertion recovery rules                                  
-    "\""                                            -> INSERTOPENQUOTE18 {recover}
-    INSERTOPENQUOTE18 StringChar* "\n"              -> STRING            {cons("INSERTEND")}
-    INSERTOPENQUOTE18 StringChar* WATEREOF          -> STRING            {cons("INSERTEND")}
-    "/*"                                            -> INSERTSTART18     {recover}
-    INSERTSTART18 ( ~[\*] | CommentChar )* WATEREOF -> LAYOUT            {cons("INSERTEND")}
+    "\""                                            -> INSERTOPENQUOTE21 {recover}
+    INSERTOPENQUOTE21 StringChar* "\n"              -> STRING            {cons("INSERTEND")}
+    INSERTOPENQUOTE21 StringChar* WATEREOF          -> STRING            {cons("INSERTEND")}
+    "/*"                                            -> INSERTSTART21     {recover}
+    INSERTSTART21 ( ~[\*] | CommentChar )* WATEREOF -> LAYOUT            {cons("INSERTEND")}
                                                     -> "pipe"            {recover, cons("INSERTION")}
                                                     -> "native"          {recover, cons("INSERTION")}
                                                     -> "load"            {recover, cons("INSERTION")}
@@ -100,22 +100,23 @@ exports
     "load" ID                                         -> Load                {cons("Load")}
                                                       -> Input               {cons("NoInput")}
     "input"                                           -> Input               {cons("ImplicitInput")}
-    "inputs" VariableList                             -> Input               {cons("ExplicitInput")}
+    "inputs" StreamList                               -> Input               {cons("ExplicitInput")}
                                                       -> Arguments           {cons("NoArguments")}
     "arguments" VariableList                          -> Arguments           {cons("Arguments")}
     "output"                                          -> Output              {cons("ImplicitOutput")}
-    "outputs" VariableList                            -> Output              {cons("ExplicitOutput")}
-    Variable "becomes"                                -> StreamAssignment    {cons("StreamAssignment")}
+    "outputs" StreamList                              -> Output              {cons("ExplicitOutput")}
+    Stream "becomes"                                  -> StreamAssignment    {cons("StreamAssignment")}
     Variable "is"                                     -> Assignment          {cons("Assignment")}
     "," "using" FunctionArgument+ ","                 -> FunctionArguments   {cons("FunctionArguments")}
     Value "as" ID                                     -> FunctionArgument    {cons("FunctionArgument")}
     "applied" ApplicationTarget?                      -> FunctionType        {cons("ApplyFunction")}
     "extracted"                                       -> FunctionType        {cons("ExtractFunction")}
     ID                                                -> ExtractName         {cons("ExtractName")}
-    "to" VariableList                                 -> ApplicationTarget   {cons("ApplicationTarget")}
+    "to" StreamList                                   -> ApplicationTarget   {cons("ApplicationTarget")}
     PipeName FunctionArguments?                       -> LambdaFunction      {cons("LambdaFunction")}
     StreamAssignment? LambdaFunction FunctionType     -> FunctionApplication {cons("FunctionApplication")}
     {Variable "and"}+                                 -> VariableList        {cons("VariableList")}
+    {Stream "and"}+                                   -> StreamList          {cons("StreamList")}
     StatementYay "."                                  -> Statement           {cons("Statement")}
     Variable                                          -> Value               
     Selector                                          -> Value               
@@ -130,4 +131,5 @@ exports
     INT                                               -> Integer             {cons("Integer")}
     "[" Selection "]"                                 -> Selector            {cons("Selector")}
     {ID "/"}+                                         -> Selection           {cons("Selection")}
-    "$" ID                                            -> Variable            {cons("Variable")}
+    "$" ID                                            -> Stream              {cons("Stream")}
+    ID                                                -> Variable            {cons("Variable")}

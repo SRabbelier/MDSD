@@ -3,6 +3,7 @@ module Pipes
 signature
   constructors
     Variable            : ID -> Variable
+    Stream              : ID -> Stream
     Selection           : List(ID) -> Selection
     Selector            : Selection -> Selector
     Integer             : INT -> Integer
@@ -17,20 +18,21 @@ signature
                         : Selector -> Value
                         : Variable -> Value
     Statement           : StatementYay -> Statement
+    StreamList          : List(Stream) -> StreamList
     VariableList        : List(Variable) -> VariableList
     FunctionApplication : Option(StreamAssignment) * LambdaFunction * FunctionType -> FunctionApplication
     LambdaFunction      : PipeName * Option(FunctionArguments) -> LambdaFunction
-    ApplicationTarget   : VariableList -> ApplicationTarget
+    ApplicationTarget   : StreamList -> ApplicationTarget
     ExtractFunction     : FunctionType
     ApplyFunction       : Option(ApplicationTarget) -> FunctionType
     FunctionArgument    : Value * ID -> FunctionArgument
     FunctionArguments   : List(FunctionArgument) -> FunctionArguments
-    StreamAssignment    : Variable -> StreamAssignment
-    ExplicitOutput      : VariableList -> Output
+    StreamAssignment    : Stream -> StreamAssignment
+    ExplicitOutput      : StreamList -> Output
     ImplicitOutput      : Output
     Arguments           : VariableList -> Arguments
     NoArguments         : Arguments
-    ExplicitInput       : VariableList -> Input
+    ExplicitInput       : StreamList -> Input
     ImplicitInput       : Input
     NoInput             : Input
     Load                : ID -> Load

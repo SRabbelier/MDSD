@@ -29,6 +29,8 @@
    FunctionApplication.1:opt -- _1,
    VariableList              -- _1,
    VariableList.1:iter-sep   -- _1 KW["and"],
+   StreamList                -- _1,
+   StreamList.1:iter-sep     -- _1 KW["and"],
    Statement                 -- _1 KW["."],
    All                       -- KW["all"],
    String                    -- _1,
@@ -36,5 +38,6 @@
    Selector                  -- KW["["] _1 KW["]"],
    Selection                 -- _1,
    Selection.1:iter-sep      -- _1 KW["/"],
-   Variable                  -- KW["$"] _1
+   Stream                    -- KW["$"] _1,
+   Variable                  -- _1
 ]

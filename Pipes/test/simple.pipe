@@ -21,17 +21,17 @@ pipe main
 output
 
 native feed
-	arguments $url
+	arguments url
 output
 
 native filter
-	arguments $on and $query
+	arguments on and query
 output
 
 native loop
-	arguments $on and $assign and $trans
+	arguments on and assign and trans
 output
 
 native search_pattern
-	arguments $pattern
+	arguments pattern
 output

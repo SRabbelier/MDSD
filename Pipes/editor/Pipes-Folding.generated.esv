@@ -23,14 +23,15 @@ folding Default folding definitions
   Start.Start
   Declaration.Pipe
   Input.ExplicitInput
-  VariableList.VariableList
+  StreamList.StreamList
   Arguments.Arguments
+  VariableList.VariableList
   FunctionApplication.FunctionApplication
   Selector
   Selector.Selector
   Selection.Selection
   FunctionType.ApplyFunction
-  OptApplicationTarget8
+  OptApplicationTarget11
   ApplicationTarget.ApplicationTarget
   Output.ExplicitOutput
   Declaration.Native

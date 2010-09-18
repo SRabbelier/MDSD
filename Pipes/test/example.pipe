@@ -39,10 +39,11 @@ pipe multi
 
 outputs $union
 
-native loop arguments $on and $assign and $trans and $emit
+native loop arguments on and assign and trans and emit
 output
 
 native union
+inputs $arg1 and $arg2
 output
 
 native reverse
@@ -52,10 +53,10 @@ native analyse_content
 output
 
 native feed
-	arguments $url
+	arguments url
 output
 
 native flickr
 	inputs $stream
-	arguments $find and $images
+	arguments find and images
 outputs $stream
