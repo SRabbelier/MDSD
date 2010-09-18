@@ -1,16 +1,16 @@
-pipe get_flickr
+define pipe get_flickr
 
 	input
-	arguments $count
+	arguments count
 	
 	flickr, using
-	    $count as find 
+	    count as find 
 	    [item] as images
 	, applied.
 
 output
 
-pipe main
+define pipe main
 
 	load utils.
 	
@@ -21,7 +21,7 @@ pipe main
 	loop, using
 	    [item] as on
 	    [item] as assign  
-	    get_flickr, using 66 as count, as trans
+	    pipe get_flickr, using 66 as count, as trans
 	    "all" as emit
 	    // TODO all
 	, applied.
@@ -29,7 +29,7 @@ pipe main
 output
 
 
-pipe multi
+define pipe multi
 	$feed1 becomes feed, using "example.com/feed1" as url, extracted.
 	$feed2 becomes feed, using "example.com/feed2" as url, extracted.
 	
@@ -39,24 +39,28 @@ pipe multi
 
 outputs $union
 
-native loop arguments on and assign and trans and emit
+define native loop
+	input
+	arguments on and assign and trans and emit
 output
 
-native union
-inputs $arg1 and $arg2
+define native union
+	inputs $arg1 and $arg2
 output
 
-native reverse
+define native reverse
+	input
 output
 
-native analyse_content
+define native analyse_content
+	input
 output
 
-native feed
+define native feed
 	arguments url
 output
 
-native flickr
+define native flickr
 	inputs $stream
 	arguments find and images
 outputs $stream

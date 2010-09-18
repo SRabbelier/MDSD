@@ -1,18 +1,19 @@
-pipe Tim
+define pipe Tim
+input
 output
 
-pipe Sverre
-inputs $stream
+define pipe Sverre
+input
 output
 
-pipe outputs_without_stream
+define pipe outputs_without_stream
 outputs $stream
 
-pipe applied_to_un_init_stream
+define pipe applied_to_un_init_stream
 	$stream becomes no_args applied to $stream.
 output
 
-pipe duplicate_name
+define pipe duplicate_name
 
 	load utils.
 	
@@ -23,7 +24,7 @@ pipe duplicate_name
 	    [item] as on_fail 
 	    "meh" as on_failing
 	    [item] as assign  
-	    get_flickr, using 66 as count, as trans
+	    pipe get_flickr, using 66 as count, as trans
 	    "all" as emit
 	    // TODO all
 	, applied.
@@ -31,7 +32,7 @@ pipe duplicate_name
 output
 
 
-pipe duplicate_name
+define pipe duplicate_name
 
 	feed, using "example.com/feed" as url,  extracted.
 
@@ -41,49 +42,55 @@ pipe duplicate_name
 
 output
 
-pipe shadow
+define pipe shadow
 	feed, using "url" as url, extracted.
 output
 
-pipe duplicate_native
+define pipe duplicate_native
 output
 
-pipe multi
+define pipe multi
 	$feed1 becomes feed, using "example.com/feed1" as url, extracted.
 	$feed2 becomes feed, using "example.com/feed2" as url, extracted.
 	
 	$union becomes wrong_input_count applied.
-	$union becomes wrong_input_count applied to $feed2.
+	$union becomes wrong_input_count applied to $feed1.
+	$union becomes wrong_input_count applied to $feed1 and $feed2.
 	$union becomes wrong_input_count applied to $feed1 and $feed2 and $feed3.
 
 outputs $union
 
 
-native loop
+define native loop
+input
 	arguments on and assign and trans and emit
 output
 
-native wrong_input_count
-	inputs $one and $two
+define native wrong_input_count
+inputs $one and $two
 output
 
-native no_args
+define native no_args
 output
 
-native shadow
+define native shadow
+input
 output
 
-native duplicate_native
+define native duplicate_native
+input
 output
 
-native duplicate_native
+define native duplicate_native
+input
 output
 
-native feed
+define native feed
+input
 	arguments url
 output
 
-native flickr
-	inputs $stream
+define native flickr
+inputs $stream
 	arguments find and images
 outputs $stream

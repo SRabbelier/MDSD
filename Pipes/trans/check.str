@@ -125,15 +125,12 @@ rules
     
   constraint-error:
   	FunctionApplication(_, LambdaFunction(PipeName(name),_), ApplyFunction(ApplicationTarget(StreamList(input)))) -> (name, $[Expected [expected_size] arguments but got [actual_size]])
-  	with <debug(!"que ")>input
   	with actual_size := <length>input
-  	with <debug(!"yay ")>actual_size
-  	with expected_input := <GetPipe; debug(!"1 "); get-inputs; debug(!"2 ")>name
+  	where p := <GetPipe>name
+  	with expected_input := <get-inputs>p
   	with expected_size := <length>expected_input
-  	with <debug(!"booh ")>expected_size
   	// where not(<eq>[expected_size, actual_size]) // LOLWTF?!!OMGBBQ
   	where not(<eq-len>[input, expected_input]) 
-	// where <lt>[expected_size, actual_size] <+ <gt>[expected_size, actual_size] 
   	
   // Reports an error if an entity is defined more than once.
   // This constraint is implemented by testing if the "bag" of

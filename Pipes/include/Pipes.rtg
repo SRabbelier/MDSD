@@ -61,13 +61,14 @@ regular tree grammar
     Value                       -> Integer
     Value                       -> String
     Value                       -> All
-    Value                       -> LambdaFunction
+    Value                       -> LambdaRef
     Value                       -> Selector
     Value                       -> Variable
     Statement                   -> Statement(StatementYay)
     StreamList                  -> StreamList(ListPlusOfStream0)
     VariableList                -> VariableList(ListPlusOfVariable0)
     FunctionApplication         -> FunctionApplication(StreamAssignment,LambdaFunction,FunctionType)
+    LambdaRef                   -> LambdaRef(LambdaFunction)
     LambdaFunction              -> LambdaFunction(PipeName,OptFunctionArguments0)
     ApplicationTarget           -> ApplicationTarget(StreamList)
     ApplicationTarget           -> ImplicitApplicationTarget()

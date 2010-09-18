@@ -14,13 +14,14 @@ signature
                               : Integer -> Value
                               : String -> Value
                               : All -> Value
-                              : LambdaFunction -> Value
+                              : LambdaRef -> Value
                               : Selector -> Value
                               : Variable -> Value
     Statement                 : StatementYay -> Statement
     StreamList                : List(Stream) -> StreamList
     VariableList              : List(Variable) -> VariableList
     FunctionApplication       : StreamAssignment * LambdaFunction * FunctionType -> FunctionApplication
+    LambdaRef                 : LambdaFunction -> LambdaRef
     LambdaFunction            : PipeName * Option(FunctionArguments) -> LambdaFunction
     ApplicationTarget         : StreamList -> ApplicationTarget
     ImplicitApplicationTarget : ApplicationTarget

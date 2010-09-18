@@ -13,8 +13,8 @@ exports
   
     Declaration*                                    -> Start {cons("Start")}
     
-    "pipe" PipeName Input Arguments Statement* Output     -> Declaration {cons("Pipe")}
-    "native" PipeName Input Arguments Output              -> Declaration {cons("Native")}
+    "define" "pipe" PipeName Input Arguments Statement* Output     -> Declaration {cons("Pipe")}
+    "define" "native" PipeName Input Arguments Output              -> Declaration {cons("Native")}
     
     ID												-> PipeName {cons("PipeName")}
 
@@ -47,6 +47,7 @@ exports
     "to" StreamList  								-> ApplicationTarget {cons("ApplicationTarget")}
 
     PipeName FunctionArguments?                     -> LambdaFunction {cons("LambdaFunction")}
+    "pipe" LambdaFunction							-> LambdaRef  {cons("LambdaRef")}
 
     StreamAssignment LambdaFunction FunctionType    -> FunctionApplication {cons("FunctionApplication")}
 
@@ -58,7 +59,7 @@ exports
     %% class membership
     Variable                                        -> Value
     Selector                                        -> Value
-    LambdaFunction                                  -> Value
+    LambdaRef	                                    -> Value
     All                                             -> Value
     String                                          -> Value
     Integer                                         -> Value
