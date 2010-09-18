@@ -1,0 +1,17 @@
+module rename
+
+imports
+  libstratego-lib
+  include/Pipes
+  lib/editor-common.generated
+
+rules
+	rename: 
+		Pipe(a, b, c, stat, d) -> Pipe(a, b, c, stat, d)
+		// with stat' := <map(rename-stream)>stat
+	
+	//rename-stream:
+	//	Statement(FunctionApplication(Some(Stream(stream)), _, _)) -> <id>
+	//	rules (
+	//		
+	//	)

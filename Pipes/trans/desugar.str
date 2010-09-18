@@ -1,0 +1,25 @@
+module desugar
+
+imports
+  libstratego-lib
+  include/Pipes
+  lib/editor-common.generated
+
+rules
+	desugar:
+		ImplicitStreamAssignment() -> MultipleStreamAssignment(StreamList([[Stream("stream")]]))
+
+	desugar:
+		SingleStreamAssignment(stream) -> MultipleStreamAssignment(StreamList([stream]))
+
+	desugar:
+		NoInput() -> ExplicitInput(StreamList([]))
+
+	desugar:
+		ImplicitInput() -> ExplicitInput(StreamList([Stream("stream")]))
+	
+	desugar:
+		ImplicitOutput() -> ExplicitOutput(StreamList([Stream("stream")]))
+
+	desugar:
+		ImplicitApplicationTarget() -> ApplicationTarget(StreamList([Stream("stream")]))
