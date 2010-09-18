@@ -13,22 +13,22 @@ exports
   
     Declaration*                                    -> Start {cons("Start")}
     
+    "load" ID                                       			   -> Declaration {cons("Load")}
     "define" "pipe" PipeName Input Arguments Statement* Output     -> Declaration {cons("Pipe")}
     "define" "native" PipeName Input Arguments Output              -> Declaration {cons("Native")}
     
     ID												-> PipeName {cons("PipeName")}
 
-    "load" ID                                       -> Load {cons("Load")}
 
     % epsilon %                                     -> Input {cons("NoInput")}
     "input"                                         -> Input {cons("ImplicitInput")}
-    "inputs" StreamList                             -> Input {cons("ExplicitInput")}
+    "inputs" ":" StreamList                         -> Input {cons("ExplicitInput")}
 
     % epsilon %                                     -> Arguments {cons("NoArguments")}
-    "arguments" VariableList                        -> Arguments {cons("Arguments")}
-
-    "output"                          				-> Output {cons("ImplicitOutput")}
-    "outputs" StreamList							-> Output {cons("ExplicitOutput")}
+    "arguments" ":" ArgumentList                    -> Arguments {cons("Arguments")}
+    
+    "output"                        				-> Output {cons("ImplicitOutput")}
+    "outputs" ":" StreamList     					-> Output {cons("ExplicitOutput")}
 
 	% epsilon %										-> StreamAssignment {cons("ImplicitStreamAssignment")}
     Stream "becomes"                                -> StreamAssignment {cons("SingleStreamAssignment")}
@@ -49,12 +49,12 @@ exports
     PipeName FunctionArguments?                     -> LambdaFunction {cons("LambdaFunction")}
     "pipe" LambdaFunction							-> LambdaRef  {cons("LambdaRef")}
 
-    StreamAssignment LambdaFunction FunctionType    -> FunctionApplication {cons("FunctionApplication")}
+    StreamAssignment LambdaFunction FunctionType "."-> FunctionApplication {cons("FunctionApplication")}
 
-    {Variable "and"}+                               -> VariableList {cons("VariableList")}
+	{Argument "and"}+                               -> ArgumentList {cons("ArgumentList")}
+	Variable										-> Argument {cons("Argument")}
+	Value "as" Variable								-> Argument {cons("DefaultedArgument")}
     {Stream "and"}+                               	-> StreamList {cons("StreamList")}
-
-	StatementYay "."								-> Statement {cons("Statement")}
 
     %% class membership
     Variable                                        -> Value
@@ -63,8 +63,7 @@ exports
     All                                             -> Value
     String                                          -> Value
     Integer                                         -> Value
-    FunctionApplication                             -> StatementYay
-    Load                                            -> StatementYay
+    FunctionApplication                             -> Statement
 
     %% primitves
     "all"                                           -> All {cons("All")}

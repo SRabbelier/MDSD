@@ -12,10 +12,10 @@ rules
   analyze:
     t -> t
     with
-      <topdown(try(record-entity))> t
+      <topdown(try(record-pipe))> t
 
   // Records the definition of an entity in a dynamic rule GetEntity.
-  record-entity:
+  record-pipe:
     p@Pipe(PipeName(x), _, _, _, _) -> p
     with
       // For a name 'x', GetPipe will return the original 'x' tree node
@@ -23,7 +23,7 @@ rules
         GetCustom :+ x -> p
     	GetPipe :+ x -> p
       )
-  record-entity:
+  record-pipe:
     n@Native(PipeName(x), _, _, _) -> n
     with
       rules(
@@ -54,13 +54,13 @@ rules
   	Pipe(_, _, NoArguments(), _, _) -> []
 
   get-args:
-  	Pipe(_, _, Arguments(VariableList(a)), _, _) -> a
+  	Pipe(_, _, Arguments(ArgumentList(a)), _, _) -> a
   
   get-args:
   	Native(_, _, NoArguments(), _) -> []
 	  
   get-args:
-  	Native(_, _, Arguments(VariableList(a)), _) -> a
+  	Native(_, _, Arguments(ArgumentList(a)), _) -> a
 
   get-inputs:
   	Pipe(_, NoInput(), _, _, _) -> []
@@ -77,20 +77,28 @@ rules
   	Native(_, ExplicitInput(StreamList(list)), _, _) -> list
 
   checkParam(|target):
-  	[[Variable(param)|rest], args] -> errors
+  	[[DefaultedArgument(_, param)|rest], args] -> errs
+  	with errs :=  <checkParam(|target)>[rest, args]
+
+  checkParam(|target):
+  	[[Argument(Variable(param))|rest], args] -> errors
   	with errs :=  <checkParam(|target)>[rest, args] 
-  	with (<fetch-elem(?FunctionArgument(_, param))> args) < errors:=<id>errs + errors:=<missingParam(|errs, target)>param
+  	with (<fetch-elem(?FunctionArgument(_, param))> args) < errors:=errs + errors:=<missingParam(|errs, target)>param
   
   checkParam(|target):
   	[[], _] -> []	
 
   missingParam(|errors, target):
-  	x -> [(target, $[Missing argument '[x]']), errors]
+  	Variable(x) -> [(target, $[Missing argument '[x]']), errors]
+  
+  hasParam(|x):
+  	param -> <id>
+  	where <fetch-elem(?Argument(Variable(x)))>param <+ <fetch-elem(?DefaultedArgument(_, Variable(x)))>param 
   
   checkArgs:
   	[param, [f@FunctionArgument(_,x)|rest]] -> errors
   	with errs := <checkArgs>[param, rest]
-  	with (<fetch-elem(?Variable(x))> param) <  errors:=<id>errs + errors:=<invArg(|errs)>f
+  	with (<hasParam(|x)>param) <  errors:=<id>errs + errors:=<invArg(|errs)>f
 
   checkArgs:
   	[_, []] -> []

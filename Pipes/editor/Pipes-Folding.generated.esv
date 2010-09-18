@@ -25,12 +25,13 @@ folding Default folding definitions
   Input.ExplicitInput
   StreamList.StreamList
   Arguments.Arguments
-  VariableList.VariableList
-  FunctionApplication.FunctionApplication
-  StreamAssignment.MultipleStreamAssignment
+  ArgumentList.ArgumentList
+  Argument.DefaultedArgument
   Selector
   Selector.Selector
   Selection.Selection
+  FunctionApplication.FunctionApplication
+  StreamAssignment.MultipleStreamAssignment
   FunctionType.ApplyFunction
   ApplicationTarget.ApplicationTarget
   Output.ExplicitOutput

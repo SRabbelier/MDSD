@@ -1,7 +1,7 @@
+load utils
+
 define pipe main
-	
-	load utils.
-	
+		
 	feed, using
 	 "http://www.xkcd.com/rss.xml" as url
 	, extracted.
@@ -21,20 +21,20 @@ define pipe main
 output
 
 define native feed
-	arguments url
+	arguments: url
 output
 
 define native filter
 input
-	arguments on and query
+	arguments: on and query
 output
 
 define native loop
 input
-	arguments on and assign and trans
+	arguments: on and assign and trans
 output
 
 define native search_pattern
 input
-	arguments pattern
+	arguments: pattern
 output

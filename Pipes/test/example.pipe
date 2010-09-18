@@ -1,18 +1,20 @@
-define pipe get_flickr
+load native
 
-	input
-	arguments count
+define pipe get_flickr
+input
+
+	arguments: 5 as count
 	
 	flickr, using
 	    count as find 
 	    [item] as images
 	, applied.
 
+
 output
 
 define pipe main
 
-	load utils.
 	
 	feed, using "" as url , extracted.
 	
@@ -37,15 +39,16 @@ define pipe multi
 	
 	$union becomes union applied to $feed2 and $feed3.
 
-outputs $union
+outputs: $union
+
 
 define native loop
 	input
-	arguments on and assign and trans and emit
+	arguments: on and assign and trans and emit
 output
 
 define native union
-	inputs $arg1 and $arg2
+	inputs: $arg1 and $arg2
 output
 
 define native reverse
@@ -57,10 +60,10 @@ define native analyse_content
 output
 
 define native feed
-	arguments url
+	arguments: url
 output
 
 define native flickr
-	inputs $stream
-	arguments find and images
-outputs $stream
+	inputs: $stream
+	arguments: find and images
+outputs: $stream

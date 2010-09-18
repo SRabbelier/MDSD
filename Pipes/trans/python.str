@@ -13,21 +13,24 @@ rules
 
   to-stream-args : ImplicitInput() -> ["stream"]
 
-  extract-variables : Variable(v) -> v
+  extract-variables : Argument(v) -> v
+  extract-variables : DefaultedArgument(_, v) -> v
+
+  extract-stream : Stream(v) -> v
 
   extract-keyword-args : Variable(v) -> result
   with result := <concat-strings>[v, "=None"]
 
-  to-stream-args : ExplicitInput(VariableList(vars)) -> result
-  with result := <map(extract-variables)>vars
+  to-stream-args : ExplicitInput(StreamList(vars)) -> result
+  with result := <map(extract-stream)>vars
 
   to-value-args : NoArguments() -> []
 
-  to-value-args : Arguments(VariableList(vars)) -> result
+  to-value-args : Arguments(ArgumentList(vars)) -> result
   with result := <map(extract-keyword-args)>vars
 
-  to-output-args : ExplicitOutput(VariableList(vars)) -> result
-  with e := <map(extract-variables)>vars
+  to-output-args : ExplicitOutput(StreamList(vars)) -> result
+  with e := <map(extract-stream)>vars
   with result := python|[return e;]|
 
   python-header = !python*|[
@@ -74,8 +77,8 @@ rules
 
   extract-function-streams : ApplyFunction(None()) -> ["stream"]
 
-  extract-function-streams : ApplyFunction(Some(VariableList(vars))) -> result
-  with result := <map(extract-variables)>vars
+  extract-function-streams : ApplyFunction(ApplicationTarget(StreamList(vars))) -> result
+  with result := <map(extract-stream)>vars
 
   extract-function-streams : ExtractFunction() -> []
 

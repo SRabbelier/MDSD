@@ -21,10 +21,10 @@ define pipe duplicate_name
 	
 	loop, using
 	    //on is [item]
-	    [item] as on_fail 
-	    "meh" as on_failing
-	    [item] as assign  
-	    pipe get_flickr, using 66 as count, as trans
+	    [item] as on_fail and
+	    "meh" as on_failing and
+	    [item] as assign  and
+	    pipe get_flickr, using 66 as count, as trans and
 	    "all" as emit
 	    // TODO all
 	, applied.
