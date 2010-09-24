@@ -9,33 +9,25 @@ output
 
 define pipe reverse
 input
-	$out and $rest become split, using
-		2 as from
-		, applied.
+	$out becomes first applied.
+	$rest becomes rest applied.
 	
 	$rest becomes reverse applied to $rest.
 	
 	$out becomes join applied to $out and $rest.
 output: $out
 
-
-//
-// MOVE TO NATIVES.pipe
-//
-
-define native split
+define pipe first
 input
-	arguments: from
-output: $left and $right
+	$first and $rest become split, using
+		2 as from
+		, applied.
+output: $first
 
-define native join
-input: $first and $second
-	// Returns a stream containing the elements of the first stream,
-	// followed by the elements of the second stream.
-output
-
-define native feed
-	arguments: url
-	// Returns a stream based on the (rss) feed to be found at url. 
-output
+define pipe rest
+input
+	$out and $rest become split, using
+		2 as from
+		, applied.
+output: $rest
  

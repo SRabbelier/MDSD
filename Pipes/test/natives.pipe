@@ -1,15 +1,6 @@
 
 
-define native first
-input
-	// Returns a stream containing the first element of the input stream
-output
 
-define native rest
-input
-	// Returns a stream containing everything but the first element
-	// of the input stream, in order.
-output
 
 define native join
 input: $first and $second
@@ -21,3 +12,8 @@ define native feed
 	arguments: url
 	// Returns a stream based on the (rss) feed to be found at url. 
 output
+
+define native split
+input
+	arguments: from
+output: $left and $right

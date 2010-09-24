@@ -7,6 +7,7 @@ imports
   include/Pipes
   lib/editor-common.generated
   analyze
+  completion
   check
   desugar
   generate
