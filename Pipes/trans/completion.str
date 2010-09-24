@@ -3,6 +3,7 @@ module completion
 imports
   lib/editor-common.generated
   include/Pipes
+  analyze
   check
 
 rules
