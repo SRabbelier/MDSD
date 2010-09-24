@@ -9,8 +9,9 @@ output
 
 define pipe reverse
 input
-	$out becomes first applied.
-	$rest becomes rest applied.
+	$out and $rest become split, using
+		2 as from
+		, applied.
 	
 	$rest becomes reverse applied to $rest.
 	
@@ -19,25 +20,13 @@ output: $out
 
 
 //
-// MOVE TO NATIVE.pipe
+// MOVE TO NATIVES.pipe
 //
 
-define native loop
-	input: $first and $second
-	arguments: on and assign and trans and emit
-output: $second and $first
-
-
-define native first
+define native split
 input
-	// Returns a stream containing the first element of the input stream
-output
-
-define native rest
-input
-	// Returns a stream containing everything but the first element
-	// of the input stream, in order.
-output
+	arguments: from
+output: $left and $right
 
 define native join
 input: $first and $second

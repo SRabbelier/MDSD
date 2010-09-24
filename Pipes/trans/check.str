@@ -70,13 +70,19 @@ rules
   get-inputs:
   	Pipe(_, ExplicitInput(StreamList(list)), _, _, _) -> list
 
-  get-inputs:
-  	Native(_, NoInput(), _, _) -> []
-  get-inputs:
-  	Native(_, ImplicitInput(), _, _) -> [Stream("stream")]
-  get-inputs:
-  	Native(_, ExplicitInput(StreamList(list)), _, _) -> list
+  // get-inputs:
+  	// Native(_, NoInput(), _, _) -> []
+  // get-inputs:
+  	// Native(_, ImplicitInput(), _, _) -> [Stream("stream")]
+  // get-inputs:
+  	// Native(_, ExplicitInput(StreamList(list)), _, _) -> list
+  	
+  get-outputs:
+	Pipe(_, _, _, _, ImplicitOutput()) -> [Stream("stream")]
 
+  get-outputs:
+	Pipe(_, _, _, _, ExplicitOutput(StreamList(list))) -> list
+	
   checkParam(|target):
   	[[DefaultedArgument(_, param)|rest], args] -> errs
   	with errs :=  <checkParam(|target)>[rest, args]
@@ -140,6 +146,14 @@ rules
   	with expected_size := <length>expected_input
   	// where not(<eq>[expected_size, actual_size]) // LOLWTF?!!OMGBBQ
   	where not(<eq-len>[input, expected_input]) 
+
+  constraint-error:
+  	FunctionApplication(MultipleStreamAssignment(StreamList(streams)), LambdaFunction(PipeName(name),_),_) -> (name, $[Pipe returns [expected_size] streams but only [actual_size] assigned])
+  	with actual_size := <length>streams
+  	where p:= <GetPipe>name
+  	with expected_input := <get-outputs>p
+  	with expected_size := <length>expected_input
+  	where not(<eq-len>[streams, expected_input])
   	
   // Reports an error if an entity is defined more than once.
   // This constraint is implemented by testing if the "bag" of

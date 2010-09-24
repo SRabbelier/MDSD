@@ -1,0 +1,27 @@
+Pipe(
+  PipeName("reverse")
+, ImplicitInput()
+, NoArguments()
+, [ FunctionApplication(
+      SingleStreamAssignment(Stream("out"))
+    , LambdaFunction(PipeName("first"), None())
+    , ApplyFunction(ImplicitApplicationTarget())
+    )
+  , FunctionApplication(
+      SingleStreamAssignment(Stream("rest"))
+    , LambdaFunction(PipeName("rest"), None())
+    , ApplyFunction(ImplicitApplicationTarget())
+    )
+  , FunctionApplication(
+      SingleStreamAssignment(Stream("rest"))
+    , LambdaFunction(PipeName("reverse"), None())
+    , ApplyFunction(ApplicationTarget(StreamList([Stream("rest")])))
+    )
+  , FunctionApplication(
+      SingleStreamAssignment(Stream("out"))
+    , LambdaFunction(PipeName("join"), None())
+    , ApplyFunction(ApplicationTarget(StreamList([Stream("out"), Stream("rest")])))
+    )
+  ]
+, ExplicitOutput(StreamList([Stream("out")]))
+)
