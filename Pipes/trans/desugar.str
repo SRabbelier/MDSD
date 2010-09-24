@@ -8,6 +8,10 @@ imports
 rules
 	desugar:
 		ImplicitStreamAssignment() -> MultipleStreamAssignment(StreamList([[Stream("stream")]]))
+		
+	// desugar:
+		// ImplicitFunctionApplication(lambda, type) -> FunctionApplication(stream, lambda, type)
+		// where stream := MultipleStreamAssignment(StreamList([[Stream("stream")]]))
 
 	desugar:
 		SingleStreamAssignment(stream) -> MultipleStreamAssignment(StreamList([stream]))

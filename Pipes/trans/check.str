@@ -24,11 +24,12 @@ rules
     	GetPipe :+ x -> p
       )
   record-pipe:
-    n@Native(PipeName(x), _, _, _) -> n
+    n@Native(PipeName(x), a, b, c) -> n
+    with p := Pipe(PipeName(x), a, b, None(), c)
     with
       rules(
     	GetNative :+ x -> n
-    	GetPipe :+ x -> n
+    	GetPipe :+ x -> p
       )
   
 	

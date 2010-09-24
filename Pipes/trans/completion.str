@@ -1,0 +1,68 @@
+module completion
+
+imports
+  lib/editor-common.generated
+  include/Pipes
+  check
+
+rules
+	
+	empty-list:
+		_ -> []
+
+	editor-complete:
+		(NOCONTEXT(COMPLETION(prefix)), position, ast, path, project-path) -> proposals
+		// where debug(!"Noo ")
+		where proposals := <editor-complete <+ empty-list>(PipeName(COMPLETION(prefix)), position, ast, path, project-path)
+	
+	editor-complete:
+		(PipeName(COMPLETION(prefix)), position, ast, path, project-path) -> proposals
+		where pipes := <all-keys-GetPipe>;
+			proposals := <map(pipe-template)>pipes
+
+	pipe-template:
+		pipe-name -> template
+		where pipe := <GetPipe>pipe-name;
+			args := <args-template> pipe;
+			app:= <applied-template> pipe;
+			template := $[[pipe-name][args] [app].]
+	
+	args-template:
+		Pipe(_, _, NoArguments(), _, _) -> $[]
+	args-template:
+		Pipe(_, _, Arguments(ArgumentList(args)), _, _) -> template
+		where list := <map(args-template);separate-by(|$[\n\t])>args
+		where template := $[, using\n\t[list]\n,]
+		
+	args-template:
+		Argument(Variable(name)) -> $[_ as [name]]
+		
+	applied-template:
+		Pipe(_, NoInput(), _, _, _) -> "extracted"
+		
+	applied-template:
+		Pipe(_, ImplicitInput(), _, _, _) -> "applied"
+		
+	applied-template:
+		Pipe(_, ExplicitInput(StreamList(streams)), _, _, _) -> $[applied to [template]]
+		where template:= <map(stream-name);separate-by(|" and ")>streams
+	
+    stream-name:
+    	Stream(name) -> $[$[name]]
+      
+	// editor-complete_:
+		// PipeName(COMPLETION(prefix)) -> [proposals]
+    	// where
+    		// proposals := <all-keys-GetPipe>
+
+	// editor-complete_:
+		// (a, b, c, d, e) -> ["extremely", "useless"]
+		// with <debug(!"hi ")>a
+		// with <debug(!"ok ")><all-keys-GetPipe>
+		
+//a (PipeName(COMPLETION("ex")),
+//b [0,3,3,0,1,0],
+//c Start([Load("natives"),Pipe(PipeName("example"),NoInput,NoArguments,[FunctionApplication(ImplicitStreamAssignment,LambdaFunction(PipeName("feed"),Some(FunctionArguments([FunctionArgument(String("\"http://www.xkcd.com/rss.xml\""),"url")]))),ExtractFunction),FunctionApplication(ImplicitStreamAssignment,LambdaFunction(PipeName("reverse"),None),ApplyFunction(ImplicitApplicationTarget))],ImplicitOutput),Pipe(PipeName("reverse"),ImplicitInput,NoArguments,[FunctionApplication(SingleStreamAssignment(Stream("out")),LambdaFunction(PipeName("first"),None),ApplyFunction(ImplicitApplicationTarget)),FunctionApplication(SingleStreamAssignment(Stream("rest")),LambdaFunction(PipeName("rest"),None),ApplyFunction(ImplicitApplicationTarget)),FunctionApplication(SingleStreamAssignment(Stream("rest")),LambdaFunction(PipeName("reverse"),None),ApplyFunction(ApplicationTarget(StreamList([Stream("rest")])))),FunctionApplication(SingleStreamAssignment(Stream("out")),LambdaFunction(PipeName("join"),None),ApplyFunction(ApplicationTarget(StreamList([Stream("out"),Stream("rest")]))))],ExplicitOutput(StreamList([Stream("out")]))),Pipe(PipeName("test"),ImplicitInput,NoArguments,[FunctionApplication(SingleStreamAssignment(Stream("stream")),LambdaFunction(PipeName(COMPLETION("ex")),None),ApplyFunction(ImplicitApplicationTarget))],ImplicitOutput),Native(PipeName("first"),ImplicitInput,NoArguments,ImplicitOutput),Native(PipeName("rest"),ImplicitInput,NoArguments,ImplicitOutput),Native(PipeName("join"),ExplicitInput(StreamList([Stream("first"),Stream("second")])),NoArguments,ImplicitOutput),Native(PipeName("feed"),NoInput,Arguments(ArgumentList([Argument(Variable("url"))])),ImplicitOutput)]),
+//d "test/want.pipe",
+//e "H:\\_home\\Workspaces\\MDSD\\MDSD\\Pipes")
+		

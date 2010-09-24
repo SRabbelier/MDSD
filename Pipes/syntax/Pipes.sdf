@@ -51,6 +51,7 @@ exports
 
     StreamAssignment LambdaFunction FunctionType "."-> FunctionApplication {cons("FunctionApplication")}
 
+
 	{Argument "and"}+                               -> ArgumentList {cons("ArgumentList")}
 	Variable										-> Argument {cons("Argument")}
 	Value "as" Variable								-> Argument {cons("DefaultedArgument")}
@@ -73,3 +74,23 @@ exports
     { ID "/"}+										-> Selection {cons("Selection")}
     "$" ID                                          -> Stream {cons("Stream")}
 	ID                                              -> Variable {cons("Variable")}
+	
+	lexical syntax
+		"and" 			-> Keyword
+		"arguments" 	-> Keyword
+		"become" 		-> Keyword
+		"becomes" 		-> Keyword
+		"define" 		-> Keyword
+		"extracted"		-> Keyword
+		"input" 		-> Keyword
+		"load" 			-> Keyword
+		"native" 		-> Keyword
+		"output" 		-> Keyword
+		"pipe" 			-> Keyword
+		"to" 			-> Keyword
+		"using"			-> Keyword
+		
+		Keyword -> ID {reject}
+	lexical restrictions
+		"and" "arguments" "become" "becomes" "define" "extracted" 
+		"input" "load" "native" "output" "pipe" "to" "using" -/- [a-zA-Z0-9]

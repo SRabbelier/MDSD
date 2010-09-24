@@ -11,6 +11,7 @@ imports
   generate
   rename
   python
+  completion
 
 rules // Main editor interface (defined by editor/Pipes-Builders and -References.esv)
   
@@ -67,8 +68,8 @@ rules // Main editor interface (defined by editor/Pipes-Builders and -References
 
   // Completes an identifier when the user presses control-space
   // (the completion identifier in the AST provides additional context information)
-  editor-complete:
-    (Type(COMPLETION(prefix)), position, ast, path, project-path) ->
-    ["String", "Int" | proposals]
-    where
-      proposals := <all-keys-GetPipe>
+  // editor-complete:
+    // (Type(COMPLETION(prefix)), position, ast, path, project-path) ->
+    // ["String", "Int" ] //| proposals]
+    // where
+      // proposals := <all-keys-GetPipe>
