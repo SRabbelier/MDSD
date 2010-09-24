@@ -15,19 +15,18 @@ strategies
       full-path'   := <string-replace(|"/", "+"); string-replace(|"\\", "+"); string-replace(|":", "+")> full-path;
       cache-path   := $[[cache-dir]/[full-path'].sig]
 
-  open-import(resolve-path, parse-file): import -> defs
+  open-import(parse-file|path): import -> defs
   where
-	path       := <resolve-path> import;
 	cache-path := <import-cache-path> path;
 	if not(<CachedImport> path) then
 	    if <is-newer> (cache-path, path) then
-	      defs := <ReadFromFile> cache-path
+	      	defs := <ReadFromFile> cache-path
 	    else
-	      defs := <parse-file <+ debug(!"Could not parse: "); fail> path;
-	      if <file-exists> path then
-	        // Only cache if on filesystem (e.g., ignore libstratego-lib)
-	        <WriteToBinaryFile> (cache-path, defs)
-	      end
+			defs := <parse-file <+ debug(!"Could not parse: "); fail> path;
+			if <file-exists> path then
+				// Only cache if on filesystem (e.g., ignore libstratego-lib)
+				<WriteToBinaryFile> (cache-path, defs)
+			end
 	    end
 	  ; rules (
 	      CachedImport : path -> defs
@@ -41,7 +40,13 @@ rules
   // Analysis: does a topdown traversal of the tree,
   // and tries to apply the record-entity rule.
   analyze:
-    t -> t
+    t@(ast, path, dir) -> t
+    with cd := <concat-strings>[dir, "\\", <dirname>path]
+    with rules (
+    	BasePath := dir
+    	CurrentFile := path
+    	CurrentDir := cd
+    )
     with <topdown(try(analyze-one))> t
 
   analyze-one:
@@ -67,11 +72,14 @@ rules
 
   import-module :
     Load(name) -> Load(name)
-    with debug(!"loading ")
-    where (<ParsedAndImported> name
-           ; rules ( Imports :+= name )
+    where (
+    	<ParsedAndImported> name
+        ; rules ( Imports :+= name )
         <+ rules ( ParsedAndImported : name)
-         ; where(<open-import(\ path -> <concat-strings> [path, ".mobl"] \, parse-file)> name
-             ; <analyze> Module(<id>))
+         ; where(
+           	full-path := <concat-strings>[<CurrentDir>, "\\", name, ".pipe"]
+           	; <open-import(parse-file|full-path)> name
+         	; <analyze>(<id>, full-path, <BasePath>)
+         	)
          ; rules ( Imports :+= name)
            )

@@ -1,6 +1,6 @@
 [
-   Start                     -- _1,
-   Start.1:iter-star         -- _1,
+   Module                    -- _1,
+   Module.1:iter-star        -- _1,
    Load                      -- KW["load"] _1,
    Pipe                      -- KW["define"] KW["pipe"] _1 _2 _3 _4 _5,
    Pipe.4:iter-star          -- _1,

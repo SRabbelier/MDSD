@@ -13,4 +13,4 @@ language General properties
                   
   extensions    : pipe
   table         : include/Pipes.tbl
-  start symbols : Start
+  start symbols : Module

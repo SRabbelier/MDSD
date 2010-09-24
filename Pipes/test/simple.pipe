@@ -1,3 +1,5 @@
+load native
+
 define pipe main
 		
 	feed, using
@@ -16,23 +18,4 @@ define pipe main
 		, as trans 
 	, applied.
 
-output
-
-define native feed
-	arguments: url
-output
-
-define native filter
-input
-	arguments: on and query
-output
-
-define native loop
-input
-	arguments: on and assign and trans
-output
-
-define native search_pattern
-input
-	arguments: pattern
 output
