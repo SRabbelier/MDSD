@@ -126,6 +126,11 @@ rules
     where
       not(<bagof-GetNative> x => [_])
   
+  constraint-error:
+  	Load(x) -> (x, $[Could not load module '[x]'])
+  	where
+  	  <FailedImports>x
+  
   constraint-warning:
     Pipe(PipeName(x), _, _, _, _) -> (x, $[Shadowing native pipe])
     where

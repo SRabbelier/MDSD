@@ -1,4 +1,4 @@
-load native
+load example_native
 
 define pipe get_flickr
 input

@@ -1,0 +1,52 @@
+load natives
+
+define pipe example
+	feed, using
+		 "http://www.xkcd.com/rss.xml" as url
+		, extracted.
+	reverse applied.
+output
+
+define pipe reverse
+input
+	$out becomes first applied.
+	$rest becomes rest applied.
+	
+	$rest becomes reverse applied to $rest.
+	
+	$out becomes join applied to $out and $rest.
+output: $out
+
+
+//
+// MOVE TO NATIVE.pipe
+//
+
+define native loop
+	input: $first and $second
+	arguments: on and assign and trans and emit
+output: $second and $first
+
+
+define native first
+input
+	// Returns a stream containing the first element of the input stream
+output
+
+define native rest
+input
+	// Returns a stream containing everything but the first element
+	// of the input stream, in order.
+output
+
+define native join
+input: $first and $second
+	// Returns a stream containing the elements of the first stream,
+	// followed by the elements of the second stream.
+output
+
+define native feed
+	arguments: url
+	// Returns a stream based on the (rss) feed to be found at url. 
+output
+ 

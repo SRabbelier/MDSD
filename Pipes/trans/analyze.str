@@ -63,11 +63,12 @@ rules
     	GetPipe :+ x -> p
       )
   analyze-one:
-    n@Native(PipeName(x), _, _, _) -> n
+     n@Native(PipeName(x), a, b, c) -> n
+     with p := Pipe(PipeName(x), a, b, None(), c)
     with
       rules(
     	GetNative :+ x -> n
-    	GetPipe :+ x -> n
+    	GetPipe :+ x -> p
       )
 
   import-module :
@@ -76,10 +77,15 @@ rules
     	<ParsedAndImported> name
         ; rules ( Imports :+= name )
         <+ rules ( ParsedAndImported : name)
+         ; full-path := <concat-strings>[<CurrentDir>, "\\", name, ".pipe"]
          ; where(
-           	full-path := <concat-strings>[<CurrentDir>, "\\", name, ".pipe"]
-           	; <open-import(parse-file|full-path)> name
-         	; <analyze>(<id>, full-path, <BasePath>)
+           	if <file-exists> full-path then
+           		<open-import(parse-file|full-path)> name
+         		; <analyze>(<id>, full-path, <BasePath>)
+         		; rules ( Imports :+= name)
+         	else
+         		rules (FailedImports :+= name)
+			end
+			
          	)
-         ; rules ( Imports :+= name)
-           )
+	)
