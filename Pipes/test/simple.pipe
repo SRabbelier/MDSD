@@ -1,5 +1,3 @@
-load utils
-
 define pipe main
 		
 	feed, using

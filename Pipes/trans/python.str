@@ -49,7 +49,7 @@ rules
   ]|
 
   to-python :
-    Start(declarations) -> python*|[
+    Module(declarations) -> python*|[
 	  stm1*
       stm
       stm2*
@@ -125,7 +125,7 @@ rules
 		with stm* := <map(to-python); concat>statements
 
   generate-python :
-	Start(_) -> result
+	Module(_) -> result
 	with code := <to-python; flatten-list>
 	with result := Application(code)
 

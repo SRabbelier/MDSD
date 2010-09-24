@@ -1,0 +1,77 @@
+module analyze
+
+imports
+	libstratego-lib
+  	include/Pipes
+  	lib/editor-common.generated
+
+strategies
+
+  import-cache-path:
+    full-path -> cache-path
+    with
+      project-path := <project-path>;
+      cache-dir    := <file-exists <+ mkdir> $[[project-path]/.cache];
+      full-path'   := <string-replace(|"/", "+"); string-replace(|"\\", "+"); string-replace(|":", "+")> full-path;
+      cache-path   := $[[cache-dir]/[full-path'].sig]
+
+  open-import(resolve-path, parse-file): import -> defs
+  where
+	path       := <resolve-path> import;
+	cache-path := <import-cache-path> path;
+	if not(<CachedImport> path) then
+	    if <is-newer> (cache-path, path) then
+	      defs := <ReadFromFile> cache-path
+	    else
+	      defs := <parse-file <+ debug(!"Could not parse: "); fail> path;
+	      if <file-exists> path then
+	        // Only cache if on filesystem (e.g., ignore libstratego-lib)
+	        <WriteToBinaryFile> (cache-path, defs)
+	      end
+	    end
+	  ; rules (
+	      CachedImport : path -> defs
+	    )
+	else
+	  defs := <CachedImport> path
+	end
+
+rules
+
+  // Analysis: does a topdown traversal of the tree,
+  // and tries to apply the record-entity rule.
+  analyze:
+    t -> t
+    with <topdown(try(analyze-one))> t
+
+  analyze-one:
+  	p@Load(name) -> p
+  	with <import-module>p
+
+  // Records the definition of an entity in a dynamic rule GetEntity.
+  analyze-one:
+    p@Pipe(PipeName(x), _, _, _, _) -> p
+    with
+      // For a name 'x', GetPipe will return the original 'x' tree node
+      rules(
+        GetCustom :+ x -> p
+    	GetPipe :+ x -> p
+      )
+  analyze-one:
+    n@Native(PipeName(x), _, _, _) -> n
+    with
+      rules(
+    	GetNative :+ x -> n
+    	GetPipe :+ x -> n
+      )
+
+  import-module :
+    Load(name) -> Load(name)
+    with debug(!"loading ")
+    where (<ParsedAndImported> name
+           ; rules ( Imports :+= name )
+        <+ rules ( ParsedAndImported : name)
+         ; where(<open-import(\ path -> <concat-strings> [path, ".mobl"] \, parse-file)> name
+             ; <analyze> Module(<id>))
+         ; rules ( Imports :+= name)
+           )

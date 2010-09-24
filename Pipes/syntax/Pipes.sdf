@@ -7,11 +7,11 @@ imports Common
 exports
 
   context-free start-symbols
-    Start
+    Module
 
   context-free syntax
   
-    Declaration*                                    -> Start {cons("Start")}
+    Declaration*                                    -> Module {cons("Module")}
     
     "load" ID                                       			   -> Declaration {cons("Load")}
     "define" "pipe" PipeName Input Arguments Statement* Output     -> Declaration {cons("Pipe")}

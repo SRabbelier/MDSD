@@ -6,6 +6,7 @@ imports
   libstratego-aterm
   include/Pipes
   lib/editor-common.generated
+  analyze
   check
   desugar
   generate

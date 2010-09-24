@@ -1,0 +1,25 @@
+define native loop
+	input
+	arguments: on and assign and trans and emit
+output
+
+define native union
+	input: $arg1 and $arg2
+output
+
+define native reverse
+	input
+output
+
+define native analyse_content
+	input
+output
+
+define native feed
+	arguments: url
+output
+
+define native flickr
+	input: $stream
+	arguments: find and images
+output: $stream

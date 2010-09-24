@@ -4,34 +4,7 @@ imports
   libstratego-lib
   include/Pipes
   lib/editor-common.generated
-
-rules
-
-  // Analysis: does a topdown traversal of the tree,
-  // and tries to apply the record-entity rule.
-  analyze:
-    t -> t
-    with
-      <topdown(try(record-pipe))> t
-
-  // Records the definition of an entity in a dynamic rule GetEntity.
-  record-pipe:
-    p@Pipe(PipeName(x), _, _, _, _) -> p
-    with
-      // For a name 'x', GetPipe will return the original 'x' tree node
-      rules(
-        GetCustom :+ x -> p
-    	GetPipe :+ x -> p
-      )
-  record-pipe:
-    n@Native(PipeName(x), _, _, _) -> n
-    with
-      rules(
-    	GetNative :+ x -> n
-    	GetPipe :+ x -> n
-      )
-  
-	
+  analyze
 	
 rules
   eq-len:
