@@ -7,7 +7,7 @@ imports
 
 rules
 	desugar:
-		ImplicitStreamAssignment() -> MultipleStreamAssignment(StreamList([[Stream("stream")]]))
+		ImplicitStreamAssignment() -> MultipleStreamAssignment(StreamList([Stream("stream")]))
 
 	desugar:
 		SingleStreamAssignment(stream) -> MultipleStreamAssignment(StreamList([stream]))
