@@ -29,11 +29,21 @@ define pipe duplicate_name
 	loop, using
 	    //on is [item] 
 	    [item] as on_fail
-	    "meh" as on_failing
+	    "meh" as on_fail2
 	    [item] as assign 
 	    pipe get_flickr, using 66 as count, as trans
 	    "all" as emit
 	    // TODO all
+	, applied.
+
+output
+
+define pipe uninit_variables
+input
+	arguments: first and second
+	flickr, using
+		first as find
+		third as images
 	, applied.
 
 output

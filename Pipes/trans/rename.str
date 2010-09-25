@@ -11,12 +11,17 @@ rules
 	
 strategies
 	rename: 
-		Pipe(name, input, args, stat, output) -> Pipe(name, rn-input, args, rn-stat, rn-output)
+		Pipe(name, input, args, stat, output) -> Pipe(name, rn-input, rn-args, rn-stat, rn-output)
 		with {| RenameStream
 			: rn-input 	:= <rename>input
+			; rn-args 	:= <rename-all>args
 			; rn-stat 	:= <rename-all>stat
 			; rn-output := <rename-all>output
 		|}
+	
+	rename:
+		Arguments(ArgumentList(list)) -> Arguments(ArgumentList(list'))
+		with list' := <map(rename-variable)>list
 	
 	rename:
 		ExplicitInput(StreamList(list)) -> ExplicitInput(StreamList(newlist))
@@ -34,6 +39,10 @@ strategies
 		// with <debug(!"RN ")>x
 		where y:= <RenameStream>x
 		
+	rename:
+		Variable(x) -> Variable(y)
+		where y := <RenameVariable>x
+	
 	rename-stream:
 		init@Stream(x) -> Stream(y)
 		where not(<RenameStream>x)
@@ -42,10 +51,20 @@ strategies
 				RenameStream: x -> y
 				InitStream: y -> init
 			)
-		// where not(<RenameStream>x) // Only rename once
-
+	
+	rename-variable:
+		Argument(init@Variable(x)) -> Variable(y)
+		with y:= x{<new>};
+			rules(
+				RenameVariable: x -> y
+				InitVariable: y -> init
+			)
+	
+	rename-variable:
+		DefaultedArgument(def, init@Variable(x)) -> DefaultedArgument(def, Variable(y))
+		with y:= x{<new>};
+			rules(
+				RenameVariable: x -> y
+				InitVariable: y -> init
+			)
 		
-	//	Statement(FunctionApplication(Some(Stream(stream)), _, _)) -> <id>
-	//	rules (
-	//		
-	//	)

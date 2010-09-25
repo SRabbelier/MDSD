@@ -77,12 +77,17 @@ rules
   	[_, []] -> []
 
   invArg(|errors):
-  	f@FunctionArgument(_,x) -> [(f, $[Invalid argument '[x]']), errors]
+  	f@FunctionArgument(_,x) -> [(x, $[Invalid argument '[x]']), errors]
 
   is-empty:
   	[] -> <id>
   is-empty:
   	[_] -> <fail>
+
+  	
+  stream-initialised(|target):
+  	s@Stream(name) -> error
+  	with <InitStream>name < error:=[] + error:= (target, $[Stream $[name] not initialised])
   	
   // Reports an error if a property type is undefined.
   // This error is reported on the type name 'type'.
@@ -130,19 +135,10 @@ rules
   constraint-error:
   	app@ApplyFunction(ApplicationTarget(StreamList(streams))) -> errors
   	with errors := <map(stream-initialised(|app))>streams
-  	
-  stream-initialised(|target):
-  	s@Stream(name) -> error
-  	// with <debug(!"Is-init ")><is-init>s
-  	// with <InitStream>name < <debug(!"Yes ")>name + <debug(!"No ")>name
-  	with <InitStream>name < error:=[] + error:= (target, $[Stream $[name] not initialised])
-  	// with debug(!"Stream-name ")
-  	// where not(<InitStream>name)
-  
-  is-init:
-  	Stream(name) -> <id>
-  	// with debug(!"is-it? ")
-  	where <InitStream>name
+
+  constraint-error:
+  	var@Variable(name) -> (var, $[Variable [name] is not initialized])
+  	where not(<InitVariable>name)
   
   // Reports an error if an entity is defined more than once.
   // This constraint is implemented by testing if the "bag" of
