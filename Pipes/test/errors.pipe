@@ -12,6 +12,7 @@ output: $stream
 
 define pipe applied_to_un_init_stream
 	$stream becomes no_streams applied to $stream.
+	$stream becomes no_streams applied.
 output
 
 load utils_not_exist
@@ -26,7 +27,7 @@ define pipe duplicate_name
 	feed, using "" as url , extracted.
 	
 	loop, using
-	    //on is [item]
+	    //on is [item] 
 	    [item] as on_fail
 	    "meh" as on_failing
 	    [item] as assign 
@@ -45,6 +46,11 @@ define pipe duplicate_name
 		"Bar" as argument
 	, applied.
 
+output
+
+define pipe fail_no_args
+input
+	loop applied.
 output
 
 define pipe shadow

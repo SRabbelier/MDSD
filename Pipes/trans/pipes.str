@@ -23,7 +23,7 @@ rules // Main editor interface (defined by editor/Pipes-Builders and -References
     with
       editor-init;
       analyze;
-      desugared := <alltd(desugar); alltd(rename)>ast;
+      desugared := <alltd(desugar); alltd(rename-all)>ast;
       errors   := <collect-all(constraint-error, conc)> desugared;
       warnings := <collect-all(constraint-warning, conc)> desugared;
       notes    := <collect-all(constraint-note, conc)> desugared
@@ -42,6 +42,12 @@ rules // Main editor interface (defined by editor/Pipes-Builders and -References
       filename := <guarantee-extension(|"aterm")> path;
       result   := selected // we just return the input term
 
+  generate-desugarred:
+    (selected, position, ast, path, project-path) -> (filename, result)
+    with
+      filename := <guarantee-extension(|"desug")> path;
+      result   := <alltd(desugar); alltd(rename-all)>selected 
+      
   debug-python:
     (selected, position, ast, path, project-path) -> (filename, result)
     with

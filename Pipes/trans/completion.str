@@ -17,6 +17,7 @@ rules
 	
 	editor-complete:
 		(PipeName(COMPLETION(prefix)), position, ast, path, project-path) -> proposals
+		with <debug(!"Propose for: ")>prefix
 		where pipes := <all-keys-GetPipe>;
 			proposals := <map(pipe-template)>pipes
 

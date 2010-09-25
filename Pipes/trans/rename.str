@@ -5,12 +5,47 @@ imports
   include/Pipes
   lib/editor-common.generated
 
+
 rules
-	rename: 
-		Pipe(a, b, c, stat, d) -> Pipe(a, b, c, stat, d)
-		// with stat' := <map(rename-stream)>stat
+	rename-all= alltd(rename)
 	
-	//rename-stream:
+strategies
+	rename: 
+		Pipe(name, input, args, stat, output) -> Pipe(name, rn-input, args, rn-stat, rn-output)
+		with {| RenameStream
+			: rn-input 	:= <rename>input
+			; rn-stat 	:= <rename-all>stat
+			; rn-output := <rename-all>output
+		|}
+		with <debug(!"out ")>output
+		with <debug(!"Out ")>rn-output
+	
+	rename:
+		ExplicitInput(StreamList(list)) -> ExplicitInput(StreamList(newlist))
+		with <debug(!"list ")>list
+		with newlist := <map(rename-stream)>list
+		with <debug(!"newlist ")>newlist
+	
+	// rename:
+		// FunctionApplication(MultipleStreamAssignment(StreamList(list)), lambda, type)
+			// -> FunctionApplication(MultipleStreamAssignment(StreamList(newlist)), lambda, type)
+		// with newlist := <map(rename-stream)>list
+		
+	rename:
+		Stream(x) -> Stream(y)
+		with <debug(!"RN ")>x
+		where y:= <RenameStream>x
+		
+	rename-stream:
+		init@Stream(x) -> Stream(y)
+		with y:= x{<new>};
+			rules(
+				RenameStream: x -> y
+				InitStream: y -> init
+			)
+		// where not(<RenameStream>x) // Only rename once
+
+		
 	//	Statement(FunctionApplication(Some(Stream(stream)), _, _)) -> <id>
 	//	rules (
 	//		
