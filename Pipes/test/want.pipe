@@ -1,7 +1,7 @@
 load natives
 
 define pipe example
-	feed, using
+	$stream becomes feed, using
 		 "http://www.xkcd.com/rss.xml" as url
 		, extracted.
 	reverse applied.
@@ -16,6 +16,7 @@ input
 	
 	$out becomes join applied to $out and $rest.
 output: $out
+
 
 define pipe first
 input

@@ -45,7 +45,6 @@ input
 		first as find
 		third as images
 	, applied.
-
 output
 
 define pipe duplicate_name

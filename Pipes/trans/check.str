@@ -127,7 +127,7 @@ rules
   	where not(<eq-len>[streams, expected_input])
   	
   constraint-error:
-  	out@ExplicitOutput(StreamList(streams)) -> errors2
+  	Pipe(_, _, _, _, out@ExplicitOutput(StreamList(streams))) -> errors2
 //  	with errors1 := <collect-all(constraint-error, conc)>stats
   	with errors2 := <map(stream-initialised(|out))>streams
   	// with <debug(!"Errors ")>errors2

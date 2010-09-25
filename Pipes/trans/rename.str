@@ -25,14 +25,17 @@ strategies
 	
 	rename:
 		ExplicitInput(StreamList(list)) -> ExplicitInput(StreamList(newlist))
-		with newlist := <map(rename-stream <+ id)>list
+		with newlist := <map(rename-stream <+ rename <+ id)>list
 	
 	rename:
 		FunctionApplication(MultipleStreamAssignment(StreamList(list)), lambda, type)
 			-> FunctionApplication(MultipleStreamAssignment(StreamList(newlist)), lambda', type')
-		with type':= <rename-all>type
+		with newlist := <map(rename-stream <+ rename <+ id)>list
 		with lambda' := <rename-all>lambda
-		with newlist := <map(rename-stream <+ id)>list
+		with type':= <rename-all>type
+		// with <debug(!"type")>type
+		// with <debug(!"Type ")>type'
+		// with <debug(!"list ")>newlist
 		
 	rename:
 		Stream(x) -> Stream(y)
