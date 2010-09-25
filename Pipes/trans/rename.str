@@ -17,27 +17,26 @@ strategies
 			; rn-stat 	:= <rename-all>stat
 			; rn-output := <rename-all>output
 		|}
-		with <debug(!"out ")>output
-		with <debug(!"Out ")>rn-output
 	
 	rename:
 		ExplicitInput(StreamList(list)) -> ExplicitInput(StreamList(newlist))
-		with <debug(!"list ")>list
-		with newlist := <map(rename-stream)>list
-		with <debug(!"newlist ")>newlist
+		with newlist := <map(rename-stream <+ id)>list
 	
-	// rename:
-		// FunctionApplication(MultipleStreamAssignment(StreamList(list)), lambda, type)
-			// -> FunctionApplication(MultipleStreamAssignment(StreamList(newlist)), lambda, type)
-		// with newlist := <map(rename-stream)>list
+	rename:
+		FunctionApplication(MultipleStreamAssignment(StreamList(list)), lambda, type)
+			-> FunctionApplication(MultipleStreamAssignment(StreamList(newlist)), lambda', type')
+		with type':= <rename-all>type
+		with lambda' := <rename-all>lambda
+		with newlist := <map(rename-stream <+ id)>list
 		
 	rename:
 		Stream(x) -> Stream(y)
-		with <debug(!"RN ")>x
+		// with <debug(!"RN ")>x
 		where y:= <RenameStream>x
 		
 	rename-stream:
 		init@Stream(x) -> Stream(y)
+		where not(<RenameStream>x)
 		with y:= x{<new>};
 			rules(
 				RenameStream: x -> y
