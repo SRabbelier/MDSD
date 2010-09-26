@@ -16,7 +16,7 @@ input
 	
 	$rest becomes reverse applied to $rest.
 	
-	$out becomes join applied to $out and $rest.
+	$out becomes join applied to $rest and $out.
 output: $out
 
 
