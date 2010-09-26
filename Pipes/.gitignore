@@ -4,3 +4,4 @@
 *.aterm
 *.generated.esv
 /editor/java
+*.generated.pp
