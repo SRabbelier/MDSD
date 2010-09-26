@@ -38,7 +38,7 @@ rules // Main editor interface (defined by editor/Pipes-Builders and -References
   generate-desugarred:
     (selected, position, ast, path, project-path) -> (filename, result)
     with
-      filename := <guarantee-extension(|"desug")> path;
+      filename := <guarantee-extension(|"desug.aterm")> path;
       result   := <alltd(desugar); alltd(rename-all)>selected 
       
   debug-python:
