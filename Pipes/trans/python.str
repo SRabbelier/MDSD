@@ -16,10 +16,11 @@ rules
   extract-variables : Argument(v) -> v
   extract-variables : DefaultedArgument(_, v) -> v
 
-  extract-stream : Stream(v) -> v
+  extract-stream : Stream(v) -> result
+  with result := <concat-strings>["stream_", v]
 
   extract-keyword-args : Variable(v) -> result
-  with result := <concat-strings>[v, "=None"]
+  with result := <concat-strings>["arg_", v, "=None"]
 
   to-stream-args : ExplicitInput(StreamList(vars)) -> result
   with result := <map(extract-stream)>vars
@@ -36,14 +37,22 @@ rules
   python-header = !python*|[
 	import sys;
 	import logging;
-	from pipes_builtins import *;
+	from pipes_builtins import ident;
+	from pipes_builtins import streamToString;
+	from pipes_builtins import streamSize;
+	from pipes_builtins import isEmpty;
+	from pipes_builtins import main_const;
+	run_pipes = [];
   ]|
 
   python-after = !python*|[
 		def main(args): {
-			pipe_main();
+			for pipe in run_pipes: {
+				result = pipe();
+				print streamToString(result);
+			};
 		};
-	    if __name__ == '__main__': {
+	    if __name__ == main_const: {
 			main(sys.argv);
 	    };
   ]|
@@ -58,7 +67,8 @@ rules
     with stm2* := <python-after>
     with stm := <map(to-python)>declarations
 
-  to-python : Load(_) -> []
+  to-python : Load(name) -> python|[from x import *;]|
+  with x := name
 
   to-python : Variable(name) -> name
 
@@ -75,7 +85,7 @@ rules
   function-name : LambdaFunction(PipeName(name), _) -> result
   with result := <concat-strings>["lambda: func_", name]
 
-  extract-function-streams : ApplyFunction(None()) -> ["stream"]
+  extract-function-streams : ApplyFunction(None()) -> ["stream_stream"]
 
   extract-function-streams : ApplyFunction(ApplicationTarget(StreamList(vars))) -> result
   with result := <map(extract-stream)>vars
@@ -84,7 +94,8 @@ rules
 
   extract-function-arg : FunctionArgument(y, x) -> result
   with y' := <to-python>y
-  with result := NamedParam(x,y')
+  with name := <concat-strings>["arg_", x]
+  with result := NamedParam(name,y')
 
   extract-function-args : None() -> []
 
@@ -105,19 +116,56 @@ rules
 
   to-python : FunctionApplication(MultipleStreamAssignment(StreamList(list)), func, appl) -> python*|[
 	x_streamname = e();
-	logging.debug(x_streamname);
+	logging.debug(streamSize(x_streamname));
   ]|
-  with x_streamname := <separate-by(|","); concat-strings>list
+  with x_streamname := <map(extract-stream); separate-by(|","); concat-strings>list
   with e := <lambda-to-python(|appl)>func
 
+  to-python : IsEmptyCondition(Stream(name)) -> py-exp|[isEmpty(x)]|
+  with x := <concat-strings>["stream_", name]
+
+  to-python : Then(t) -> python*|[
+	stm*
+  ]|
+  with stm* := <map(to-python)>t
+
+  to-python : NoThen() -> python*|[
+	pass;
+  ]|
+
+  to-python : Else(t) -> python*|[
+	stm*
+  ]|
+  with stm* := <map(to-python)>t
+
+  to-python : NoElse() -> python*|[
+	pass;
+  ]|
+
+  to-python : Conditional(If(t), then_block, else_block) -> [result]
+  with e := <to-python>t
+  with stm0* := <to-python>then_block
+  with stm1* := <to-python>else_block
+  with result := python|[
+	if e: {
+		stm0*
+	} else: {
+		stm1*
+	};
+  ]|
+
   to-python :
-	Pipe(name, input, arguments, statements, output) -> python*|[
+	Run(PipeName(name)) -> python|[run_pipes.append(e);]|
+	with e := <concat-strings>["func_", name]
+
+  to-python :
+	Pipe(PipeName(name), input, arguments, statements, output) -> python*|[
 		def x_name(e*): {
 			stm*
 			stm_ret
 		};
 		]|
-		with x_name := <concat-strings> ["pipe_", name]
+		with x_name := <concat-strings> ["func_", name]
 		with stream-args := <to-stream-args>input
 		with value-args := <to-value-args>arguments
 		with e* := <flatten-list>[stream-args, value-args]
