@@ -13,7 +13,7 @@ def func_split(stream_stream, arg_from=None):
     before = copyStream(stream_stream)
     after = copyStream(stream_stream)
     arg_from -= 1
-    
+
     channel = before.find("channel")
     items = before.findall("channel/item")
     for item in items[arg_from:]:
@@ -29,4 +29,3 @@ def func_split(stream_stream, arg_from=None):
 def func_feed(arg_url=None):
     feed = urllib2.urlopen(arg_url).read()
     return streamFromString(feed)
-
