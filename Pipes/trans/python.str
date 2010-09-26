@@ -9,21 +9,16 @@ imports
     lib/StrategoPython
 
 rules
-  to-stream-args : NoInput() -> []
-
-  to-stream-args : ImplicitInput() -> ["stream"]
-
   extract-variables : Argument(v) -> v
   extract-variables : DefaultedArgument(_, v) -> v
 
-  extract-stream : Stream(v) -> result
-  with result := <concat-strings>["stream_", v]
+  arg-name: x -> <concat-strings>["arg_", x]
 
-  extract-keyword-args : Variable(v) -> result
-  with result := <concat-strings>["arg_", v, "=None"]
+  extract-keyword-args : Variable(_) -> result
+  with result := <concat-strings>[<to-python>, "=None"]
 
   to-stream-args : ExplicitInput(StreamList(vars)) -> result
-  with result := <map(extract-stream)>vars
+  with result := <map(to-python)>vars
 
   to-value-args : NoArguments() -> []
 
@@ -31,7 +26,7 @@ rules
   with result := <map(extract-keyword-args)>vars
 
   to-output-args : ExplicitOutput(StreamList(vars)) -> result
-  with e := <map(extract-stream)>vars
+  with e := <map(to-python)>vars
   with result := python|[return e;]|
 
   python-header = !python*|[
@@ -85,16 +80,14 @@ rules
   function-name : LambdaFunction(PipeName(name), _) -> result
   with result := <concat-strings>["lambda: func_", name]
 
-  extract-function-streams : ApplyFunction(None()) -> ["stream_stream"]
-
   extract-function-streams : ApplyFunction(ApplicationTarget(StreamList(vars))) -> result
-  with result := <map(extract-stream)>vars
+  with result := <map(to-python)>vars
 
   extract-function-streams : ExtractFunction() -> []
 
   extract-function-arg : FunctionArgument(y, x) -> result
   with y' := <to-python>y
-  with name := <concat-strings>["arg_", x]
+  with name := <arg-name>x
   with result := NamedParam(name,y')
 
   extract-function-args : None() -> []
@@ -118,11 +111,17 @@ rules
 	x_streamname = e();
 	logging.debug(streamSize(x_streamname));
   ]|
-  with x_streamname := <map(extract-stream); separate-by(|","); concat-strings>list
+  with x_streamname := <map(to-python); separate-by(|","); concat-strings>list
   with e := <lambda-to-python(|appl)>func
 
   to-python : IsEmptyCondition(Stream(name)) -> py-exp|[isEmpty(x)]|
   with x := <concat-strings>["stream_", name]
+
+  to-python : Variable(x) -> result
+  with result := <arg-name>x
+
+  to-python : Stream(v) -> result
+  with result := <concat-strings>["stream_", v]
 
   to-python : Then(t) -> python*|[
 	stm*
