@@ -10,14 +10,14 @@ exports
     Module
 
   context-free syntax
-  
+
     Declaration*                                    -> Module {cons("Module")}
-    
+
     "load" ID                                                      -> Declaration {cons("Load")}
     "run" "pipe" PipeName                                          -> Declaration {cons("Run")}
     "define" "pipe" PipeName Input Arguments Statement* Output     -> Declaration {cons("Pipe")}
     "define" "native" PipeName Input Arguments Output              -> Declaration {cons("Native")}
-    
+
     ID												-> PipeName {cons("PipeName")}
 
 
@@ -27,7 +27,7 @@ exports
 
     % epsilon %                                     -> Arguments {cons("NoArguments")}
     "arguments" ":" ArgumentList                    -> Arguments {cons("Arguments")}
-    
+
     "output"                        				-> Output {cons("ImplicitOutput")}
     "output" ":" StreamList      					-> Output {cons("ExplicitOutput")}
 
@@ -79,12 +79,12 @@ exports
     %% primitves
     "all"                                           -> All {cons("All")}
     STRING                                          -> String {cons("String")}
-    INT                                             -> Integer {cons("Integer")} 
+    INT                                             -> Integer {cons("Integer")}
     "[" Selection "]"                               -> Selector {cons("Selector")}
     { ID "/"}+										-> Selection {cons("Selection")}
     "$" ID                                          -> Stream {cons("Stream")}
 	ID                                              -> Variable {cons("Variable")}
-	
+
 	lexical syntax
 		"and" 			-> Keyword
 		"arguments" 	-> Keyword
@@ -99,8 +99,8 @@ exports
 		"pipe" 			-> Keyword
 		"to" 			-> Keyword
 		"using"			-> Keyword
-		
+
 		Keyword -> ID {reject}
 	lexical restrictions
-		"and" "arguments" "become" "becomes" "define" "extracted" 
+		"and" "arguments" "become" "becomes" "define" "extracted"
 		"input" "load" "native" "output" "pipe" "to" "using" -/- [a-zA-Z0-9]
