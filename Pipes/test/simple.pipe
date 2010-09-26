@@ -1,21 +1,9 @@
-load native
+load natives
 
 define pipe main
 		
 	feed, using
 	 "http://www.xkcd.com/rss.xml" as url
 	, extracted.
-	
-	filter, using
-	    [title] as on
-	    "the" as query
-	, applied.
-	
-	loop, using
-		[description] as on
-		[image/url] as assign
-		pipe search_pattern, using "src=\"([^\"]+)\"" as pattern
-		, as trans 
-	, applied.
 
 output
