@@ -13,7 +13,8 @@ exports
   
     Declaration*                                    -> Module {cons("Module")}
     
-    "load" ID                                       			   -> Declaration {cons("Load")}
+    "load" ID                                                      -> Declaration {cons("Load")}
+    "run" "pipe" PipeName                                          -> Declaration {cons("Run")}
     "define" "pipe" PipeName Input Arguments Statement* Output     -> Declaration {cons("Pipe")}
     "define" "native" PipeName Input Arguments Output              -> Declaration {cons("Native")}
     
