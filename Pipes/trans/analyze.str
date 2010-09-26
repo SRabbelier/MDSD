@@ -41,7 +41,7 @@ rules
   // and tries to apply the record-entity rule.
   analyze:
     t@(ast, path, dir) -> t
-    with cd := <concat-strings>[dir, "\\", <dirname>path]
+    with cd := <concat-strings>[dir, "/", <dirname>path]
     with rules (
     	BasePath := dir
     	CurrentFile := path
@@ -77,7 +77,7 @@ rules
     	<ParsedAndImported> name
         ; rules ( Imports :+= name )
         <+ rules ( ParsedAndImported : name)
-         ; full-path := <concat-strings>[<CurrentDir>, "\\", name, ".pipe"]
+         ; full-path := <concat-strings>[<CurrentDir>, "/", name, ".pipe"]
          ; where(
            	if <file-exists> full-path then
            		<open-import(parse-file|full-path)> name
