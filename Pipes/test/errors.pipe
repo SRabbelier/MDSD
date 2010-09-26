@@ -7,7 +7,6 @@ input
 output
 
 define pipe outputs_without_stream
-// TODO uninitialised streams
 output: $stream
 
 define pipe applied_to_un_init_stream

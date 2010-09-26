@@ -7,3 +7,5 @@ define pipe main
 	, extracted.
 
 output
+
+run pipe main
