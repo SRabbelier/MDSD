@@ -27,14 +27,7 @@ rules // Main editor interface (defined by editor/Pipes-Builders and -References
       errors   := <collect-all(constraint-error, conc)> desugared;
       warnings := <collect-all(constraint-warning, conc)> desugared;
       notes    := <collect-all(constraint-note, conc)> desugared
-  
-  // Transforms a selection to Java
-  generate-java:
-    (selected, position, ast, path, project-path) -> (filename, result)
-    with
-      filename := <guarantee-extension(|"java")> path;
-      result   := <to-java> selected
-  
+
   // Prints the abstract syntax ATerm of a selection.
   generate-aterm:
     (selected, position, ast, path, project-path) -> (filename, result)
