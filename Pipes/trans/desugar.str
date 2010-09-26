@@ -17,9 +17,15 @@ rules
 
 	desugar:
 		ImplicitInput() -> ExplicitInput(StreamList([Stream("stream")]))
-	
+
 	desugar:
 		ImplicitOutput() -> ExplicitOutput(StreamList([Stream("stream")]))
 
 	desugar:
 		ImplicitApplicationTarget() -> ApplicationTarget(StreamList([Stream("stream")]))
+
+	desugar:
+		Then([]) -> NoThen()
+
+	desugar:
+		Else([]) -> NoElse()
