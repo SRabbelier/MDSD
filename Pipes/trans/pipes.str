@@ -45,13 +45,15 @@ rules // Main editor interface (defined by editor/Pipes-Builders and -References
     (selected, position, ast, path, project-path) -> (filename, result)
     with
       filename := <guarantee-extension(|"py.aterm")> path;
-      result   := <generate-python> selected
+      <analyze>(ast, path, project-path);
+      result   := <alltd(desugar); alltd(rename); generate-python>ast
   
   generate-python:
     (selected, position, ast, path, project-path) -> (filename, result)
     with
       filename := <guarantee-extension(|"py")> path;
-      result   := <generate-python; pp-python> selected
+      <analyze>(ast, path, project-path);
+      result   := <alltd(desugar); alltd(rename); generate-python; pp-python> ast
   
   // Resolves a reference when the user control-clicks or presses F3 in the editor.
   // Only succeeds for nodes of the form Type(_) for which GetEntity is defined.
