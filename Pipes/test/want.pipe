@@ -7,6 +7,8 @@ define pipe example
 	reverse applied.
 output
 
+run pipe example
+
 define pipe reverse
 input
 	$out becomes first applied.
