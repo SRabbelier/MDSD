@@ -7,58 +7,50 @@ input
 output
 
 define pipe outputs_without_stream
+// no input
 output: $stream
 
 define pipe applied_to_un_init_stream
-	$stream becomes no_streams applied to $stream.
-	$stream becomes no_streams applied.
+	$stream becomes one_stream applied to $stream.
+	$stream becomes one_stream applied.
 output
 
 load utils_not_exist
 
-define native get_flickr
+run pipe non_existing_pipe
+
+define pipe wrong_argument_names
 input
-	arguments: 5 as count
+	two_arguments, using
+	    5 as first
+	    "wrong" as fail
+	    "meh" as second_fail
+	, applied.
 output
 
 define pipe duplicate_name
+input
+	// doing nothing
+output
 
-	feed, using "" as url , extracted.
-	
-	loop, using
-	    //on is [item] 
-	    [item] as on_fail
-	    "meh" as on_fail2
-	    [item] as assign 
-	    pipe get_flickr, using 66 as count, as trans
-	    "all" as emit
-	    // TODO all
-	, applied.
-
+define pipe duplicate_name
+input
+	// doing nothing
 output
 
 define pipe uninit_variables
 input
-	arguments: first and second
-	flickr, using
-		first as find
-		third as images
+	arguments: first_var and second_var
+	two_arguments, using
+		first_var as first
+		third_var as second
 	, applied.
 output
 
-define pipe duplicate_name
-
-	feed, using "example.com/feed" as url,  extracted.
-
-	oops, using
-		"Bar" as argument
-	, applied.
-
-output
 
 define pipe fail_no_args
 input
-	loop applied.
+	two_arguments applied.
 output
 
 define pipe shadow
@@ -66,42 +58,53 @@ define pipe shadow
 output
 
 define pipe duplicate_native
+input
+	// shodowing duplicate native
 output
 
-define pipe multi
-	$feed1 becomes feed, using "example.com/feed1" as url, extracted.
-	$feed2 becomes feed, using "example.com/feed2" as url, extracted.
-	
-	$union becomes wrong_input_count applied.
-	$union becomes wrong_input_count applied to $feed1.
-	$union becomes wrong_input_count applied to $feed1 and $feed2.
-	$union becomes wrong_input_count applied to $feed1 and $feed2 and $feed3.
+define pipe use_of_implicit
+input: $implicit_stream
+output: $implicit_stream 
 
+define pipe multi_inputs
+input: $feed1 and $feed2
+	$union becomes two_inputs applied.
+	$union becomes two_inputs applied to $feed1.
+	$union becomes two_inputs applied to $feed1 and $feed2.
+	$union becomes two_inputs applied to $feed1 and $feed2 and $feed3.
 output: $union
 
-define pipe mulit2
+define pipe mulit_outputs
 input
-	wrong_output_count applied.
-	$one becomes wrong_output_count applied.
-	$one become wrong_output_count applied.
-	$one and $two become wrong_output_count applied.
-	$one and $two and $three become wrong_output_count applied.
+	two_outputs applied.
+	$one becomes two_outputs applied.
+	$one become two_outputs applied.
+	$one and $two become two_outputs applied.
+	$one and $two and $three become two_outputs applied.
 output
 
-define native loop
-input
-	arguments: on and assign and trans and emit
-output
+//
+// NATIVES
+//
 
-define native wrong_input_count
+define native two_inputs
 input: $one and $two
 output
 
-define native wrong_output_count
+define native two_outputs
 input
 output: $one and $two
 
+define native two_arguments
+input
+	arguments: first and second
+output
+
 define native no_streams
+output
+
+define native one_stream
+input
 output
 
 define native shadow
@@ -121,7 +124,3 @@ input
 	arguments: url
 output
 
-define native flickr
-input: $stream
-	arguments: find and images
-output: $stream

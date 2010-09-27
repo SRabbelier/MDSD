@@ -62,7 +62,7 @@ rules
   	[[], _] -> []	
 
   missingParam(|errors, target):
-  	x -> [(target, $[Missing argument '[x]']), errors]
+  	x -> [(target, $[Missing argument '[x]']) | errors]
   
   hasParam(|x):
   	param -> <id>
@@ -77,7 +77,7 @@ rules
   	[_, []] -> []
 
   invArg(|errors):
-  	f@FunctionArgument(_,x) -> [(x, $[Invalid argument '[x]']), errors]
+  	f@FunctionArgument(_,x) -> [(x, $[Invalid argument '[x]'])| errors]
 
   is-empty:
   	[] -> <id>
@@ -86,13 +86,19 @@ rules
 
   	
   stream-initialised(|target):
-  	s@Stream(name) -> error
-  	with <InitStream>name < error:=[] + error:= (target, $[Stream $[name] not initialised])
+  	s@Stream(name) -> (target, $[Stream $[name] not initialised])
+  	where not(<InitStream>name)
+  	// with <InitStream>name < error:=[] + error:= (target, $[Stream $[name] not initialised])
   	
   // Reports an error if a property type is undefined.
   // This error is reported on the type name 'type'.
   constraint-error:
     LambdaFunction(p@PipeName(name), _) -> (p, $[Pipe '[name]' is not defined])
+    where
+      not(<GetPipe> name) // no entity for this type
+  
+  constraint-error:
+  	Run(p@PipeName(name)) -> (p, $[Pipe '[name]' is not defined])
     where
       not(<GetPipe> name) // no entity for this type
   
@@ -127,14 +133,16 @@ rules
   	where not(<eq-len>[streams, expected_input])
   	
   constraint-error:
-  	Pipe(_, _, _, _, out@ExplicitOutput(StreamList(streams))) -> errors2
-//  	with errors1 := <collect-all(constraint-error, conc)>stats
-  	with errors2 := <map(stream-initialised(|out))>streams
+  	Pipe(_, _, _, _, out@ExplicitOutput(StreamList(streams))) -> errors
+// with errors1 := <collect-all(constraint-error, conc)>stats
+  	with errors1 := <collect-all(constraint-error2, conc)>
+  	with errors2 := <collect-all(stream-initialised(|out), conc)>streams
+	with errors := <concat>[errors1, errors2]  	
   	// with <debug(!"Errors ")>errors2
   	
   constraint-error:
   	app@ApplyFunction(ApplicationTarget(StreamList(streams))) -> errors
-  	with errors := <map(stream-initialised(|app))>streams
+  	with errors := <collect-all(stream-initialised(|app), conc)>streams
 
   constraint-error:
   	var@Variable(name) -> (var, $[Variable [name] is not initialized])
@@ -143,10 +151,10 @@ rules
   // Reports an error if an entity is defined more than once.
   // This constraint is implemented by testing if the "bag" of
   // all entities x is not a singleton list.
-  constraint-error:
+  constraint-error2:
     Pipe(PipeName(x), _, _, _, _) -> (x, $[Duplicate pipe name '[x]'])
     where
-      not(<bagof-GetCustom> x => [_])
+      not(<bagof-GetCustom> x => [_])  
 
   constraint-error:
     Native(PipeName(x), _, _, _) -> (x, $[Duplicate native name '[x]'])
@@ -162,9 +170,16 @@ rules
     Pipe(PipeName(x), _, _, _, _) -> (x, $[Shadowing native pipe])
     where
       (<GetNative> x)
-  
+
   constraint-note:
     Pipe(x@PipeName("Tim"), _, _, _, _) -> (x, $[You are an incredible machine.])
 
   constraint-note:
     Pipe(x@PipeName("Sverre"), _, _, _, _) -> (x, $[You are a CLI addict])
+    
+  ast-constraint-warning:
+  	x@Stream("implicit_stream") -> (x, $[Use of 'implicit_stream' is discouraged; it's ugly and horrid.])
+  
+  ast-constraint-warning:
+  	 x@MultipleStreamAssignment(StreamList([Stream(name)])) -> (x, $[Correct English would be to say '$[name] becomes'.])
+  	

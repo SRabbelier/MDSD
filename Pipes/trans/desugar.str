@@ -6,8 +6,12 @@ imports
   lib/editor-common.generated
 
 rules
+	
+	ImplicitStream:
+	_ -> StreamList([Stream("implicit_stream")])
+	
 	desugar:
-		ImplicitStreamAssignment() -> MultipleStreamAssignment(StreamList([Stream("stream")]))
+		ImplicitStreamAssignment() -> MultipleStreamAssignment(<ImplicitStream>)
 
 	desugar:
 		SingleStreamAssignment(stream) -> MultipleStreamAssignment(StreamList([stream]))
@@ -16,16 +20,16 @@ rules
 		NoInput() -> ExplicitInput(StreamList([]))
 
 	desugar:
-		ImplicitInput() -> ExplicitInput(StreamList([Stream("stream")]))
+		ImplicitInput() -> ExplicitInput(<ImplicitStream>)
 
 	desugar:
-		ImplicitOutput() -> ExplicitOutput(StreamList([Stream("stream")]))
+		ImplicitOutput() -> ExplicitOutput(<ImplicitStream>)
 
 	desugar:
-		ImplicitApplicationTarget() -> ApplicationTarget(StreamList([Stream("stream")]))
+		ImplicitApplicationTarget() -> ApplicationTarget(<ImplicitStream>)
 
 	desugar:
-		Then([]) -> NoThen()
+		NoThen() -> Then([])
 
 	desugar:
-		Else([]) -> NoElse()
+		NoElse() -> Else([])

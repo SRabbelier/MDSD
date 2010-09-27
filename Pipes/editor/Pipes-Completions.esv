@@ -13,7 +13,7 @@ completions
                                          
   // Syntax completion:                  
   completion template                  : "define pipe " <p> "\n" "input\n\t" "arguments:\n\n" "output" (blank)
-  completion template                  : "define native " <n> "\n" "input\n\t" "arguments:\n\n" "output" (blank)
+  // completion template                  : "define native " <n> "\n" "input\n\t" "arguments:\n\n" "output" (blank)
 
   completion keyword                   : "input"
   completion keyword                   : "arguments"

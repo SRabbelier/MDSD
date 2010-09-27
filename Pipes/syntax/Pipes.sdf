@@ -50,7 +50,7 @@ exports
     PipeName FunctionArguments?                     -> LambdaFunction {cons("LambdaFunction")}
     "pipe" LambdaFunction							-> LambdaRef  {cons("LambdaRef")}
 
-	"empty" Stream                                  -> Condition {cons("IsEmptyCondition")}
+	Stream? "isEmpty"                               -> Condition {cons("IsEmptyCondition")}
 
 	"if" Condition                                  -> If {cons("If")}
 	% epsilon %                                     -> Then {cons("NoThen")}

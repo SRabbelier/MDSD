@@ -10,11 +10,18 @@ output
 run pipe example
 
 define pipe reverse
-input
+input 
 	$out becomes first applied.
 	$rest becomes rest applied.
 
-	if empty $rest
+
+	// if implicit isEmpty
+	// if true
+	// if implicit isSize 5
+	// if isFive 4 and implicit isEmpty
+	// if $stream isFive 4
+	// if emptyness of $stream
+	if $stream isEmpty
 	else
 		$rest becomes reverse applied to $rest.
 	endif

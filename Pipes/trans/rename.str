@@ -12,10 +12,17 @@ rules
 strategies
 	rename: 
 		Pipe(name, input, args, stat, output) -> Pipe(name, rn-input, rn-args, rn-stat, rn-output)
-		with {| RenameStream
-			: rn-input 	:= <rename>input
+		with {| RenameStream, RenameVariable
+			: rn-input 	:= <rename-all>input
 			; rn-args 	:= <rename-all>args
 			; rn-stat 	:= <rename-all>stat
+			; rn-output := <rename-all>output
+		|}
+	
+	rename:
+		Native(name, input, args, output) -> Native(name, input, rn-args, rn-output)
+		with {| RenameStream, RenameVariable
+			: rn-args	:= <rename-all>args
 			; rn-output := <rename-all>output
 		|}
 	
@@ -30,16 +37,15 @@ strategies
 	rename:
 		FunctionApplication(MultipleStreamAssignment(StreamList(list)), lambda, type)
 			-> FunctionApplication(MultipleStreamAssignment(StreamList(newlist)), lambda', type')
+		with type':= <rename-all>type
 		with newlist := <map(rename-stream <+ rename <+ id)>list
 		with lambda' := <rename-all>lambda
-		with type':= <rename-all>type
 		// with <debug(!"type")>type
 		// with <debug(!"Type ")>type'
 		// with <debug(!"list ")>newlist
 		
 	rename:
 		Stream(x) -> Stream(y)
-		// with <debug(!"RN ")>x
 		where y:= <RenameStream>x
 		
 	rename:

@@ -57,10 +57,12 @@ rules
 	  stm1*
       stm
       stm2*
+      stm3*
     ]|
     with stm1* := <python-header>
     with stm2* := <python-after>
     with stm := <map(to-python)>declarations
+    with stm3* := <alltd(run-python)>declarations
 
   to-python : Load(name) -> python|[from x import *;]|
   with x := name
@@ -128,7 +130,7 @@ rules
   ]|
   with stm* := <map(to-python)>t
 
-  to-python : NoThen() -> python*|[
+  to-python : Then([]) -> python*|[
 	pass;
   ]|
 
@@ -137,7 +139,7 @@ rules
   ]|
   with stm* := <map(to-python)>t
 
-  to-python : NoElse() -> python*|[
+  to-python : Else([]) -> python*|[
 	pass;
   ]|
 
@@ -153,7 +155,7 @@ rules
 	};
   ]|
 
-  to-python :
+  run-python :
 	Run(PipeName(name)) -> python|[run_pipes.append(e);]|
 	with e := <concat-strings>["func_", name]
 
