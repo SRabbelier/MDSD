@@ -64,6 +64,7 @@ exports
 
 	{Argument "and"}+                               -> ArgumentList {cons("ArgumentList")}
 	Variable										-> Argument {cons("Argument")}
+	"pipe" PipeName									-> Argument {cons("PipeArgument")}
 	Value "as" Variable								-> Argument {cons("DefaultedArgument")}
     {Stream "and"}+                               	-> StreamList {cons("StreamList")}
 

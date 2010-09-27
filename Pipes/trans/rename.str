@@ -12,7 +12,7 @@ rules
 strategies
 	rename: 
 		Pipe(name, input, args, stat, output) -> Pipe(name, rn-input, rn-args, rn-stat, rn-output)
-		with {| RenameStream, RenameVariable
+		with {| RenameStream, RenameVariable, RenamePipe
 			: rn-input 	:= <rename-all>input
 			; rn-args 	:= <rename-all>args
 			; rn-stat 	:= <rename-all>stat
@@ -49,6 +49,10 @@ strategies
 		Variable(x) -> Variable(y)
 		where y := <RenameVariable>x
 	
+	rename:
+		PipeName(x) -> PipeName(y)
+		where y := <RenamePipe>x
+	
 	rename-stream:
 		init@Stream(x) -> Stream(y)
 		where not(<RenameStream>x)
@@ -59,7 +63,15 @@ strategies
 			)
 	
 	rename-variable:
-		Argument(init@Variable(x)) -> Variable(y)
+		PipeArgument(init@PipeName(x)) -> PipeArgument(PipeName(y))
+		with y:= x{<new>};
+			rules(
+				RenamePipe: x -> y
+				InitPipe: y -> init
+			) 
+	
+	rename-variable:
+		Argument(init@Variable(x)) -> Argument(Variable(y))
 		with y:= x{<new>};
 			rules(
 				RenameVariable: x -> y

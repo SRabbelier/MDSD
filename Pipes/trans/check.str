@@ -54,6 +54,11 @@ rules
   	with errs :=  <checkParam(|target)>[rest, args]
 
   checkParam(|target):
+  	[[PipeArgument(PipeName(param))|rest], args] -> errors
+  	with errs :=  <checkParam(|target)>[rest, args]
+  	with (match := <fetch-elem(?FunctionArgument(_, param))> args) < errors:=<pipeParam(|errs)>match + errors:=<missingParam(|errs, target)>param
+
+  checkParam(|target):
   	[[Argument(Variable(param))|rest], args] -> errors
   	with errs :=  <checkParam(|target)>[rest, args]
   	with (<fetch-elem(?FunctionArgument(_, param))> args) < errors:=errs + errors:=<missingParam(|errs, target)>param
@@ -61,20 +66,35 @@ rules
   checkParam(|target):
   	[[], _] -> []	
 
+  pipeParam(|error):
+  	FunctionArgument(LambdaRef(_), _) -> error
+  
+  pipeParam(|error):
+  	FunctionArgument(a, _) -> [(a, $[Expecting a Pipe argument])]
+
   missingParam(|errors, target):
   	x -> [(target, $[Missing argument '[x]']) | errors]
   
   hasParam(|x):
-  	param -> <id>
-  	where <fetch-elem(?Argument(Variable(x)))>param <+ <fetch-elem(?DefaultedArgument(_, Variable(x)))>param 
+  	param -> par
+  	where par := <fetch-elem(?Argument(Variable(x))) <+ fetch-elem(?PipeArgument(PipeName(x))) <+ fetch-elem(?DefaultedArgument(_, Variable(x)))>param 
   
   checkArgs:
-  	[param, [f@FunctionArgument(_,x)|rest]] -> errors
+  	[param, [f@FunctionArgument(arg,x)|rest]] -> errors
   	with errs := <checkArgs>[param, rest]
-  	with (<hasParam(|x)>param) <  errors:=<id>errs + errors:=<invArg(|errs)>f
-
+  	with (match := <hasParam(|x)>param) <  errors:=<pipeArg(|errs)>[arg, match] + errors:=<invArg(|errs)>f  
+  	
   checkArgs:
   	[_, []] -> []
+  
+  pipeArg(|errs):
+  	[LambdaRef(_), PipeArgument(_)]-> errs
+
+  pipeArg(|errs):
+  	[a@LambdaRef(_), _] -> [(a, $[Argument is not a Pipe argument])]
+  
+  pipeArg(|errs):
+  	[_, _] -> errs
 
   invArg(|errors):
   	f@FunctionArgument(_,x) -> [(x, $[Invalid argument '[x]'])| errors]
@@ -95,6 +115,8 @@ rules
     LambdaFunction(p@PipeName(name), _) -> (p, $[Pipe '[name]' is not defined])
     where
       not(<GetPipe> name) // no entity for this type
+    where
+      not(<InitPipe> name) // not a pipe argument
   
   constraint-error:
   	Run(p@PipeName(name)) -> (p, $[Pipe '[name]' is not defined])
@@ -135,8 +157,12 @@ rules
   	Pipe(_, _, _, _, out@ExplicitOutput(StreamList(streams))) -> errors
   	with errors1 := <collect-all(constraint-error2, conc)>
   	with errors2 := <collect-all(stream-initialised(|out), conc)>streams
-	with errors := <concat>[errors1, errors2]  	
-  	
+	with errors := <concat>[errors1, errors2] 
+
+  constraint-error:
+  	x@IsEmptyCondition(streams) -> error
+  	with error := <collect-all(stream-initialised(|x), conc)>streams
+	
   constraint-error:
   	app@ApplyFunction(ApplicationTarget(StreamList(streams))) -> errors
   	with errors := <collect-all(stream-initialised(|app), conc)>streams

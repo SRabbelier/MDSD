@@ -14,13 +14,46 @@ input
 	$out becomes first applied.
 	$rest becomes rest applied.
 
-	if $stream isEmpty
+	if $rest isEmpty
 	else
 		$rest becomes reverse applied to $rest.
 	endif
-	
 	$out becomes join applied to $rest and $out.
+	
 output: $out
+
+define pipe do_nothing
+input
+output
+
+define pipe reverse_fucked
+input 
+	$out becomes first applied.
+	$rest becomes rest applied.
+
+	if $rest isEmpty
+	then
+		middle_man, using
+			5 as handlert 
+			pipe reverse_fucked as not_a_pipe
+		, applied.
+	else
+		middle_man, using
+			pipe reverse_fucked as handlert
+		, applied.
+	endif
+	$out becomes join applied to $rest and $out.
+	
+output: $out
+
+define pipe middle_man
+input
+arguments: pipe handlert and 5 as not_a_pipe
+
+	do_nothing applied.
+	handlert applied.
+	
+output
 
 
 define pipe first

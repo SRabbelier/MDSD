@@ -47,6 +47,13 @@ input
 	, applied.
 output
 
+define pipe reverse_fucked
+input 
+	pipe_arg, using
+		5 as pipe_arg 
+		pipe reverse_fucked as not_a_pipe
+	, applied.	
+output
 
 define pipe fail_no_args
 input
@@ -105,6 +112,11 @@ output
 
 define native one_stream
 input
+output
+
+define native pipe_arg
+input
+arguments: pipe pipe_arg and not_a_pipe
 output
 
 define native shadow
