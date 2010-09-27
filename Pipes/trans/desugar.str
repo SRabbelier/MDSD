@@ -15,6 +15,9 @@ rules
 
 	desugar:
 		SingleStreamAssignment(stream) -> MultipleStreamAssignment(StreamList([stream]))
+	
+	desugar:
+		ImplicitIsEmptyCondition() -> IsEmptyCondition(<ImplicitStream>)
 
 	desugar:
 		NoInput() -> ExplicitInput(StreamList([]))

@@ -88,7 +88,6 @@ rules
   stream-initialised(|target):
   	s@Stream(name) -> (target, $[Stream $[name] not initialised])
   	where not(<InitStream>name)
-  	// with <InitStream>name < error:=[] + error:= (target, $[Stream $[name] not initialised])
   	
   // Reports an error if a property type is undefined.
   // This error is reported on the type name 'type'.
@@ -134,11 +133,9 @@ rules
   	
   constraint-error:
   	Pipe(_, _, _, _, out@ExplicitOutput(StreamList(streams))) -> errors
-// with errors1 := <collect-all(constraint-error, conc)>stats
   	with errors1 := <collect-all(constraint-error2, conc)>
   	with errors2 := <collect-all(stream-initialised(|out), conc)>streams
 	with errors := <concat>[errors1, errors2]  	
-  	// with <debug(!"Errors ")>errors2
   	
   constraint-error:
   	app@ApplyFunction(ApplicationTarget(StreamList(streams))) -> errors

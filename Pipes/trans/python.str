@@ -62,7 +62,7 @@ rules
     with stm1* := <python-header>
     with stm2* := <python-after>
     with stm := <map(to-python)>declarations
-    with stm3* := <alltd(run-python)>declarations
+    with stm3* := <collect-all(run-python, conc)>declarations
 
   to-python : Load(name) -> python|[from x import *;]|
   with x := name
@@ -154,6 +154,9 @@ rules
 		stm1*
 	};
   ]|
+
+  to-python :
+	Run(PipeName(name)) -> []
 
   run-python :
 	Run(PipeName(name)) -> python|[run_pipes.append(e);]|
