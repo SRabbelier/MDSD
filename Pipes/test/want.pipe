@@ -4,7 +4,9 @@ define pipe example
 	feed, using
 		 "http://www.xkcd.com/rss.xml" as url
 		, extracted.
-	reverse applied.
+	partial_transformation, using
+		pipe reverse as transformation
+		, applied.
 output
 
 run pipe example
@@ -22,39 +24,19 @@ input
 	
 output: $out
 
-define pipe do_nothing
+define pipe partial_transformation
 input
-output
-
-define pipe reverse_fucked
-input 
-	$out becomes first applied.
-	$rest becomes rest applied.
-
-	if $rest isEmpty
-	then
-		middle_man, using
-			5 as handlert 
-			pipe reverse_fucked as not_a_pipe
-		, applied.
-	else
-		middle_man, using
-			pipe reverse_fucked as handlert
-		, applied.
-	endif
-	$out becomes join applied to $rest and $out.
+	arguments: pipe transformation and 5 as up_to
 	
-output: $out
-
-define pipe middle_man
-input
-arguments: pipe handlert and 5 as not_a_pipe
-
-	do_nothing applied.
-	handlert applied.
+	$part and $rest become split, using
+		up_to as from
+		, applied.
 	
-output
+	$part becomes transfromation applied to $part.
+	
+	join applied to $part and $rest.
 
+output
 
 define pipe first
 input
