@@ -36,7 +36,14 @@ rules
 		where template := $[, using\n\t[list]\n,]
 		
 	args-template:
-		Argument(Variable(name)) -> $[_ as [name]]
+		Argument(Variable(name)) -> $[a as [name]]
+	
+	args-template:
+		DefaultedArgument(val, Variable(name)) -> $[[val'] as [name]]
+		with val' := <value>val
+		
+	args-template:
+		PipeArgument(PipeName(name)) -> $[pipe p as [name]]
 		
 	applied-template:
 		Pipe(_, NoInput(), _, _, _) -> "extracted"
@@ -50,6 +57,13 @@ rules
 	
     stream-name:
     	Stream(name) -> $[$[name]]
+    
+    value:
+    	Integer(x) -> x
+    value:
+    	String(x) -> x
+    value:
+    	_ -> $[_]
       
 	// editor-complete_:
 		// PipeName(COMPLETION(prefix)) -> [proposals]
