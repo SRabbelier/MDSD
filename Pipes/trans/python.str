@@ -14,8 +14,11 @@ rules
 
   arg-name: x -> <concat-strings>["arg_", x]
 
-  extract-keyword-args : Variable(_) -> result
-  with result := <concat-strings>[<to-python>, "=None"]
+  extract-keyword-args : Argument(v@Variable(_)) -> result
+  with result := <concat-strings>[<to-python>v, "=None"]
+
+  extract-keyword-args : DefaultedArgument(value, v) -> result
+  with result := <concat-strings>[<to-python>v, "=", <to-python>value]
 
   to-stream-args : ExplicitInput(StreamList(vars)) -> result
   with result := <map(to-python)>vars
@@ -67,7 +70,8 @@ rules
   to-python : Load(name) -> python|[from x import *;]|
   with x := name
 
-  to-python : Variable(name) -> name
+  to-python : Variable(name) -> result
+  with result := <arg-name>name
 
   to-python : Selector(Selection(selection)) -> result
   with joined := <separate-by(|"/"); concat-strings>selection
