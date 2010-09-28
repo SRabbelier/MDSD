@@ -4,9 +4,19 @@ define pipe example
 	feed, using
 		 "http://www.xkcd.com/rss.xml" as url
 		, extracted.
+		  
+	// Transforms ordering from:
+	// 1, 2, 3, 4, 5, 6, ... to
+	// 4, 5, 3, 2, 1, 6, ...
 	partial_transformation, using
-		pipe reverse as transformation
-		, applied.
+		pipe apply_two, using
+			pipe reverse as first
+			pipe partial_transformation, using
+				pipe reverse as transformation
+				3 as up_to
+			, as second
+		, as transformation
+	, applied.
 output
 
 run pipe example
@@ -32,10 +42,17 @@ input
 		up_to as from
 		, applied.
 	
-	$part becomes transfromation applied to $part.
+	transformation applied to $part.
 	
 	join applied to $part and $rest.
 
+output
+
+define pipe apply_two
+input
+	arguments: pipe first and pipe second
+	first applied.
+	second applied.
 output
 
 define pipe first
