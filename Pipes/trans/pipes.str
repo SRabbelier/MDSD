@@ -21,12 +21,13 @@ rules // Main editor interface (defined by editor/Pipes-Builders and -References
     (ast, path, project-path) -> (errors, all-warnings, notes)
     with
       editor-init;
-      analyze;
-      desugared := <alltd(desugar); alltd(rename-all)>ast;
-      errors   := <collect-all(constraint-error, conc)> desugared;
+      desugared := <alltd(desugar)>;
+      <analyze>desugared;
+      renamed := <alltd(rename-all)>desugared;
+      errors   := <collect-all(constraint-error, conc)> renamed;
       ast-warnings := <collect-all(ast-constraint-warning, conc)>ast;
-      warnings := <collect-all(constraint-warning, conc)> desugared;
-      notes    := <collect-all(constraint-note, conc)> desugared;
+      warnings := <collect-all(constraint-warning, conc)> renamed;
+      notes    := <collect-all(constraint-note, conc)> renamed;
       all-warnings := <concat>[warnings, ast-warnings]
       
 
@@ -47,15 +48,17 @@ rules // Main editor interface (defined by editor/Pipes-Builders and -References
     (selected, position, ast, path, project-path) -> (filename, result)
     with
       filename := <guarantee-extension(|"py.aterm")> path;
-      <analyze>(ast, path, project-path);
-      result   := <alltd(desugar); alltd(rename); generate-python>ast
+      desugared := <alltd(desugar)>ast;
+      <analyze>(desugared, path, project-path);
+      result   := <alltd(rename); generate-python>desugared
   
   generate-python:
     (selected, position, ast, path, project-path) -> (filename, result)
     with
+      desugared := <alltd(desugar)>ast;
       filename := <guarantee-extension(|"py")> path;
-      <analyze>(ast, path, project-path);
-      result   := <alltd(desugar); alltd(rename); generate-python; pp-python> ast
+      <analyze>(desugared, path, project-path);
+      result   := <alltd(rename); generate-python; pp-python>desugared
   
   // Resolves a reference when the user control-clicks or presses F3 in the editor.
   // Only succeeds for nodes of the form Type(_) for which GetEntity is defined.
