@@ -21,6 +21,9 @@ rules
   extract-keyword-args : DefaultedArgument(value, v) -> result
   with result := <concat-strings>[<to-python>v, "=", <to-python>value]
 
+  extract-keyword-args : PipeArgument(v@PipeName(_)) -> result
+  with result := <concat-strings>[<to-python>v, "=None"]
+
   to-stream-args : ExplicitInput(StreamList(vars)) -> result
   with result := <map(to-python)>vars
 
@@ -123,6 +126,8 @@ rules
 	ident(x_funcname(pe0*))
   ]|
 
+  to-python: LambdaRef(f) -> <lambda-to-python>f
+
   to-python : FunctionApplication(MultipleStreamAssignment(StreamList(list)), func, appl) -> python*|[
 	x_streamname = e(e1);
 	logging.debug(streamSize(x_streamname));
@@ -139,6 +144,9 @@ rules
 
   to-python : Stream(v) -> result
   with result := <concat-strings>["stream_", v]
+
+  to-python : PipeName(name) -> result
+  with result := <concat-strings>["func_", name]
 
   to-python : Then(t) -> python*|[
 	stm*
@@ -174,8 +182,8 @@ rules
 	Run(PipeName(name)) -> []
 
   run-python :
-	Run(PipeName(name)) -> python|[run_pipes.append(e);]|
-	with e := <concat-strings>["func_", name]
+	Run(p) -> python|[run_pipes.append(e);]|
+	with e := <to-python>p
 
   to-python :
 	Pipe(PipeName(name), input, arguments, statements, output) -> python*|[
