@@ -4,6 +4,7 @@ imports
   libstratego-lib
   include/Pipes
   lib/editor-common.generated
+  desugar
 
 
 rules
@@ -63,11 +64,14 @@ strategies
 			)
 	
 	rename-variable:
-		PipeArgument(init@PipeName(x)) -> PipeArgument(PipeName(y))
-		with y:= x{<new>};
-			rules(
+		PipeArgument(init@PipeName(x)) -> PipeArgument(name')
+		with y:= x{<new>}
+		with name' := PipeName(y)
+		with p := Pipe(name', ExplicitInput(<ImplicitStream>), NoArguments(), [], ExplicitOutput(<ImplicitStream>))
+		with rules(
 				RenamePipe: x -> y
 				InitPipe: y -> init
+				GetPipe: y -> p
 			) 
 	
 	rename-variable:
