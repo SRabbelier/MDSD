@@ -1,0 +1,51 @@
+load natives
+
+/*
+define pipe default_pipe_arg
+input
+	arguments: reverse as pipe one
+
+output
+*/
+
+define pipe validating_stream_input_count_for_lambda_args
+input
+	partial_transformation, using
+		// join takes two inputs
+		pipe join as transformation 
+	, applied.
+output
+
+define pipe validating_stream_input_count_for_pipe_arguments
+input
+	arguments: pipe one
+	$first and $second become one applied.
+	one applied to $second and $first.
+output
+
+define pipe arguments_for_pipes_arguments
+input
+	arguments: pipe me
+	// No arguments for me
+	me, using "tim" as name, applied.
+
+output
+
+
+//
+// Required pipes for examples
+//
+
+define pipe partial_transformation
+input
+	arguments: pipe transformation and 5 as up_to
+	
+	$part and $rest become split, using
+		up_to as from
+		, applied.
+	
+	transformation applied to $part.
+	
+	join applied to $part and $rest.
+
+output
