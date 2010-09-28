@@ -4,6 +4,7 @@ imports
 	libstratego-lib
   	include/Pipes
   	lib/editor-common.generated
+	desugar
 
 strategies
 
@@ -63,8 +64,8 @@ rules
     	GetPipe :+ x -> p
       )
   analyze-one:
-     n@Native(PipeName(x), a, b, c) -> n
-     with p := Pipe(PipeName(x), a, b, None(), c)
+    n@Native(PipeName(x), a, b, c) -> n
+    with p := Pipe(PipeName(x), a, b, None(), c)
     with
       rules(
     	GetNative :+ x -> n
@@ -81,6 +82,7 @@ rules
          ; where(
            	if <file-exists> full-path then
            		<open-import(parse-file|full-path)> name
+			; alltd(desugar)
          		; <analyze>(<id>, full-path, <BasePath>)
          		; rules ( Imports :+= name)
          	else
