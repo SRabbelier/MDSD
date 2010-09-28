@@ -7,8 +7,11 @@ imports
 
 rules
 	
+	OneImplicitStream:
+	_ -> Stream("implicit_stream")
+
 	ImplicitStream:
-	_ -> StreamList([Stream("implicit_stream")])
+	_ -> StreamList([<OneImplicitStream>])
 	
 	desugar:
 		ImplicitStreamAssignment() -> MultipleStreamAssignment(<ImplicitStream>)
@@ -17,7 +20,7 @@ rules
 		SingleStreamAssignment(stream) -> MultipleStreamAssignment(StreamList([stream]))
 	
 	desugar:
-		ImplicitIsEmptyCondition() -> IsEmptyCondition(<ImplicitStream>)
+		ImplicitIsEmptyCondition() -> IsEmptyCondition(<OneImplicitStream>)
 
 	desugar:
 		NoInput() -> ExplicitInput(StreamList([]))
