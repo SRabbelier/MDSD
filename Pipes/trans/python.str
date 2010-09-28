@@ -84,8 +84,10 @@ rules
 
   to-python : Integer(value) -> value
 
-  function-name : LambdaFunction(PipeName(name), _) -> result
-  with result := <concat-strings>["lambda: func_", name]
+  function-name-and-args : LambdaFunction(p@PipeName(name), _) -> result
+  with args := <extract-function-streams>p
+  with name-and-args := <concat-strings>["lambda " | args]
+  with result := <concat-strings>[name-and-args, ": func_", name]
 
   extract-pipe-streams : Pipe(_, ExplicitInput(StreamList(vars)), _, _, _) -> vars
 
@@ -94,7 +96,10 @@ rules
   with vars := <extract-pipe-streams>p
   with result := <map(to-python)>vars
 
-  // extract-function-streams : ExtractFunction() -> []
+  extract-application-streams : ApplyFunction(ApplicationTarget(StreamList(list))) -> result
+  with result := <map(to-python)>list
+
+  extract-application-streams : ExtractFunction() -> []
 
   extract-function-arg : FunctionArgument(y, x) -> result
   with y' := <to-python>y
@@ -112,18 +117,19 @@ rules
   with result := <concat>[function_streams, function_args]
 
   lambda-to-python: LambdaFunction(name, args) -> result
-  with x_funcname := <function-name>
+  with x_funcname := <function-name-and-args>
   with pe0* := <function-args>
   with result := py-exp|[
 	ident(x_funcname(pe0*))
   ]|
 
   to-python : FunctionApplication(MultipleStreamAssignment(StreamList(list)), func, appl) -> python*|[
-	x_streamname = e();
+	x_streamname = e(e1);
 	logging.debug(streamSize(x_streamname));
   ]|
   with x_streamname := <map(to-python); separate-by(|","); concat-strings>list
   with e := <lambda-to-python>func
+  with e1 := <extract-application-streams>appl
 
   to-python : IsEmptyCondition(Stream(name)) -> py-exp|[isEmpty(x)]|
   with x := <concat-strings>["stream_", name]
