@@ -48,9 +48,14 @@ rules
 	applied-template:
 		Pipe(_, NoInput(), _, _, _) -> "extracted"
 		
+	// WTFBBQ not completing on AST?	
 	applied-template:
 		Pipe(_, ImplicitInput(), _, _, _) -> "applied"
 		
+	applied-template:
+		Pipe(_, ExplicitInput(StreamList([Stream(_)])), _, _, _) -> "applied"
+		// where template:= <map(stream-name);separate-by(|" and ")>streams
+	
 	applied-template:
 		Pipe(_, ExplicitInput(StreamList(streams)), _, _, _) -> $[applied to [template]]
 		where template:= <map(stream-name);separate-by(|" and ")>streams
