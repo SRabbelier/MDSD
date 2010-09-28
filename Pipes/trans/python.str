@@ -67,9 +67,9 @@ rules
       stm3*
     ]|
     with stm1* := <python-header>
-    with stm2* := <python-after>
     with stm := <map(to-python)>declarations
-    with stm3* := <collect-all(run-python, conc)>declarations
+    with stm2* := <collect-all(run-python, conc)>declarations
+    with stm3* := <python-after>
 
   to-python : Load(name) -> python|[from x import *;]|
   with x := name
@@ -88,8 +88,8 @@ rules
   to-python : Integer(value) -> value
 
   function-name-and-args : LambdaFunction(p@PipeName(name), _) -> result
-  with args := <extract-function-streams>p
-  with name-and-args := <concat-strings>["lambda " | args]
+  with args := <extract-function-streams; separate-by(|", "); concat-strings>p
+  with name-and-args := <concat-strings>["lambda ", args]
   with result := <concat-strings>[name-and-args, ": func_", name]
 
   extract-pipe-streams : Pipe(_, ExplicitInput(StreamList(vars)), _, _, _) -> vars
@@ -104,9 +104,15 @@ rules
 
   extract-application-streams : ExtractFunction() -> []
 
+  extract-arg-name : FunctionArgument(LambdaRef(_), name) -> result
+  with result := <to-python>PipeName(name)
+
+  extract-arg-name : FunctionArgument(_, name) -> result
+  with result := <arg-name>name
+
   extract-function-arg : FunctionArgument(y, x) -> result
   with y' := <to-python>y
-  with name := <arg-name>x
+  with name := <extract-arg-name>
   with result := NamedParam(name,y')
 
   extract-function-args : None() -> []
@@ -132,9 +138,9 @@ rules
 	x_streamname = e(e1);
 	logging.debug(streamSize(x_streamname));
   ]|
-  with x_streamname := <map(to-python); separate-by(|","); concat-strings>list
+  with x_streamname := <map(to-python); separate-by(|", "); concat-strings>list
   with e := <lambda-to-python>func
-  with e1 := <extract-application-streams>appl
+  with e1 := <extract-application-streams; separate-by(|", "); concat-strings>appl
 
   to-python : IsEmptyCondition(Stream(name)) -> py-exp|[isEmpty(x)]|
   with x := <concat-strings>["stream_", name]
