@@ -16,7 +16,7 @@ completions
   // completion template                  : "define native " <n> "\n" "input\n\t" "arguments:\n\n" "output" (blank)
 
   completion keyword                   : "input"
-  completion keyword                   : "arguments"
+  completion keyword                   : "arguments:"
   completion keyword                   : "becomes"
   completion keyword                   : "output"
                                          
