@@ -2,10 +2,24 @@ load natives
 
 define pipe main
 		
-	feed, using
+	$stream becomes feed, using
 	 "http://www.xkcd.com/rss.xml" as url
 	, extracted.
 
+	rest, using pipe noop as transformation, applied to $stream.
+
 output
+
+define pipe noop
+input
+output
+
+
+define pipe rest
+input
+arguments: pipe transformation
+	// transformation applied.
+output
+
 
 run pipe main
