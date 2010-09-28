@@ -191,6 +191,6 @@ rules
 	with result := Application(code)
 
   pp-python :
-  	ast -> s
-  	where tbl := <import-term(lib/Python-pretty.pp.af)>
+	ast -> s
+	where tbl := <import-term(lib/Python-pretty.pp.af)>
     where s := <ast2box(|[tbl]); box2text-string(|80)> ast
