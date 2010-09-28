@@ -148,16 +148,11 @@ rules
   to-python : PipeName(name) -> result
   with result := <concat-strings>["func_", name]
 
-  to-python : Then(t) -> python*|[
-	stm*
-  ]|
-  with stm* := <map(to-python)>t
-
   to-python : Then([]) -> python*|[
 	pass;
   ]|
 
-  to-python : Else(t) -> python*|[
+  to-python : Then(t) -> python*|[
 	stm*
   ]|
   with stm* := <map(to-python)>t
@@ -165,6 +160,11 @@ rules
   to-python : Else([]) -> python*|[
 	pass;
   ]|
+
+  to-python : Else(t) -> python*|[
+	stm*
+  ]|
+  with stm* := <map(to-python)>t
 
   to-python : Conditional(If(t), then_block, else_block) -> [result]
   with e := <to-python>t
