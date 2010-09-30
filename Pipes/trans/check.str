@@ -137,22 +137,36 @@ rules
     with errors := <checkParam(|name)>[pargs, []]
     
   constraint-error:
-  	FunctionApplication(_, LambdaFunction(PipeName(name),_), ApplyFunction(ApplicationTarget(StreamList(input)))) -> (name, $[Pipe '[name]' expects [expected_size] streams but got [actual_size]])
+  	FunctionApplication(_, LambdaFunction(p@PipeName(name),_), ApplyFunction(ApplicationTarget(StreamList(input)))) -> (p, $[Pipe '[name]' expects [expected_size] streams but got [actual_size]])
   	with actual_size := <length>input
-  	where p := <GetPipe>name
-  	with expected_input := <get-inputs>p
+  	where pipe := <GetPipe>name
+  	with expected_input := <get-inputs>pipe
   	with expected_size := <length>expected_input
   	// where not(<eq>[expected_size, actual_size]) // LOLWTF?!!OMGBBQ
   	where not(<eq-len>[input, expected_input]) 
 
   constraint-error:
-  	FunctionApplication(MultipleStreamAssignment(StreamList(streams)), LambdaFunction(PipeName(name),_),_) -> (name, $[Pipe '[name]' returns [expected_size] streams but only [actual_size] assigned])
+  	FunctionApplication(MultipleStreamAssignment(StreamList(streams)), LambdaFunction(p@PipeName(name),_),_) -> (p, $[Pipe '[name]' returns [expected_size] streams but has [actual_size] assigned])
   	with actual_size := <length>streams
-  	where p:= <GetPipe>name
-  	with expected_input := <get-outputs>p
+  	where pipe:= <GetPipe>name
+  	with expected_output := <get-outputs>pipe
+  	with expected_size := <length>expected_output
+  	where not(<eq-len>[streams, expected_output])
+  
+  constraint-error:
+  	LambdaRef(LambdaFunction(p@PipeName(name),_)) -> (p, $[Pipe arguments receive one stream, '[name]' expects [expected_size]])
+  	where pipe:= <GetPipe>name
+  	with expected_input := <get-inputs>pipe
   	with expected_size := <length>expected_input
-  	where not(<eq-len>[streams, expected_input])
-  	
+	where not(<eq-len>[["one"], expected_input])
+  
+  constraint-error:
+  	LambdaRef(LambdaFunction(p@PipeName(name),_)) -> (p, $[Pipe arguments must return one stream, '[name]' returns [expected_size]])
+  	where pipe:= <GetPipe>name
+  	with expected_output := <get-outputs>pipe
+  	with expected_size := <length>expected_output
+	where not(<eq-len>[["one"], expected_output])
+	  	
   constraint-error:
   	Pipe(_, _, _, _, out@ExplicitOutput(StreamList(streams))) -> errors
   	with errors1 := <collect-all(constraint-error2, conc)>
@@ -195,10 +209,10 @@ rules
       (<GetNative> x)
 
   constraint-note:
-    Pipe(x@PipeName("Tim"), _, _, _, _) -> (x, $[You are an incredible machine.])
+    Pipe(x@PipeName("Tim"), _, _, _, _) -> (x, $[I'm the incredible machine.])
 
   constraint-note:
-    Pipe(x@PipeName("Sverre"), _, _, _, _) -> (x, $[You are a CLI addict])
+    Pipe(x@PipeName("Sverre"), _, _, _, _) -> (x, $[I'm are a CLI addict])
     
   ast-constraint-warning:
   	x@Stream("implicit_stream") -> (x, $[Use of 'implicit_stream' is discouraged; it's ugly and horrid.])

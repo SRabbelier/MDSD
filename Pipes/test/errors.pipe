@@ -90,6 +90,30 @@ input
 	$one and $two and $three become two_outputs applied.
 output
 
+define pipe validating_stream_input_count_for_pipe_arguments
+input
+	arguments: pipe one
+	$first and $second become one applied.
+	one applied to $second and $first.
+output
+
+define pipe arguments_for_pipes_arguments
+input
+	arguments: pipe me
+	// No arguments for me
+	me, using "tim" as name, applied.
+output
+
+define pipe validating_stream_input_count_for_lambda_args
+input
+	pipe_arg, using
+		pipe two_inputs as pipe_arg 
+	, applied.
+	pipe_arg, using
+		pipe two_outputs as pipe_arg 
+	, applied.
+output
+
 //
 // NATIVES
 //
@@ -116,7 +140,7 @@ output
 
 define native pipe_arg
 input
-arguments: pipe pipe_arg and not_a_pipe
+arguments: pipe pipe_arg and "default" as not_a_pipe
 output
 
 define native shadow
